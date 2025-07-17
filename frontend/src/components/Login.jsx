@@ -32,10 +32,12 @@ const Login = () => {
     setIsLoading(true);
 
     try {
+      // Call the login function from AuthContext
       await login(formData);
-      // No need to handle navigation here as it's handled in the AuthContext
+      // Navigation is handled in AuthContext based on user role
+      // Admin users will be redirected to /admindashboard
     } catch (error) {
-      // Error handling is done in AuthContext
+      toast.error(error.response?.data?.detail || 'Login failed. Please check your credentials.');
       setIsLoading(false);
     }
   };

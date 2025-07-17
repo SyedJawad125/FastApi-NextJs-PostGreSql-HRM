@@ -106,28 +106,36 @@ export const AuthProvider = ({ children }) => {
   // Login function
   const login = useCallback(async (credentials) => {
     try {
-      const response = await AxiosInstance.post('/user/login', credentials);
-      const { token: newToken, refresh_token, user: userData, role: userRole, permissions: userPermissions } = response.data.data;
-
-      // Store in localStorage
-      localStorage.setItem('token', JSON.stringify(newToken));
+      const response = await AxiosInstance.post('/users/login', credentials);
+      const {
+        access_token,
+        refresh_token,
+        user_id,
+        username,
+        email,
+        is_superuser,
+        role_name,
+        permissions
+      } = response.data;
+  
+      const userData = { user_id, username, email, is_superuser };
+  
+      localStorage.setItem('token', JSON.stringify(access_token));
       localStorage.setItem('refreshToken', JSON.stringify(refresh_token));
       localStorage.setItem('user', JSON.stringify(userData));
-      localStorage.setItem('role', JSON.stringify(userRole));
-      localStorage.setItem('permissions', JSON.stringify(userPermissions));
-
-      // Update state
-      setToken(newToken);
+      localStorage.setItem('role', JSON.stringify(role_name));
+      localStorage.setItem('permissions', JSON.stringify(permissions));
+  
+      setToken(access_token);
       setRefreshToken(refresh_token);
       setUser(userData);
-      setRole(userRole);
-      setPermissions(userPermissions);
-
-      // Show success message
+      setRole(role_name);
+      setPermissions(permissions);
+  
       toast.success('Login successful!');
-
-      // Redirect based on role
-      switch(userRole) {
+  
+      // Redirect user
+      switch (role_name) {
         case 'SUPER_ADMIN':
         case 'ADMIN':
           router.push('/admindashboard');
@@ -140,46 +148,16 @@ export const AuthProvider = ({ children }) => {
       }
     } catch (error) {
       console.error('Login error:', error);
-      toast.error(error.response?.data?.message || 'Login failed');
+      toast.error(error.response?.data?.detail || 'Login failed');
       throw error;
     }
   }, [router]);
-
-  // Logout function
-  const logout = useCallback(async () => {
-    try {
-      if (token) {
-        await AxiosInstance.post('/user/logout');
-      }
-    } catch (error) {
-      console.error('Logout error:', error);
-    } finally {
-      // Clear localStorage
-      localStorage.removeItem('token');
-      localStorage.removeItem('refreshToken');
-      localStorage.removeItem('user');
-      localStorage.removeItem('role');
-      localStorage.removeItem('permissions');
-
-      // Reset state
-      setToken(null);
-      setRefreshToken(null);
-      setUser(null);
-      setRole(null);
-      setPermissions({});
-
-      // Show success message
-      toast.success('Logged out successfully');
-
-      // Redirect to home
-      router.push('/');
-    }
-  }, [token, router]);
+  
 
   // Register function
   const register = useCallback(async (userData) => {
     try {
-      const response = await AxiosInstance.post('/user/register', userData);
+      const response = await AxiosInstance.post('/users/signup', userData);
       toast.success('Registration successful! Please login.');
       return response.data;
     } catch (error) {
@@ -188,6 +166,30 @@ export const AuthProvider = ({ children }) => {
       throw error;
     }
   }, []);
+
+
+  // Logout function
+const logout = useCallback(() => {
+  try {
+    localStorage.removeItem('token');
+    localStorage.removeItem('refreshToken');
+    localStorage.removeItem('user');
+    localStorage.removeItem('role');
+    localStorage.removeItem('permissions');
+
+    setToken(null);
+    setRefreshToken(null);
+    setUser(null);
+    setRole(null);
+    setPermissions({});
+
+    toast.success('Logged out successfully!');
+    router.push('/login');
+  } catch (error) {
+    console.error('Logout error:', error);
+    toast.error('Logout failed');
+  }
+}, [router]);
 
   // Context value
   const value = {
