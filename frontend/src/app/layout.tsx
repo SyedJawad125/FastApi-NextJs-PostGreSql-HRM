@@ -1,11 +1,13 @@
+// app/layout.tsx
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
 import { ReactNode } from 'react';
+import { CartProvider } from '@/components/CartContext';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-// import SessionProviderWrapper from '@/components/SessionProviderWrapper';
-import AuthProvider from '@/components/AuthProvider'; // Keep AuthProvider
+import AuthProvider from '@/components/AuthProvider';
+// import ClientThemeProvider from '@/components/ClientThemeProvider';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -16,27 +18,113 @@ export const metadata: Metadata = {
 
 interface RootLayoutProps {
   children: ReactNode;
-  session: any; // Adjust according to your session type
+  session: any;
 }
 
 export default function RootLayout({ children, session }: RootLayoutProps) {
   return (
-    // <SessionProviderWrapper session={session}>
-      <AuthProvider>
-          <html lang="en" className={inter.className}>
-            <body>
+    <html lang="en" className={inter.className}>
+      <body>
+        {/* <ClientThemeProvider> */}
+          <AuthProvider>
+            <CartProvider>
               {children}
               <ToastContainer />
-            </body>
-          </html>
-      </AuthProvider>
-    // </SessionProviderWrapper>
+            </CartProvider>
+          </AuthProvider>
+        {/* </ClientThemeProvider> */}
+      </body>
+    </html>
   );
 }
 
 
+// import type { Metadata } from 'next';
+// import { Inter } from 'next/font/google';
+// import './globals.css';
+// import { ReactNode } from 'react';
+// import { CartProvider } from '@/components/CartContext';
+// import { ToastContainer } from 'react-toastify';
+// import 'react-toastify/dist/ReactToastify.css';
+// // import SessionProviderWrapper from '@/components/SessionProviderWrapper';
+// import AuthProvider from '@/components/AuthProvider'; // Keep AuthProvider
+
+// const inter = Inter({ subsets: ['latin'] });
+
+// export const metadata: Metadata = {
+//   title: 'My Application',
+//   description: 'My awesome app built with Next.js 14',
+// };
+
+// interface RootLayoutProps {
+//   children: ReactNode;
+//   session: any; // Adjust according to your session type
+// }
+
+// export default function RootLayout({ children, session }: RootLayoutProps) {
+//   return (
+//     // <SessionProviderWrapper session={session}>
+//       <AuthProvider>
+//         <CartProvider>
+//           <html lang="en" className={inter.className}>
+//             <body>
+//               {children}
+//               <ToastContainer />
+//             </body>
+//           </html>
+//         </CartProvider>
+//       </AuthProvider>
+//     // </SessionProviderWrapper>
+//   );
+// }
 
 
+
+// import type { Metadata } from 'next';
+// import { Inter } from 'next/font/google';
+// import './globals.css';
+// import { ReactNode } from 'react';
+// import { CartProvider } from '@/components/CartContext';
+// import { ToastContainer } from 'react-toastify';
+// import 'react-toastify/dist/ReactToastify.css';
+// import AuthProvider from '@/components/AuthProvider';
+
+// const inter = Inter({ subsets: ['latin'] });
+
+// export const metadata: Metadata = {
+//   title: 'My Application',
+//   description: 'My awesome app built with Next.js 14',
+// };
+
+// interface RootLayoutProps {
+//   children: ReactNode;
+// }
+
+// export default function RootLayout({ children }: RootLayoutProps) {
+//   return (
+//     <AuthProvider>
+//       <CartProvider>
+//         <html lang="en" className={inter.className}>
+//           <body>
+//             {children}
+//             <ToastContainer 
+//               position="top-right"
+//               autoClose={5000}
+//               hideProgressBar={false}
+//               newestOnTop={false}
+//               closeOnClick
+//               rtl={false}
+//               pauseOnFocusLoss
+//               draggable
+//               pauseOnHover
+//               theme="light"
+//             />
+//           </body>
+//         </html>
+//       </CartProvider>
+//     </AuthProvider>
+//   );
+// }
 
 
 // import type { Metadata } from "next";
