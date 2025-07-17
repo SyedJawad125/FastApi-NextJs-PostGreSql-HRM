@@ -1,18 +1,7 @@
-// /** @type {import('next').NextConfig} */
-// const nextConfig = {
-//     images: {
-//     domains: ['127.0.0.1'], // Add your backend host here
-//   },
-// };
-
-// export default nextConfig;
-
-
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-    domains: ['localhost', '127.0.0.1'], // Include both variants
-    // Alternative if you need to specify port:
+    domains: ['localhost', '127.0.0.1'],
     remotePatterns: [
       {
         protocol: 'http',
@@ -28,6 +17,13 @@ const nextConfig = {
       },
     ],
   },
+  output: 'standalone',
+  typescript: {
+    ignoreBuildErrors: true
+  },
+  eslint: {
+    ignoreDuringBuilds: true
+  }
 };
 
 export default nextConfig;

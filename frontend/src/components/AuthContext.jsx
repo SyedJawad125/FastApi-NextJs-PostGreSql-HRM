@@ -1,264 +1,217 @@
 'use client';
-import React, { createContext, useState, useEffect } from 'react';
+import React, { createContext, useState, useEffect, useCallback } from 'react';
 import AxiosInstance from "@/components/AxiosInstance";
+import { useRouter } from 'next/navigation';
+import { toast } from 'react-toastify';
 
 export const AuthContext = createContext();
 
+// Define available roles and their hierarchy
+const ROLE_HIERARCHY = {
+  SUPER_ADMIN: ['ADMIN', 'MANAGER', 'USER'],
+  ADMIN: ['MANAGER', 'USER'],
+  MANAGER: ['USER'],
+  USER: []
+};
+
+// Define permission sets for each role
+const ROLE_PERMISSIONS = {
+  SUPER_ADMIN: ['all'],
+  ADMIN: [
+    'manage_users',
+    'manage_employees',
+    'manage_products',
+    'manage_categories',
+    'view_reports',
+    'manage_settings'
+  ],
+  MANAGER: [
+    'manage_employees',
+    'manage_products',
+    'view_reports'
+  ],
+  USER: [
+    'view_products',
+    'view_categories'
+  ]
+};
+
 export const AuthProvider = ({ children }) => {
-  console.log('AuthProvider is rendered');
-
+  const router = useRouter();
   const [token, setToken] = useState(null);
-  const [permissions, setPermissions] = useState({}); // Initialize permissions as an empty object
-  const [role, setRole] = useState(null); // Initialize role state
+  const [refreshToken, setRefreshToken] = useState(null);
+  const [user, setUser] = useState(null);
+  const [role, setRole] = useState(null);
+  const [permissions, setPermissions] = useState({});
+  const [isLoading, setIsLoading] = useState(true);
 
+  // Load auth state from localStorage
   useEffect(() => {
-    // Load token, permissions, and role from localStorage
-    const storedToken = localStorage.getItem('token');
-    const storedPermissions = localStorage.getItem('permissions');
-    const storedRole = localStorage.getItem('role'); // Load role from localStorage
-
-    console.log('Loaded token from localStorage:', storedToken);
-    console.log('Loaded permissions from localStorage:', storedPermissions);
-    console.log('Loaded role from localStorage:', storedRole); // Log loaded role
-
-    if (storedToken) {
+    const loadAuthState = () => {
       try {
-        const parsedToken = JSON.parse(storedToken);
-        setToken(parsedToken);
-        console.log('Parsed token:', parsedToken);
+        const storedToken = localStorage.getItem('token');
+        const storedRefreshToken = localStorage.getItem('refreshToken');
+        const storedUser = localStorage.getItem('user');
+        const storedRole = localStorage.getItem('role');
+        const storedPermissions = localStorage.getItem('permissions');
+
+        if (storedToken) setToken(JSON.parse(storedToken));
+        if (storedRefreshToken) setRefreshToken(JSON.parse(storedRefreshToken));
+        if (storedUser) setUser(JSON.parse(storedUser));
+        if (storedRole) setRole(JSON.parse(storedRole));
+        if (storedPermissions) setPermissions(JSON.parse(storedPermissions));
       } catch (error) {
-        console.error('Error parsing token:', error);
-        setToken(null);
+        console.error('Error loading auth state:', error);
+        // Clear potentially corrupted data
+        localStorage.removeItem('token');
+        localStorage.removeItem('refreshToken');
+        localStorage.removeItem('user');
+        localStorage.removeItem('role');
+        localStorage.removeItem('permissions');
+      } finally {
+        setIsLoading(false);
       }
+    };
+
+    loadAuthState();
+  }, []);
+
+  // Check if user has permission
+  const hasPermission = useCallback((requiredPermission) => {
+    if (!role || !permissions) return false;
+    
+    // Super admin has all permissions
+    if (role === 'SUPER_ADMIN') return true;
+    
+    // Check if user has the specific permission
+    if (Array.isArray(permissions)) {
+      return permissions.includes(requiredPermission);
     }
+    
+    return false;
+  }, [role, permissions]);
 
-    if (storedPermissions) {
-      try {
-        const parsedPermissions = JSON.parse(storedPermissions);
-        setPermissions(parsedPermissions);
-        console.log('Parsed permissions:', parsedPermissions);
-      } catch (error) {
-        console.error('Error parsing permissions:', error);
-        setPermissions({}); // Reset to an empty object on error
+  // Check if user has role
+  const hasRole = useCallback((requiredRole) => {
+    if (!role) return false;
+    
+    // Check if user has the exact role
+    if (role === requiredRole) return true;
+    
+    // Check if user's role is higher in hierarchy
+    const higherRoles = ROLE_HIERARCHY[role] || [];
+    return higherRoles.includes(requiredRole);
+  }, [role]);
+
+  // Login function
+  const login = useCallback(async (credentials) => {
+    try {
+      const response = await AxiosInstance.post('/user/login', credentials);
+      const { token: newToken, refresh_token, user: userData, role: userRole, permissions: userPermissions } = response.data.data;
+
+      // Store in localStorage
+      localStorage.setItem('token', JSON.stringify(newToken));
+      localStorage.setItem('refreshToken', JSON.stringify(refresh_token));
+      localStorage.setItem('user', JSON.stringify(userData));
+      localStorage.setItem('role', JSON.stringify(userRole));
+      localStorage.setItem('permissions', JSON.stringify(userPermissions));
+
+      // Update state
+      setToken(newToken);
+      setRefreshToken(refresh_token);
+      setUser(userData);
+      setRole(userRole);
+      setPermissions(userPermissions);
+
+      // Show success message
+      toast.success('Login successful!');
+
+      // Redirect based on role
+      switch(userRole) {
+        case 'SUPER_ADMIN':
+        case 'ADMIN':
+          router.push('/admindashboard');
+          break;
+        case 'MANAGER':
+          router.push('/managerdashboard');
+          break;
+        default:
+          router.push('/');
       }
+    } catch (error) {
+      console.error('Login error:', error);
+      toast.error(error.response?.data?.message || 'Login failed');
+      throw error;
     }
+  }, [router]);
 
-    if (storedRole) {
-      try {
-        const parsedRole = JSON.parse(storedRole);
-        setRole(parsedRole);
-        console.log('Parsed role:', parsedRole);
-      } catch (error) {
-        console.error('Error parsing role:', error);
-        setRole(null); // Reset role on error
+  // Logout function
+  const logout = useCallback(async () => {
+    try {
+      if (token) {
+        await AxiosInstance.post('/user/logout');
       }
+    } catch (error) {
+      console.error('Logout error:', error);
+    } finally {
+      // Clear localStorage
+      localStorage.removeItem('token');
+      localStorage.removeItem('refreshToken');
+      localStorage.removeItem('user');
+      localStorage.removeItem('role');
+      localStorage.removeItem('permissions');
+
+      // Reset state
+      setToken(null);
+      setRefreshToken(null);
+      setUser(null);
+      setRole(null);
+      setPermissions({});
+
+      // Show success message
+      toast.success('Logged out successfully');
+
+      // Redirect to home
+      router.push('/');
+    }
+  }, [token, router]);
+
+  // Register function
+  const register = useCallback(async (userData) => {
+    try {
+      const response = await AxiosInstance.post('/user/register', userData);
+      toast.success('Registration successful! Please login.');
+      return response.data;
+    } catch (error) {
+      console.error('Registration error:', error);
+      toast.error(error.response?.data?.message || 'Registration failed');
+      throw error;
     }
   }, []);
 
-  const login = (userToken, userPermissions, userRole) => {
-    // Store token, permissions, and role in local storage
-    localStorage.setItem('token', JSON.stringify(userToken));
-    localStorage.setItem('permissions', JSON.stringify(userPermissions));
-    localStorage.setItem('role', JSON.stringify(userRole)); // Store role
-
-    // Update state
-    setToken(userToken);
-    setPermissions(userPermissions || {}); // Ensure userPermissions is an object
-    setRole(userRole); // Set role state
-
-    console.log('Logged in with token:', userToken);
-    console.log('Permissions set on login:', userPermissions);
-    console.log('Role set on login:', userRole); // Log the role
+  // Context value
+  const value = {
+    token,
+    user,
+    role,
+    permissions,
+    isLoading,
+    isAuthenticated: !!token,
+    login,
+    logout,
+    register,
+    hasPermission,
+    hasRole,
   };
 
-  const logout = async () => {
-    try {
-      // Assuming you're calling an API to log out
-      await AxiosInstance.post('/user/logout');
-
-      // Clear local storage and update state
-      localStorage.removeItem('token');
-      localStorage.removeItem('permissions');
-      localStorage.removeItem('role'); // Clear role from local storage
-
-      setToken(null);
-      setPermissions({}); // Reset permissions to an empty object
-      setRole(null); // Reset role to null
-
-      console.log('Logged out and cleared local storage.');
-    } catch (error) {
-      console.error('Logout error:', error);
-    }
-  };
+  // Loading state
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
 
   return (
-    <AuthContext.Provider value={{ token, permissions, role, login, logout }}>
+    <AuthContext.Provider value={value}>
       {children}
     </AuthContext.Provider>
   );
 };
-
-
-
-
-// 'use client';
-// import React, { createContext, useState, useEffect } from 'react';
-// import AxiosInstance from "@/components/AxiosInstance";
-
-// export const AuthContext = createContext();
-
-// export const AuthProvider = ({ children }) => {
-//   console.log('AuthProvider is rendered');
-  
-//   const [token, setToken] = useState(null);
-//   const [permissions, setPermissions] = useState({});
-
-//   useEffect(() => {
-//     // This code will only run in the browser
-//     const storedToken = localStorage.getItem('token');
-//     const storedPermissions = localStorage.getItem('permissions');
-
-//     // Debug logging for loaded data
-//     console.log('Loaded token from localStorage:', storedToken);
-//     console.log('Loaded permissions from localStorage:', storedPermissions);
-
-//     try {
-//       const parsedToken = storedToken ? JSON.parse(storedToken) : null;
-//       setToken(parsedToken);
-//       console.log('Parsed token:', parsedToken);
-//     } catch (error) {
-//       console.error('Error parsing token:', error);
-//       setToken(null);
-//     }
-
-//     try {
-//       const parsedPermissions = storedPermissions ? JSON.parse(storedPermissions) : {};
-//       setPermissions(parsedPermissions);
-//       console.log('Parsed permissions:', parsedPermissions);
-//     } catch (error) {
-//       console.error('Error parsing permissions:', error);
-//       setPermissions({});
-//     }
-//   }, []);
-
-//   const login = (userToken, userPermissions) => {
-//     // Store token and permissions in local storage
-//     localStorage.setItem('token', JSON.stringify(userToken));
-//     localStorage.setItem('permissions', JSON.stringify(userPermissions));
-
-//     // Update state
-//     setToken(userToken);
-//     setPermissions(userPermissions || {}); // Ensure it's at least an empty object
-
-//     // Debugging logs
-//     console.log('Logged in with token:', userToken);
-//     console.log('Permissions set on login:', userPermissions);
-//   };
-
-//   const logout = async () => {
-//     try {
-//       // Assuming you're calling an API to log out
-//       await AxiosInstance.post('/user/logout');
-      
-//       // Clear local storage and update state
-//       localStorage.removeItem('token');
-//       localStorage.removeItem('permissions');
-
-//       setToken(null);
-//       setPermissions({});
-
-//       console.log('Logged out and cleared local storage.');
-//     } catch (error) {
-//       console.error('Logout error:', error);
-//     }
-//   };
-
-//   return (
-//     <AuthContext.Provider value={{ token, permissions, login, logout }}>
-//       {children}
-//     </AuthContext.Provider>
-//   );
-// };
-
-
-
-// 'use client';
-// import React, { createContext, useState, useEffect } from 'react';
-// import AxiosInstance from "@/components/AxiosInstance";
-
-// export const AuthContext = createContext();
-
-// export const AuthProvider = ({ children }) => {
-//   console.log('AuthProvider is rendered');
-  
-//   const [token, setToken] = useState(null);
-//   const [permissions, setPermissions] = useState(undefined);
-
-//   useEffect(() => {
-//     const storedToken = localStorage.getItem('token');
-
-//     if (storedToken) {
-//       try {
-//         const parsedToken = JSON.parse(storedToken);
-//         setToken(parsedToken);
-
-//         // Fetch permissions from the backend
-//         fetchPermissions(parsedToken);
-//       } catch (error) {
-//         console.error('Error parsing token:', error);
-//         setToken(null);
-//       }
-//     }
-//   }, []);
-
-//   const fetchPermissions = async (token) => {
-//     try {
-//       const response = await AxiosInstance.get('/user/permissions', {
-//         headers: {
-//           Authorization: `Bearer ${token}`
-//         }
-//       });
-
-//       const userPermissions = response.data;
-//       setPermissions(userPermissions);
-
-//       // Store permissions in localStorage for later use
-//       localStorage.setItem('permissions', JSON.stringify(userPermissions));
-
-//       console.log('Fetched and stored permissions:', userPermissions);
-//     } catch (error) {
-//       console.error('Error fetching permissions:', error);
-//       setPermissions(undefined);
-//     }
-//   };
-
-//   const login = (userToken, userPermissions) => {
-//     localStorage.setItem('token', JSON.stringify(userToken));
-//     setToken(userToken);
-
-//     // Fetch permissions after login
-//     fetchPermissions(userToken);
-//   };
-
-//   const logout = async () => {
-//     try {
-//       await AxiosInstance.post('/user/logout');
-      
-//       localStorage.removeItem('token');
-//       localStorage.removeItem('permissions');
-
-//       setToken(null);
-//       setPermissions(undefined);
-
-//       console.log('Logged out and cleared local storage.');
-//     } catch (error) {
-//       console.error('Logout error:', error);
-//     }
-//   };
-
-//   return (
-//     <AuthContext.Provider value={{ token, permissions, login, logout }}>
-//       {children}
-//     </AuthContext.Provider>
-//   );
-// };
