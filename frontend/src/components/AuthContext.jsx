@@ -333,6 +333,13 @@ export const AuthProvider = ({ children }) => {
   const login = useCallback(async (credentials) => {
     try {
       const response = await AxiosInstance.post('/users/login', credentials);
+      
+      // Handle intercepted 403 errors
+      if (response.error) {
+        toast.error(response.error.message);
+        return { success: false };
+      }
+  
       const {
         access_token,
         refresh_token,
@@ -343,47 +350,41 @@ export const AuthProvider = ({ children }) => {
         role_name,
         permissions
       } = response.data;
-
+  
       const userData = { 
         id: user_id,
         username,
         email,
-        is_superuser: Boolean(is_superuser) // Ensure boolean value
+        is_superuser: Boolean(is_superuser)
       };
-
-      // Store data in localStorage
+  
       localStorage.setItem('token', JSON.stringify(access_token));
       localStorage.setItem('refreshToken', JSON.stringify(refresh_token));
       localStorage.setItem('user', JSON.stringify(userData));
       localStorage.setItem('role', JSON.stringify(role_name));
       localStorage.setItem('permissions', JSON.stringify(permissions));
-
-      // Update state
+  
       setToken(access_token);
       setRefreshToken(refresh_token);
       setUser(userData);
       setRole(role_name);
       setPermissions(permissions);
-
-      // Log user data to console
-      console.log('Logged in user:', {
-        ...userData,
-        role: role_name,
-        permissions,
-        is_superuser: Boolean(is_superuser)
-      });
-
+  
       // toast.success('Login successful!');
-      toast.success('Login successfully!', {
+      toast.success('Login successful!', {
         autoClose: 1500,
       });
-      
       router.push('/admindashboard');
       
+      return { success: true };
     } catch (error) {
       console.error('Login error:', error);
-      toast.error(error.response?.data?.detail || 'Login failed');
-      throw error;
+      // This will only catch non-403 errors now
+      // toast.error('Login failed. Please try again later.');
+      toast.success('Login failed. Please try again later.', {
+        autoClose: 1500,
+      });
+      return { success: false };
     }
   }, [router]);
 

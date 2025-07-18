@@ -224,12 +224,15 @@ const Login = () => {
     e.preventDefault();
     setIsLoading(true);
   
-    try {
-      await login(formData); // AuthContext will handle the redirect
-    } catch (error) {
-      toast.error(error.response?.data?.detail || 'Login failed. Please check your credentials.');
-      setIsLoading(false);
+    const { success } = await login(formData);
+    setIsLoading(false);
+    
+    if (!success) {
+      // The error toast is already shown by the login function
+      return;
     }
+    
+    // Success case is handled in AuthContext
   };
 
   const handleForgetPassword = () => {
