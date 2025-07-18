@@ -124,6 +124,22 @@ from .salary_history import (
     SalaryHistoryOut,
     SalaryHistoryListResponse
 )
+from .image_category import (
+    ImageCategoryBase,
+    ImageCategoryCreate,
+    ImageCategoryUpdate,
+    PaginatedImageCategory,
+    ImageCategoryListResponse
+)       
+# from .image import (
+#     ImageBase,
+#     ImageCreate,
+#     ImageUpdate,
+#     ImageOut,
+#     PaginatedImages,
+#     ImageListResponse
+# )
+
 # define what will be exported on `from schemas import *`
 __all__ = [
     'UserBase', 'UserCreate', 'LoginRequest', 'UserUpdate', 'UserOut',
@@ -143,6 +159,8 @@ __all__ = [
     'EmployeeSalaryBase', 'EmployeeSalaryCreate', 'EmployeeSalaryUpdate', 'EmployeeSalaryOut', 'EmployeeSalaryListResponse',
     'PaymentFrequency', 'SalaryStructureBase', 'SalaryStructureCreate', 'SalaryStructureUpdate', 'SalaryStructureOut', 'SalaryStructureListResponse',
     'PayslipStatus', 'PayslipBase', 'PayslipCreate', 'PayslipUpdate', 'PayslipOut', 'PayslipListResponse',
-    'ChangeType', 'SalaryHistoryBase', 'SalaryHistoryCreate', 'SalaryHistoryUpdate', 'SalaryHistoryOut', 'SalaryHistoryListResponse'
+    'ChangeType', 'SalaryHistoryBase', 'SalaryHistoryCreate', 'SalaryHistoryUpdate', 'SalaryHistoryOut', 'SalaryHistoryListResponse',
+    'ImageCategoryBase', 'ImageCategoryCreate', 'ImageCategoryUpdate', 'PaginatedImageCategory', 'ImageCategoryListResponse',
+    # 'ImageBase', 'ImageCreate', 'ImageUpdate', 'ImageOut', 'PaginatedImages', 'ImageListResponse'
 ]
 

@@ -419,6 +419,34 @@ def filter_salary_structures(params, query: Query):
     return query
 
 
+from starlette.datastructures import QueryParams
+from app.models.image_category import ImageCategory
+
+
+def filter_image_categories(query_params: QueryParams, query: Query) -> Query:
+    category = query_params.get("category")
+    created_by_user_id = query_params.get("created_by_user_id")
+    updated_by_user_id = query_params.get("updated_by_user_id")
+
+    if category:
+        query = query.filter(ImageCategory.category.ilike(f"%{category}%"))
+
+    if created_by_user_id:
+        try:
+            query = query.filter(ImageCategory.created_by_user_id == int(created_by_user_id))
+        except ValueError:
+            pass
+
+    if updated_by_user_id:
+        try:
+            query = query.filter(ImageCategory.updated_by_user_id == int(updated_by_user_id))
+        except ValueError:
+            pass
+
+    return query
+
+
+
 def filter_permissions(params, query):
     name = params.get("name")
     if name:

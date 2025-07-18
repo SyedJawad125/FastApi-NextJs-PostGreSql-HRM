@@ -29,7 +29,8 @@ from app.routers import (
     employee, department, auth, user, 
     role, permission, rank, attendance, 
     timesheet, leave, notification, employee_salary,
-    salary_structure, payslip, salary_history
+    salary_structure, payslip, salary_history, 
+    image_category
 )
 
 app = FastAPI(
@@ -60,6 +61,10 @@ app = FastAPI(
         {
             "name": "Notifications",
             "description": "User notifications management"
+        },
+        {
+            "name": "Image Categories",
+            "description": "Image categories management"
         }
     ]
 )
@@ -101,6 +106,8 @@ app.include_router(employee_salary.router)
 app.include_router(salary_structure.router)
 app.include_router(payslip.router)
 app.include_router(salary_history.router)
+app.include_router(image_category.router)
+
 
 
 
