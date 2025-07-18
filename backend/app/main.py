@@ -23,6 +23,8 @@ from app.models.employee_salary import EmployeeSalary
 from app.models.salary_structure import SalaryStructure
 from app.models.payslip import Payslip
 from app.models.salary_history import SalaryHistory
+from app.models.image_category import ImageCategory
+from app.models.image import Image
 
 # Import routers
 from app.routers import (
@@ -30,7 +32,8 @@ from app.routers import (
     role, permission, rank, attendance, 
     timesheet, leave, notification, employee_salary,
     salary_structure, payslip, salary_history, 
-    image_category
+    image_category,
+    image
 )
 
 app = FastAPI(
@@ -107,6 +110,7 @@ app.include_router(salary_structure.router)
 app.include_router(payslip.router)
 app.include_router(salary_history.router)
 app.include_router(image_category.router)
+app.include_router(image.router)
 
 
 

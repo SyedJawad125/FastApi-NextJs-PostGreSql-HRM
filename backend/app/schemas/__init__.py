@@ -131,14 +131,12 @@ from .image_category import (
     PaginatedImageCategory,
     ImageCategoryListResponse
 )       
-# from .image import (
-#     ImageBase,
-#     ImageCreate,
-#     ImageUpdate,
-#     ImageOut,
-#     PaginatedImages,
-#     ImageListResponse
-# )
+from .image import (
+    ImageBase,
+    ImageCreate,    
+    ImageUpdate,
+    ImageOut,
+)
 
 # define what will be exported on `from schemas import *`
 __all__ = [
@@ -161,6 +159,6 @@ __all__ = [
     'PayslipStatus', 'PayslipBase', 'PayslipCreate', 'PayslipUpdate', 'PayslipOut', 'PayslipListResponse',
     'ChangeType', 'SalaryHistoryBase', 'SalaryHistoryCreate', 'SalaryHistoryUpdate', 'SalaryHistoryOut', 'SalaryHistoryListResponse',
     'ImageCategoryBase', 'ImageCategoryCreate', 'ImageCategoryUpdate', 'PaginatedImageCategory', 'ImageCategoryListResponse',
-    # 'ImageBase', 'ImageCreate', 'ImageUpdate', 'ImageOut', 'PaginatedImages', 'ImageListResponse'
+    'ImageBase', 'ImageCreate', 'ImageUpdate', 'ImageOut'
 ]
 

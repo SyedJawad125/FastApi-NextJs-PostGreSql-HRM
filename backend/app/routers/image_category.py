@@ -18,6 +18,7 @@ router = APIRouter(
 )
 
 
+
 @router.get("/", response_model=ImageCategoryListResponse)
 def get_image_categories(
     request: Request,

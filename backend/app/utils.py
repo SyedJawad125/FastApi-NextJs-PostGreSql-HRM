@@ -445,6 +445,30 @@ def filter_image_categories(query_params: QueryParams, query: Query) -> Query:
 
     return query
 
+from sqlalchemy.orm import Session
+from app.models.image import Image
+from typing import List, Optional
+
+
+def filter_images(
+    db: Session,
+    name: Optional[str] = None,
+    category_id: Optional[int] = None,
+    created_by_user_id: Optional[int] = None,
+    mime_type: Optional[str] = None
+) -> List[Image]:
+    query = db.query(Image)
+
+    if name:
+        query = query.filter(Image.name.ilike(f"%{name}%"))
+    if category_id:
+        query = query.filter(Image.category_id == category_id)
+    if created_by_user_id:
+        query = query.filter(Image.created_by_user_id == created_by_user_id)
+    if mime_type:
+        query = query.filter(Image.mime_type == mime_type)
+
+    return query.all()
 
 
 def filter_permissions(params, query):
