@@ -41,7 +41,7 @@ def upload_image(
             "category_id": category_id,
             "image_path": file_info["image_path"],  # Include the saved path
             "created_by_user_id": current_user.id,
-            "updated_by_user_id": current_user.id,
+            "updated_by_user_id": None,
         }
 
         # 3. Create the image record
@@ -139,67 +139,44 @@ def update_image_route(
     current_user: models.User = Depends(oauth2.get_current_user)
 ):
     try:
-        logger.info(f"Attempting to update image with ID: {image_id}")
-        
-        # Verify the image exists
         db_image = db.query(models.Image).filter(models.Image.id == image_id).first()
         if not db_image:
-            logger.error(f"Image with ID {image_id} not found in database")
-            raise HTTPException(
-                status_code=404, 
-                detail=f"Image with ID {image_id} not found"
-            )
-            
-        # Prepare update data based on model fields
-        update_data = {
-            "name": name,
-            "description": description,
-            "category_id": category_id,
-            "updated_by_user_id": current_user.id,
-        }
+            raise HTTPException(status_code=404, detail="Image not found")
 
-        # Handle file upload if provided
-        old_image_path = None
+        # Always update these fields
+        db_image.updated_by_user_id = current_user.id
+        db_image.upload_date = datetime.utcnow()
+
+        # Update other fields if provided
+        if name is not None:
+            db_image.name = name
+        if description is not None:
+            db_image.description = description
+        if category_id is not None:
+            db_image.category_id = category_id
+
+        # Handle file upload
         if file:
             file_info = save_image_file(file)
-            update_data["image_path"] = file_info["image_path"]
-            old_image_path = db_image.image_path  # Save old path for cleanup
+            # Clean up old file first
+            if db_image.image_path:
+                try:
+                    Path(db_image.image_path).unlink(missing_ok=True)
+                except Exception as e:
+                    logger.warning(f"Couldn't delete old image: {e}")
+            # Update file-related fields
+            db_image.image_path = file_info["image_path"]
+            db_image.original_filename = file_info.get("original_filename")
+            db_image.file_size = file_info.get("file_size")
+            db_image.mime_type = file_info.get("mime_type")
 
-        # Filter out None values and create update object
-        clean_data = {k: v for k, v in update_data.items() if v is not None}
-        
-        # Update only the fields that were provided
-        for field, value in clean_data.items():
-            setattr(db_image, field, value)
-        
-        # Update the modification timestamp
-        db_image.upload_date = datetime.utcnow()
-        
         db.commit()
         db.refresh(db_image)
-
-        # Clean up old file if new one was uploaded
-        if old_image_path and file:
-            try:
-                old_path = Path(old_image_path)
-                if old_path.exists():
-                    old_path.unlink()
-                    logger.info(f"Successfully deleted old image: {old_image_path}")
-            except Exception as e:
-                logger.warning(f"Failed to delete old image {old_image_path}: {str(e)}")
-
         return db_image
 
-    except HTTPException:
-        raise
     except Exception as e:
         db.rollback()
-        logger.error(f"Error updating image: {str(e)}", exc_info=True)
-        raise HTTPException(
-            status_code=500,
-            detail=f"An error occurred while updating the image: {str(e)}"
-        )
-
+        raise HTTPException(status_code=500, detail=str(e))
 
 @router.delete("/{image_id}")
 def delete_existing_image(

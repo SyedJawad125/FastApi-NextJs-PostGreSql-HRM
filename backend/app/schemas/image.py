@@ -118,12 +118,24 @@ class ImageUpdate(ImageBase):
     mime_type: Optional[str] = None
     updated_by_user_id: Optional[int] = None
 
+# class ImageOut(ImageBase):
+#     id: int
+    
+#     upload_date: datetime
+#     created_by_user_id: Optional[int] = None
+#     updated_by_user_id: Optional[int] = None
+#     category: Optional[ImageCategory] = None
+
+#     class Config:
+#         from_attributes = True
+
+
 class ImageOut(ImageBase):
     id: int
-    
+    image_path: str  # Make sure this is not optional in the response
     upload_date: datetime
-    created_by_user_id: Optional[int] = None
-    updated_by_user_id: Optional[int] = None
+    created_by_user_id: int  # Changed from Optional to required
+    updated_by_user_id: Optional[int] = None  # Keep as Optional
     category: Optional[ImageCategory] = None
 
     class Config:
