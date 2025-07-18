@@ -52,8 +52,17 @@ permissions = [
     {"name": "Read Salary History", "code": "read_salary_history", "module_name": "Salary History", "description": "User can read Salary History"},
     {"name": "Update Salary History", "code": "update_salary_history", "module_name": "Salary History", "description": "User can update Salary History"},
     {"name": "Delete Salary History", "code": "delete_salary_history", "module_name": "Salary History", "description": "User can delete Salary History"},
-]
 
+    {"name": "Create Image", "code": "create_image", "module_name": "Image", "description": "User can create Image"},
+    {"name": "Read Image", "code": "read_image", "module_name": "Image", "description": "User can read Image"},
+    {"name": "Update Image", "code": "update_image", "module_name": "Image", "description": "User can update Image"},
+    {"name": "Delete Image", "code": "delete_image", "module_name": "Image", "description": "User can delete Image"},
+
+    {"name": "Create Image Category", "code": "create_image_category", "module_name": "Image Category", "description": "User can create Image Category"},
+    {"name": "Read Image Category", "code": "read_image_category", "module_name": "Image Category", "description": "User can read Image Category"},
+    {"name": "Update Image Category", "code": "update_image_category", "module_name": "Image Category", "description": "User can update Image Category"},
+    {"name": "Delete Image Category", "code": "delete_image_category", "module_name": "Image Category", "description": "User can delete Image Category"},
+]
 
 def add_permissions_to_db(db: Session):
     for perm in permissions:

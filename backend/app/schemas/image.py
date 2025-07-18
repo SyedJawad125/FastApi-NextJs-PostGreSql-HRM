@@ -118,17 +118,6 @@ class ImageUpdate(ImageBase):
     mime_type: Optional[str] = None
     updated_by_user_id: Optional[int] = None
 
-# class ImageOut(ImageBase):
-#     id: int
-    
-#     upload_date: datetime
-#     created_by_user_id: Optional[int] = None
-#     updated_by_user_id: Optional[int] = None
-#     category: Optional[ImageCategory] = None
-
-#     class Config:
-#         from_attributes = True
-
 
 class ImageOut(ImageBase):
     id: int
