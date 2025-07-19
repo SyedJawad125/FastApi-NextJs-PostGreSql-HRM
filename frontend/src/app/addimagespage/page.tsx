@@ -332,122 +332,115 @@ const AddImages = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 py-8 px-4">
-      <div className="max-w-4xl mx-auto bg-white rounded-lg shadow-md overflow-hidden">
-        {/* Header */}
-        <div className="bg-blue-600 px-6 py-4">
-          <h2 className="text-2xl font-bold text-white">Add New Image</h2>
-          <p className="mt-1 text-blue-100">Upload a new image to your collection</p>
-        </div>
-        
-        {/* Form */}
-        <form className="p-6 space-y-6" onSubmit={handleSubmit}>
-          {/* Name */}
-          <div>
-            <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
-              Image Name <span className="text-red-500">*</span>
-            </label>
-            <input
-              type="text"
-              id="name"
-              className="w-full px-4 py-2 rounded border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              required
-            />
-          </div>
+    <div className="min-h-screen bg-gray-900 py-10 px-4">
+  <div className="max-w-3xl mx-auto bg-gray-800 rounded-lg shadow-lg p-6 text-white">
+    {/* Header */}
+    <h2 className="text-3xl font-semibold mb-2 text-amber-400">Add New Image</h2>
+    <p className="text-sm text-gray-300 mb-6">Upload a new image to your collection</p>
 
-          {/* Category */}
-          <div>
-            <label htmlFor="category_id" className="block text-sm font-medium text-gray-700 mb-1">
-              Category <span className="text-red-500">*</span>
-            </label>
-            <select
-              id="category_id"
-              className="w-full px-4 py-2 rounded border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              value={category_id}
-              onChange={(e) => setCategoryId(e.target.value)}
-              required
-            >
-              <option value="">Select Category</option>
-              {categories.map((category) => (
-                <option key={category.id} value={category.id}>
-                  {category.category}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {/* Description */}
-          <div>
-            <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1">
-              Description
-            </label>
-            <input
-              type="text"
-              id="description"
-              className="w-full px-4 py-2 rounded border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-            />
-          </div>
-
-          {/* File Upload */}
-          <div>
-            <label htmlFor="file" className="block text-sm font-medium text-gray-700 mb-1">
-              Image File <span className="text-red-500">*</span>
-            </label>
-            <input
-              type="file"
-              id="file"
-              ref={fileInputRef}
-              className="block w-full text-sm text-gray-500
-                file:mr-4 file:py-2 file:px-4
-                file:rounded file:border-0
-                file:text-sm file:font-semibold
-                file:bg-blue-50 file:text-blue-700
-                hover:file:bg-blue-100"
-              onChange={handleFileChange}
-              accept="image/*"
-              required
-            />
-          </div>
-
-          {/* Image Preview */}
-          {previewUrl && (
-            <div className="mt-4">
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Image Preview
-              </label>
-              <div className="mt-1">
-                <img
-                  src={previewUrl}
-                  alt="Preview"
-                  className="max-w-full h-auto max-h-64 rounded border border-gray-300"
-                />
-              </div>
-            </div>
-          )}
-
-          {/* Submit Buttons */}
-          <div className="flex justify-end pt-4 space-x-4">
-            <button
-              type="button"
-              onClick={() => router.push('/imagespage')}
-              className="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-            >
-              Save
-            </button>
-          </div>
-        </form>
+    <form className="space-y-6" onSubmit={handleSubmit}>
+      {/* Name */}
+      <div>
+        <label htmlFor="name" className="block mb-1">
+          Image Name <span className="text-red-400">*</span>
+        </label>
+        <input
+          type="text"
+          id="name"
+          className="w-full p-2 rounded bg-gray-700 border border-gray-600 text-white"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          required
+        />
       </div>
-    </div>
+
+      {/* Category */}
+      <div>
+        <label htmlFor="category_id" className="block mb-1">
+          Category <span className="text-red-400">*</span>
+        </label>
+        <select
+          id="category_id"
+          className="w-full p-2 rounded bg-gray-700 border border-gray-600 text-white"
+          value={category_id}
+          onChange={(e) => setCategoryId(e.target.value)}
+          required
+        >
+          <option value="">Select Category</option>
+          {categories.map((category) => (
+            <option key={category.id} value={category.id}>
+              {category.category}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      {/* Description */}
+      <div>
+        <label htmlFor="description" className="block mb-1">
+          Description
+        </label>
+        <input
+          type="text"
+          id="description"
+          className="w-full p-2 rounded bg-gray-700 border border-gray-600 text-white"
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+        />
+      </div>
+
+      {/* File Upload */}
+      <div>
+        <label htmlFor="file" className="block mb-1">
+          Image File <span className="text-red-400">*</span>
+        </label>
+        <input
+          type="file"
+          id="file"
+          ref={fileInputRef}
+          className="text-sm text-gray-400
+            file:mr-4 file:py-2 file:px-4
+            file:rounded-full file:border-0
+            file:bg-amber-500 file:text-black
+            hover:file:bg-amber-600"
+          onChange={handleFileChange}
+          accept="image/*"
+          required
+        />
+      </div>
+
+      {/* Image Preview */}
+      {previewUrl && (
+        <div className="mt-4">
+          <p className="mb-1 text-sm">Preview:</p>
+          <img
+            src={previewUrl}
+            alt="Preview"
+            className="max-w-full max-h-64 rounded shadow-md object-cover border border-gray-600"
+          />
+        </div>
+      )}
+
+      {/* Submit Buttons */}
+      <div className="flex justify-end gap-4 mt-6">
+        <button
+          type="button"
+          onClick={() => router.push('/imagespage')}
+          className="px-4 py-2 rounded bg-gray-600 hover:bg-gray-500"
+        >
+          Cancel
+        </button>
+        <button
+          type="submit"
+          className="px-4 py-2 rounded bg-amber-500 text-black hover:bg-amber-600"
+        >
+          Save
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
   );
 };
 
