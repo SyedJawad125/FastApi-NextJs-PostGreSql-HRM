@@ -95,10 +95,10 @@ const HomePage = () => {
             {banners.map((banner, index) => (
               <div key={index}>
                 <img
-  src={`http://localhost:8000/${banner.image_path.replace(/\\/g, "/")}`}
-  alt={`Banner ${index + 1}`}
-  className="w-full h-[70vh] object-cover mb-12"
-/>
+                  src={`http://localhost:8000/${banner.image_path.replace(/\\/g, "/")}`}
+                  alt={`Banner ${index + 1}`}
+                  className="w-full h-[70vh] object-cover mb-12"
+                />
                 <div className="absolute inset-0 bg-black bg-opacity-30 flex items-center justify-center">
                   <div className="text-center text-white px-8 max-w-2xl">
                     <h2 className="text-4xl md:text-5xl font-serif font-bold mb-4">Exclusive Collection {index + 1}</h2>
