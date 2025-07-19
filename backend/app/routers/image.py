@@ -2,11 +2,12 @@
 
 from fastapi import APIRouter, Depends, UploadFile, File,Form, HTTPException, Request
 from sqlalchemy.orm import Session
+from app import database, schemas
 from app.database import get_db
 from app.schemas.image import ImageCreate, ImageOut, ImageUpdate, ImageListResponse
 from app.crud.image import create_image, get_all_images, get_image, update_image, delete_image
 from app import oauth2, models
-from app.utils import paginate_data
+from app.utils import paginate_data, filter_images, filter_images_all
 from typing import List, Optional
 from app.schemas.image import ImageUpdate, ImageOut
 from app.crud.image import update_image , save_image_file
@@ -69,6 +70,39 @@ def upload_image(
         )
 
 
+@router.get("/", response_model=ImageListResponse)
+def get_images(
+    request: Request,
+    db: Session = Depends(database.get_db),
+    current_user: models.User = Depends(oauth2.get_current_user),
+):
+    try:
+        query = db.query(models.Image)
+
+        # Convert query params to dictionary and include current_user.id as a filter
+        query_params = dict(request.query_params)
+        query_params["created_by_user_id"] = str(current_user.id)
+
+        query = filter_images_all(query_params, query)
+
+        data = query.all()
+        paginated_data, count = paginate_data(data, request)
+
+        serialized_data = [schemas.ImageOut.from_orm(item) for item in paginated_data]
+
+        return {
+            "status": "SUCCESSFUL",
+            "result": {
+                "count": count,
+                "data": serialized_data
+            }
+        }
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+
 from fastapi import APIRouter, Query, Depends, HTTPException, Request
 from sqlalchemy.orm import Session, joinedload
 from typing import List
@@ -118,17 +152,10 @@ def get_images_by_category(
 
 
 
-from fastapi import APIRouter, Query, Depends, HTTPException
-from sqlalchemy.orm import Session, joinedload
-from typing import List
-from app import models, oauth2
-from app.database import get_db
-from app.schemas.image import ImageOut
-from app.models.image_category import ImageCategory  # ✅ Correct import
 
-
-@router.get("/filter", response_model=List[ImageOut])
+@router.get("/publiccategorywise", response_model=ImageListResponse)
 def get_images_by_category(
+    request: Request,
     category: str = Query(..., description="Category of images to filter by"),
     db: Session = Depends(get_db),
     current_user: models.User = Depends(oauth2.get_current_user)
@@ -148,13 +175,20 @@ def get_images_by_category(
                 detail=f"No images found in category '{category}'"
             )
 
-        return images
+        paginated_data, count = paginate_data(images, request)
+
+        return ImageListResponse(
+            status="SUCCESSFUL",
+            result=PaginatedImages(
+                count=count,
+                data=paginated_data
+            )
+        )
 
     except HTTPException:
         raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-
 
 
 @router.get("/{image_id}", response_model=ImageOut)

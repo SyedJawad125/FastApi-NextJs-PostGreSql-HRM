@@ -12,24 +12,26 @@ const HomePage = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [banners, setBanners] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchImages = async () => {
       try {
-        const res = await AxiosInstance.get('/images/categorywise?category=BannerImageSlider');
-        if (res && res.data && res.data.data) {
-          setBanners(res.data.data.data);
+        const res = await AxiosInstance.get('/images/publiccategorywise?category=BannerImageSlider');
+        if (res?.data?.result?.data) {
+          setBanners(res.data.result.data);
         } else {
           console.error('Unexpected response structure:', res);
         }
       } catch (error) {
-        console.error('Error fetching images:', error);
+        console.error('Error fetching images:', error.message || error);
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchImages();
   }, []);
-
   
 
   const renderArrowPrev = (clickHandler, hasPrev, label) => (

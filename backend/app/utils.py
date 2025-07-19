@@ -470,6 +470,37 @@ def filter_images(
 
     return query.all()
 
+from typing import Any
+from fastapi import Request
+from sqlalchemy.orm import Query
+from app.models.image import Image  # make sure this import is correct
+
+def filter_images_all(query_params: dict[str, Any], query: Query) -> Query:
+    """
+    Dynamically filter images based on query parameters.
+    Supported filters: name, category_id, created_by_user_id, mime_type
+    """
+    name = query_params.get("name")
+    category_id = query_params.get("category_id")
+    created_by_user_id = query_params.get("created_by_user_id")
+    mime_type = query_params.get("mime_type")
+
+    if name:
+        query = query.filter(Image.name.ilike(f"%{name}%"))
+    if category_id:
+        try:
+            query = query.filter(Image.category_id == int(category_id))
+        except ValueError:
+            pass  # Skip invalid category_id
+    if created_by_user_id:
+        try:
+            query = query.filter(Image.created_by_user_id == int(created_by_user_id))
+        except ValueError:
+            pass
+    if mime_type:
+        query = query.filter(Image.mime_type == mime_type)
+
+    return query
 
 def filter_permissions(params, query):
     name = params.get("name")
