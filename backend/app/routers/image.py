@@ -7,11 +7,12 @@ from app.schemas.image import ImageCreate, ImageOut, ImageUpdate, ImageListRespo
 from app.crud.image import create_image, get_all_images, get_image, update_image, delete_image
 from app import oauth2, models
 from app.utils import paginate_data
-from typing import Optional
+from typing import List, Optional
 from app.schemas.image import ImageUpdate, ImageOut
 from app.crud.image import update_image , save_image_file
 from app.schemas.image import ImageCreate
 from app.crud.image import update_image
+from builtins import Exception
 
 router = APIRouter(prefix="/images", tags=["Images"])
 
@@ -50,12 +51,6 @@ def upload_image(
         db.commit()
         db.refresh(db_image)
 
-        # 4. Optionally store additional file metadata if needed
-        # You could update the record here with:
-        # db_image.original_filename = file_info.get("original_filename")
-        # db_image.file_size = file_info.get("file_size")
-        # db.commit()
-
         return db_image
 
     except HTTPException:
@@ -74,25 +69,92 @@ def upload_image(
         )
 
 
-@router.get("/", response_model=ImageListResponse)
-def read_all_images(
+from fastapi import APIRouter, Query, Depends, HTTPException, Request
+from sqlalchemy.orm import Session, joinedload
+from typing import List
+from app import models, oauth2
+from app.database import get_db
+from app.schemas.image import ImageListResponse, PaginatedImages, ImageOut
+from app.models.image_category import ImageCategory
+from app.utils import paginate_data  # adjust import as needed
+
+
+@router.get("/categorywise", response_model=ImageListResponse)
+def get_images_by_category(
     request: Request,
+    category: str = Query(..., description="Category of images to filter by"),
     db: Session = Depends(get_db),
     current_user: models.User = Depends(oauth2.get_current_user)
 ):
     try:
-        data = get_all_images(db)
-        paginated_data, count = paginate_data(data, request)
-        
-        return {
-            "status": "SUCCESSFUL",
-            "result": {
-                "count": count,
-                "data": paginated_data
-            }
-        }
+        images = (
+            db.query(models.Image)
+            .join(ImageCategory)
+            .options(joinedload(models.Image.category))
+            .filter(ImageCategory.category == category)
+            .all()
+        )
+
+        if not images:
+            raise HTTPException(
+                status_code=404,
+                detail=f"No images found in category '{category}'"
+            )
+
+        paginated_data, count = paginate_data(images, request)
+
+        return ImageListResponse(
+            status="SUCCESSFUL",
+            result=PaginatedImages(
+                count=count,
+                data=paginated_data
+            )
+        )
+
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+
+
+from fastapi import APIRouter, Query, Depends, HTTPException
+from sqlalchemy.orm import Session, joinedload
+from typing import List
+from app import models, oauth2
+from app.database import get_db
+from app.schemas.image import ImageOut
+from app.models.image_category import ImageCategory  # ✅ Correct import
+
+
+@router.get("/filter", response_model=List[ImageOut])
+def get_images_by_category(
+    category: str = Query(..., description="Category of images to filter by"),
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(oauth2.get_current_user)
+):
+    try:
+        images = (
+            db.query(models.Image)
+            .join(ImageCategory)
+            .options(joinedload(models.Image.category))
+            .filter(ImageCategory.category == category)
+            .all()
+        )
+
+        if not images:
+            raise HTTPException(
+                status_code=404,
+                detail=f"No images found in category '{category}'"
+            )
+
+        return images
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 
 
 @router.get("/{image_id}", response_model=ImageOut)
@@ -110,6 +172,9 @@ def read_image(
         raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+
+
 
 
 from fastapi import UploadFile, File, Form, HTTPException

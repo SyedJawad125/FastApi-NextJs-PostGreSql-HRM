@@ -8,6 +8,7 @@ import TopNavbarCom from "@/components/TopNavbarCom";
 import FooterCom from "@/components/FooterCom";
 import ContentpageHome from "@/components/ContentpageHome";
 import AdModal from "@/components/AdModal";
+import BannerSliderHomeCom from "@/components/BannerSliderHomeCom";
 
 export default function Home() {
   const [message, setMessage] = useState("");
@@ -25,7 +26,7 @@ export default function Home() {
       <AdModal />
       <TopNavbarCom />
       <NavbarCom />
-      {/* <BannerSliderHomeCom /> */}
+      <BannerSliderHomeCom />
 
       {/* ✅ Show response from FastAPI here */}
       {message && (
