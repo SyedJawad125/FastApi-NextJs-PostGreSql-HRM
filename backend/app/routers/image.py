@@ -74,14 +74,14 @@ def upload_image(
 def get_images(
     request: Request,
     db: Session = Depends(database.get_db),
-    current_user: models.User = Depends(oauth2.get_current_user),
+    # current_user: models.User = Depends(oauth2.get_current_user),
 ):
     try:
         query = db.query(models.Image)
 
         # Convert query params to dictionary and include current_user.id as a filter
         query_params = dict(request.query_params)
-        query_params["created_by_user_id"] = str(current_user.id)
+        # query_params["created_by_user_id"] = str(current_user.id)
 
         query = filter_images_all(query_params, query)
 
@@ -118,7 +118,7 @@ def get_images_by_category(
     request: Request,
     category: str = Query(..., description="Category of images to filter by"),
     db: Session = Depends(get_db),
-    current_user: models.User = Depends(oauth2.get_current_user)
+    # current_user: models.User = Depends(oauth2.get_current_user)
 ):
     try:
         images = (
@@ -158,7 +158,7 @@ def get_images_by_category(
     request: Request,
     category: str = Query(..., description="Category of images to filter by"),
     db: Session = Depends(get_db),
-    current_user: models.User = Depends(oauth2.get_current_user)
+    # current_user: models.User = Depends(oauth2.get_current_user)
 ):
     try:
         images = (
