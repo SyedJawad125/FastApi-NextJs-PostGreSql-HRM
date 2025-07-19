@@ -632,50 +632,50 @@ const ImagesCom = () => {
 
         {/* ✅ Modal Popup */}
         {showModal && selectedImage && (
-          <div className="fixed inset-0 bg-black bg-opacity-80 backdrop-blur-md z-50 flex items-center justify-center p-4">
-            <div className="relative bg-gradient-to-br from-[#1a1a1a] via-[#252525] to-[#1a1a1a] text-white rounded-xl shadow-xl border border-gray-800 p-6 w-full max-w-md animate-fade-in">
-              {/* Close button */}
-              <button
-                onClick={() => setShowModal(false)}
-                className="absolute -top-3 -right-3 bg-gray-900 rounded-full w-8 h-8 flex items-center justify-center text-gray-300 hover:text-white border border-gray-700 shadow-lg hover:scale-110 transition-all"
-                title="Close"
-              >
-                ✖
-              </button>
+  <div className="fixed inset-0 bg-black bg-opacity-80 backdrop-blur-md z-50 flex items-center justify-center p-4">
+    <div className="relative bg-gradient-to-br from-[#1a1a1a] via-[#252525] to-[#1a1a1a] text-white rounded-xl shadow-xl border border-gray-800 p-6 w-full max-w-md animate-fade-in">
+      {/* Close button (now static) */}
+      <button
+        onClick={() => setShowModal(false)}
+        className="absolute -top-2 -right-0 bg-gray-900 rounded-full w-8 h-8 flex items-center justify-center text-gray-300 hover:text-white border border-gray-700 shadow-lg transition-colors"
+        title="Close"
+      >
+        ✖
+      </button>
 
-              {/* Image */}
-              <div className="overflow-hidden rounded-lg shadow-lg mb-4 group">
-                <Image
-                  src={getImageUrl(selectedImage.image_path)}
-                  alt={selectedImage.name}
-                  width={600}
-                  height={400}
-                  className="w-full h-48 object-cover transition-transform duration-500 group-hover:scale-105"
-                />
-              </div>
+      {/* Image */}
+      <div className="overflow-hidden rounded-lg shadow-lg mb-4 group">
+        <Image
+          src={getImageUrl(selectedImage.image_path)}
+          alt={selectedImage.name}
+          width={600}
+          height={400}
+          className="w-full h-48 object-cover transition-transform mt-2 duration-500 group-hover:scale-105"
+        />
+      </div>
 
-              {/* Details */}
-              <div className="space-y-3">
-                <h2 className="text-xl font-bold text-amber-400 mb-1 tracking-tight">
-                  {selectedImage.name}
-                </h2>
-                <p className="text-sm text-gray-300 line-clamp-2">{selectedImage.description}</p>
+      {/* Details */}
+      <div className="space-y-3">
+        <h2 className="text-xl font-bold text-amber-400 mb-1 tracking-tight">
+          {selectedImage.name}
+        </h2>
+        <p className="text-sm text-gray-300 line-clamp-2">{selectedImage.description}</p>
 
-                <div className="flex flex-wrap gap-2 pt-1">
-                  {selectedImage.category?.category && (
-                    <span className="text-xs px-2 py-1 bg-gray-800 rounded-full text-amber-300 border border-gray-700">
-                      {selectedImage.category.category}
-                    </span>
-                  )}
-                  
-                  <span className="text-xs px-2 py-1 bg-gray-800 rounded-full text-gray-400 border border-gray-700">
-                    {new Date(selectedImage.upload_date).toLocaleDateString()}
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
+        <div className="flex flex-wrap gap-2 pt-1">
+          {selectedImage.category?.category && (
+            <span className="text-xs px-2 py-1 bg-gray-800 rounded-full text-amber-300 border border-gray-700">
+              {selectedImage.category.category}
+            </span>
+          )}
+          
+          <span className="text-xs px-2 py-1 bg-gray-800 rounded-full text-gray-400 border border-gray-700">
+            {new Date(selectedImage.upload_date).toLocaleDateString()}
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+)}
       </div>
     </div>
   );
