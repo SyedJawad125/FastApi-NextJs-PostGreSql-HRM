@@ -93,7 +93,8 @@
 from typing import Optional
 from pydantic import BaseModel, Field
 from datetime import datetime
-from .image_category import ImageCategory
+from .image_category import ImageCategoryOut  # ✅ Correct import
+
 
 class ImageBase(BaseModel):
     name: Optional[str] = Field(None, max_length=30)
@@ -125,7 +126,8 @@ class ImageOut(ImageBase):
     upload_date: datetime
     created_by_user_id: int  # Changed from Optional to required
     updated_by_user_id: Optional[int] = None  # Keep as Optional
-    category: Optional[ImageCategory] = None
+    # category: Optional[ImageCategory] = None
+    category: Optional[ImageCategoryOut] = None  # Use the response schema
 
     class Config:
         from_attributes = True
