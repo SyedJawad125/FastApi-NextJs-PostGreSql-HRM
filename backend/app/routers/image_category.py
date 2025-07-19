@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, status, Request, HTTPException
 from sqlalchemy.orm import Session
-from typing import Any
+from typing import Any, List, Optional
 
 from app import database, models, oauth2
 from app.utils import paginate_data
@@ -11,6 +11,7 @@ from app.schemas.image_category import (
     ImageCategoryUpdate,
     ImageCategoryListResponse,
 )
+from math import ceil
 
 router = APIRouter(
     prefix="/image_categories",
@@ -18,25 +19,33 @@ router = APIRouter(
 )
 
 
-
 @router.get("/", response_model=ImageCategoryListResponse)
 def get_image_categories(
     request: Request,
     db: Session = Depends(database.get_db),
     current_user: models.User = Depends(oauth2.get_current_user),
+    page: int = 1,
+    limit: int = 10
 ):
     try:
         query = db.query(models.ImageCategory)
         query = filter_image_categories(request.query_params, query)
-        data = query.all()
-        paginated_data, count = paginate_data(data, request)
-
-        serialized_data = [ImageCategory.from_orm(item) for item in paginated_data]
+        
+        # Get total count before pagination
+        total_count = query.count()
+        
+        # Apply pagination
+        offset = (page - 1) * limit
+        data = query.offset(offset).limit(limit).all()
+        
+        serialized_data = [ImageCategory.from_orm(item) for item in data]
 
         return {
             "status": "SUCCESSFUL",
             "result": {
-                "count": count,
+                "count": total_count,
+                "total_pages": ceil(total_count / limit),
+                "current_page": page,
                 "data": serialized_data
             }
         }

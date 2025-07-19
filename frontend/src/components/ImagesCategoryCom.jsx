@@ -288,45 +288,240 @@
 
 
 
-'use client';
+
+
+
+
+// 'use client';
+// import React, { useEffect, useState } from 'react';
+// import AxiosInstance from "@/components/AxiosInstance";
+
+// const ImagesCategoryCom = () => {
+//   const [categories, setCategories] = useState([]);
+
+//   useEffect(() => {
+//     const fetchCategories = async () => {
+//       try {
+//         const response = await AxiosInstance.get('/image_categories');
+//         if (response.data.status === 'SUCCESSFUL') {
+//           setCategories(response.data.result.data);
+//         }
+//       } catch (error) {
+//         console.error('Error fetching image categories:', error);
+//       }
+//     };
+
+//     fetchCategories();
+//   }, []);
+
+//   return (
+//     <div className="p-6">
+//       <h2 className="text-2xl font-semibold mb-4 text-white">Image Categories</h2>
+//       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+//         {categories.map((cat) => (
+//           <div
+//             key={cat.id}
+//             className="bg-gray-800 text-white p-4 rounded shadow hover:bg-gray-700 transition-all"
+//           >
+//             <h3 className="text-lg font-bold">{cat.category}</h3>
+//             <p>ID: {cat.id}</p>
+//             <p>Created By User ID: {cat.created_by_user_id}</p>
+//             {cat.updated_by_user_id && (
+//               <p>Updated By User ID: {cat.updated_by_user_id}</p>
+//             )}
+//           </div>
+//         ))}
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default ImagesCategoryCom;
+
+
+
+
 import React, { useEffect, useState } from 'react';
 import AxiosInstance from "@/components/AxiosInstance";
 
 const ImagesCategoryCom = () => {
   const [categories, setCategories] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [pagination, setPagination] = useState({
+    page: 1,
+    limit: 10,
+    total: 0,
+    totalPages: 1
+  });
+
+  const fetchCategories = async (page = 1) => {
+    setLoading(true);
+    try {
+      const response = await AxiosInstance.get('/image_categories', {
+        params: {
+          page,
+          limit: pagination.limit
+        }
+      });
+      if (response.data.status === 'SUCCESSFUL') {
+        setCategories(response.data.result.data);
+        setPagination(prev => ({
+          ...prev,
+          page,
+          total: response.data.result.count,
+          totalPages: response.data.result.total_pages
+        }));
+      }
+    } catch (error) {
+      console.error('Error fetching image categories:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const response = await AxiosInstance.get('/image_categories');
-        if (response.data.status === 'SUCCESSFUL') {
-          setCategories(response.data.result.data);
-        }
-      } catch (error) {
-        console.error('Error fetching image categories:', error);
-      }
-    };
-
     fetchCategories();
   }, []);
 
+  const handlePageChange = (newPage) => {
+    if (newPage >= 1 && newPage <= pagination.totalPages) {
+      fetchCategories(newPage);
+    }
+  };
+
   return (
-    <div className="p-6">
-      <h2 className="text-2xl font-semibold mb-4 text-white">Image Categories</h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {categories.map((cat) => (
-          <div
-            key={cat.id}
-            className="bg-gray-800 text-white p-4 rounded shadow hover:bg-gray-700 transition-all"
-          >
-            <h3 className="text-lg font-bold">{cat.category}</h3>
-            <p>ID: {cat.id}</p>
-            <p>Created By User ID: {cat.created_by_user_id}</p>
-            {cat.updated_by_user_id && (
-              <p>Updated By User ID: {cat.updated_by_user_id}</p>
-            )}
+    <div className="min-h-screen bg-black p-8">
+      <div className="max-w-7xl mx-auto">
+        <div className="mb-12">
+          <h1 className="text-3xl font-bold text-white mb-2">Image Categories</h1>
+          <div className="flex items-center text-sm text-gray-400">
+            <span>Total: {pagination.total} records</span>
+            <span className="mx-2">•</span>
+            <span>Page {pagination.page} of {pagination.totalPages}</span>
           </div>
-        ))}
+        </div>
+
+        {loading ? (
+          <div className="space-y-4">
+            {[...Array(pagination.limit)].map((_, i) => (
+              <div key={i} className="grid grid-cols-12 gap-4 p-6 bg-gray-900 rounded-lg shadow-lg animate-pulse">
+                <div className="col-span-3 h-6 bg-gray-800 rounded"></div>
+                <div className="col-span-2 h-6 bg-gray-800 rounded"></div>
+                <div className="col-span-2 h-6 bg-gray-800 rounded"></div>
+                <div className="col-span-2 h-6 bg-gray-800 rounded"></div>
+                <div className="col-span-3 h-6 bg-gray-800 rounded"></div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <>
+            {/* Table Header */}
+            <div className="grid grid-cols-12 gap-4 px-6 py-3 bg-gray-900 rounded-t-lg border-b border-gray-800">
+              <div className="col-span-3 font-medium text-gray-300">Category</div>
+              <div className="col-span-2 font-medium text-gray-300">ID</div>
+              <div className="col-span-3 font-medium text-gray-300">Created By</div>
+              <div className="col-span-2 font-medium text-gray-300">Updated By</div>
+              <div className="col-span-2 font-medium text-gray-300 text-right">Actions</div>
+            </div>
+
+            {/* Data Rows */}
+            <div className="bg-gray-900 rounded-b-lg shadow-lg divide-y divide-gray-800">
+              {categories.map((cat) => (
+                <div key={cat.id} className="grid grid-cols-12 gap-4 items-center p-6 hover:bg-gray-800 transition-colors">
+                  <div className="col-span-3 font-medium text-white">
+                    <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-indigo-900/50 text-indigo-300 border border-indigo-800">
+                      {cat.category}
+                    </span>
+                  </div>
+                  <div className="col-span-2 text-gray-300 font-mono">{cat.id}</div>
+                  <div className="col-span-3 text-gray-300">
+                    <div className="flex items-center">
+                      <span className="inline-block w-8 h-8 rounded-full bg-gray-700 flex items-center justify-center mr-2">
+                        <span className="text-xs text-gray-300">{cat.created_by_user_id.toString().charAt(0)}</span>
+                      </span>
+                      User #{cat.created_by_user_id}
+                    </div>
+                  </div>
+                  <div className="col-span-2 text-gray-300">
+                    {cat.updated_by_user_id ? (
+                      <div className="flex items-center">
+                        <span className="inline-block w-8 h-8 rounded-full bg-gray-700 flex items-center justify-center mr-2">
+                          <span className="text-xs text-gray-300">{cat.updated_by_user_id.toString().charAt(0)}</span>
+                        </span>
+                        User #{cat.updated_by_user_id}
+                      </div>
+                    ) : (
+                      <span className="text-gray-500">N/A</span>
+                    )}
+                  </div>
+                  <div className="col-span-2 flex justify-end space-x-2">
+                    <button className="p-2 text-gray-400 hover:text-indigo-400 hover:bg-gray-700 rounded-full transition-colors">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                        <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
+                      </svg>
+                    </button>
+                    <button className="p-2 text-gray-400 hover:text-red-400 hover:bg-gray-700 rounded-full transition-colors">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                        <path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Pagination */}
+            <div className="flex items-center justify-between mt-6 px-2">
+              <div className="text-sm text-gray-400">
+                Showing <span className="font-medium text-white">{(pagination.page - 1) * pagination.limit + 1}</span> to{' '}
+                <span className="font-medium text-white">
+                  {Math.min(pagination.page * pagination.limit, pagination.total)}
+                </span>{' '}
+                of <span className="font-medium text-white">{pagination.total}</span> results
+              </div>
+              <div className="flex space-x-2">
+                <button
+                  onClick={() => handlePageChange(pagination.page - 1)}
+                  disabled={pagination.page === 1}
+                  className={`px-4 py-2 border rounded-md ${pagination.page === 1 ? 'text-gray-600 border-gray-700 cursor-not-allowed' : 'text-gray-300 border-gray-600 hover:bg-gray-800'}`}
+                >
+                  Previous
+                </button>
+                <div className="flex space-x-1">
+                  {Array.from({ length: Math.min(5, pagination.totalPages) }, (_, i) => {
+                    let pageNum;
+                    if (pagination.totalPages <= 5) {
+                      pageNum = i + 1;
+                    } else if (pagination.page <= 3) {
+                      pageNum = i + 1;
+                    } else if (pagination.page >= pagination.totalPages - 2) {
+                      pageNum = pagination.totalPages - 4 + i;
+                    } else {
+                      pageNum = pagination.page - 2 + i;
+                    }
+                    
+                    return (
+                      <button
+                        key={pageNum}
+                        onClick={() => handlePageChange(pageNum)}
+                        className={`w-10 h-10 rounded-md ${pagination.page === pageNum ? 'bg-indigo-600 text-white' : 'text-gray-300 border border-gray-600 hover:bg-gray-800'}`}
+                      >
+                        {pageNum}
+                      </button>
+                    );
+                  })}
+                </div>
+                <button
+                  onClick={() => handlePageChange(pagination.page + 1)}
+                  disabled={pagination.page === pagination.totalPages}
+                  className={`px-4 py-2 border rounded-md ${pagination.page === pagination.totalPages ? 'text-gray-600 border-gray-700 cursor-not-allowed' : 'text-gray-300 border-gray-600 hover:bg-gray-800'}`}
+                >
+                  Next
+                </button>
+              </div>
+            </div>
+          </>
+        )}
       </div>
     </div>
   );
