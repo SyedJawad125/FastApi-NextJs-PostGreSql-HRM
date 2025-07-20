@@ -351,11 +351,12 @@ const ImagesCategoryCom = () => {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [pagination, setPagination] = useState({
-    page: 1,
+    page: 1,          // ✅ has default value
     limit: 10,
     total: 0,
     totalPages: 1
   });
+  
 
   const fetchCategories = async (page = 1) => {
     setLoading(true);
@@ -383,25 +384,42 @@ const ImagesCategoryCom = () => {
   };
 
   useEffect(() => {
-    fetchCategories();
-  }, []);
+    fetchCategories(pagination.page);
+  }, [pagination.page]);
+  
 
   const updateCategory = (id) => {
     router.push(`/UpdateImagesCategoryPage?id=${id}`);
   };
 
+
   const deleteCategory = async (id) => {
     try {
       const res = await AxiosInstance.delete(`/image_categories/${id}`);
-      if (res.data && res.data.status === 'SUCCESSFUL') {
-        toast.success('Category deleted successfully!');
-        fetchCategories(pagination.page); // Refresh current page after deletion
+      if (res?.data?.status === "SUCCESSFUL") {
+        toast.success(res.data.message || 'Category deleted successfully!');
+  
+        const newTotal = pagination.total - 1;
+        const newTotalPages = Math.ceil(newTotal / pagination.limit);
+        const newPage = pagination.page > newTotalPages ? newTotalPages : pagination.page;
+  
+        // ✅ Trigger useEffect by updating pagination
+        setPagination(prev => ({
+          ...prev,
+          page: newPage
+        }));
       }
     } catch (error) {
-      toast.error('Error deleting category!');
-      console.error('Delete error:', error);
+      if (error.response?.status === 404) {
+        toast.error('Category not found');
+      } else {
+        const errorMessage = error.response?.data?.detail || 'Error deleting category';
+        toast.error(errorMessage);
+      }
     }
   };
+  
+  
 
   const handlePageChange = (newPage) => {
     if (newPage >= 1 && newPage <= pagination.totalPages) {
@@ -424,7 +442,7 @@ const ImagesCategoryCom = () => {
           onClick={() => router.push('/AddImagesCategoryPage')}
           className="px-6 py-3 -mt-4 mb-4 border border-amber-500 text-amber-500 rounded-full hover:bg-amber-500 hover:text-black"
         >
-          Add Images
+          Add Images Category
         </button>
         {loading ? (
           <div className="space-y-4">
