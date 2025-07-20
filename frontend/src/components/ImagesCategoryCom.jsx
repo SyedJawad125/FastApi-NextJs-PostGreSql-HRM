@@ -343,8 +343,10 @@
 
 import React, { useEffect, useState } from 'react';
 import AxiosInstance from "@/components/AxiosInstance";
+import { useRouter } from 'next/navigation';
 
 const ImagesCategoryCom = () => {
+  const router = useRouter(); // ✅ Add this
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [pagination, setPagination] = useState({
@@ -383,6 +385,21 @@ const ImagesCategoryCom = () => {
     fetchCategories();
   }, []);
 
+    const updateCategory = (id) => {
+    router.push(`/UpdateImagesCategoryPage?id=${id}`);
+    };
+
+    const deleteCategory = async (id) => {
+      try {
+        const res = await AxiosInstance.delete(`/image_categories?id=${id}`);
+        if (res.data && res.data.status === 'SUCCESSFUL') {
+          toast.success('Category deleted successfully!');
+          fetchCategories();
+        }
+      } catch (error) {
+        toast.error('Error deleting category!');
+      }
+    };
   const handlePageChange = (newPage) => {
     if (newPage >= 1 && newPage <= pagination.totalPages) {
       fetchCategories(newPage);
@@ -399,8 +416,14 @@ const ImagesCategoryCom = () => {
             <span className="mx-2">•</span>
             <span>Page {pagination.page} of {pagination.totalPages}</span>
           </div>
+          
         </div>
-
+        <button
+              onClick={() => router.push('/AddImagesCategoryPage')}
+              className="px-6 py-3 -mt-4 mb-4 border border-amber-500 text-amber-500 rounded-full hover:bg-amber-500 hover:text-black"
+            >
+              Add Images
+            </button>
         {loading ? (
           <div className="space-y-4">
             {[...Array(pagination.limit)].map((_, i) => (
