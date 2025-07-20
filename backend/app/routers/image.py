@@ -154,7 +154,7 @@ def get_images_by_category(
 
 
 
-@router.get("/publiccategorywise", response_model=ImageListResponse, dependencies=[require("read_image")])
+@router.get("/publiccategorywise", response_model=ImageListResponse)
 def get_images_by_category(
     request: Request,
     category: str = Query(..., description="Category of images to filter by"),
