@@ -14,11 +14,12 @@ from app.crud.image import update_image , save_image_file
 from app.schemas.image import ImageCreate
 from app.crud.image import update_image
 from builtins import Exception
+from app.dependencies.permission import require
 
 router = APIRouter(prefix="/images", tags=["Images"])
 
 
-@router.post("/", response_model=ImageOut)
+@router.post("/", response_model=ImageOut, dependencies=[require("read_image")])
 def upload_image(
     file: UploadFile = File(...),
     name: Optional[str] = Form(None),
@@ -70,7 +71,7 @@ def upload_image(
         )
 
 
-@router.get("/", response_model=ImageListResponse)
+@router.get("/", response_model=ImageListResponse, dependencies=[require("read_image")])
 def get_images(
     request: Request,
     db: Session = Depends(database.get_db),
@@ -113,7 +114,7 @@ from app.models.image_category import ImageCategory
 from app.utils import paginate_data  # adjust import as needed
 
 
-@router.get("/categorywise", response_model=ImageListResponse)
+@router.get("/categorywise", response_model=ImageListResponse, dependencies=[require("read_image")])
 def get_images_by_category(
     request: Request,
     category: str = Query(..., description="Category of images to filter by"),
@@ -153,7 +154,7 @@ def get_images_by_category(
 
 
 
-@router.get("/publiccategorywise", response_model=ImageListResponse)
+@router.get("/publiccategorywise", response_model=ImageListResponse, dependencies=[require("read_image")])
 def get_images_by_category(
     request: Request,
     category: str = Query(..., description="Category of images to filter by"),
@@ -191,7 +192,7 @@ def get_images_by_category(
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.get("/{image_id}", response_model=ImageOut)
+@router.get("/{image_id}", response_model=ImageOut, dependencies=[require("read_image")])
 def read_image(
     image_id: int, 
     db: Session = Depends(get_db),
@@ -227,7 +228,7 @@ from app.crud.image import save_image_file
 
 logger = logging.getLogger(__name__)
 
-@router.patch("/{image_id}", response_model=ImageOut)
+@router.patch("/{image_id}", response_model=ImageOut, dependencies=[require("update_image")])
 def update_image_route(
     image_id: int,
     file: Optional[UploadFile] = File(None),
@@ -277,7 +278,7 @@ def update_image_route(
         db.rollback()
         raise HTTPException(status_code=500, detail=str(e))
 
-@router.delete("/{image_id}")
+@router.delete("/{image_id}", dependencies=[require("delete_image")])
 def delete_existing_image(
     image_id: int, 
     db: Session = Depends(get_db),

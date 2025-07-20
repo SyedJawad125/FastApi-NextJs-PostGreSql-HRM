@@ -11,6 +11,7 @@ from app.schemas.image_category import (
     ImageCategoryUpdate,
     ImageCategoryListResponse,
 )
+from app.dependencies.permission import require
 from math import ceil
 
 router = APIRouter(
@@ -19,7 +20,7 @@ router = APIRouter(
 )
 
 
-@router.get("/", response_model=ImageCategoryListResponse)
+@router.get("/", response_model=ImageCategoryListResponse, dependencies=[require("read_image_category")])
 def get_image_categories(
     request: Request,
     db: Session = Depends(database.get_db),
@@ -53,7 +54,7 @@ def get_image_categories(
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.post("/", status_code=status.HTTP_201_CREATED, response_model=ImageCategory)
+@router.post("/", status_code=status.HTTP_201_CREATED, response_model=ImageCategory, dependencies=[require("create_image_category")])
 def create_image_category(
     image_category: ImageCategoryCreate,
     db: Session = Depends(database.get_db),
@@ -73,7 +74,7 @@ def create_image_category(
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.get("/{id}", response_model=ImageCategory)
+@router.get("/{id}", response_model=ImageCategory, dependencies=[require("read_image_category")])
 def get_image_category(
     id: int,
     db: Session = Depends(database.get_db),
@@ -85,7 +86,7 @@ def get_image_category(
     return category
 
 
-@router.patch("/{id}", response_model=ImageCategory)
+@router.patch("/{id}", response_model=ImageCategory, dependencies=[require("update_image_category")])
 def patch_update_image_category(
     id: int,
     updated_category: ImageCategoryUpdate,
@@ -109,7 +110,7 @@ def patch_update_image_category(
     return category_instance
 
 
-@router.delete("/{id}", status_code=status.HTTP_200_OK)
+@router.delete("/{id}", status_code=status.HTTP_200_OK, dependencies=[require("delete_image_category")])
 def delete_image_category(
     id: int,
     db: Session = Depends(database.get_db),

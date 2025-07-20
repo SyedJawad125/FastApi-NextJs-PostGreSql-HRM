@@ -341,13 +341,16 @@
 
 
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import AxiosInstance from "@/components/AxiosInstance";
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-hot-toast'; // Import toast for notifications
 import { Toaster } from 'react-hot-toast';
+import { AuthContext } from '@/components/AuthContext';
+
 const ImagesCategoryCom = () => {
   const router = useRouter();
+  const { permissions = {} } = useContext(AuthContext);
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [pagination, setPagination] = useState({
@@ -427,6 +430,26 @@ const ImagesCategoryCom = () => {
     }
   };
 
+  if (!permissions.read_image_category) {
+    return (
+      <div className="min-h-screen bg-gray-900 flex items-center justify-center p-6">
+        <div className="text-center p-8 max-w-md">
+          <h2 className="text-2xl text-amber-400 mb-4">Access Denied</h2>
+          <p className="text-gray-300 mb-6">
+            You don't have permission to view Category of Images. Please contact your administrator.
+          </p>
+          <button
+            onClick={() => router.push('/')}
+            className="px-6 py-2 bg-amber-600 rounded-full hover:bg-amber-700 text-white"
+          >
+            Return to Dashboard
+          </button>
+        </div>
+        <ToastContainer position="top-right" autoClose={2000} />
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-black p-8">
       <div className="max-w-7xl mx-auto">
@@ -438,12 +461,14 @@ const ImagesCategoryCom = () => {
             <span>Page {pagination.page} of {pagination.totalPages}</span>
           </div>
         </div>
+        {permissions.create_image_category && (
         <button
           onClick={() => router.push('/AddImagesCategoryPage')}
           className="px-6 py-3 -mt-4 mb-4 border border-amber-500 text-amber-500 rounded-full hover:bg-amber-500 hover:text-black"
         >
           Add Images Category
         </button>
+        )}
         {loading ? (
           <div className="space-y-4">
             {[...Array(pagination.limit)].map((_, i) => (
@@ -498,6 +523,7 @@ const ImagesCategoryCom = () => {
                     )}
                   </div>
                   <div className="col-span-2 flex justify-end space-x-2">
+                    {permissions.update_image_category && (
                     <button 
                       onClick={() => updateCategory(cat.id)}
                       className="p-2 text-gray-400 hover:text-indigo-400 hover:bg-gray-700 rounded-full transition-colors"
@@ -506,6 +532,8 @@ const ImagesCategoryCom = () => {
                         <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
                       </svg>
                     </button>
+                    )}
+                    {permissions.delete_image_category && (
                     <button 
                       onClick={() => deleteCategory(cat.id)}
                       className="p-2 text-gray-400 hover:text-red-400 hover:bg-gray-700 rounded-full transition-colors"
@@ -514,6 +542,7 @@ const ImagesCategoryCom = () => {
                         <path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
                       </svg>
                     </button>
+                    )}
                   </div>
                 </div>
               ))}
