@@ -68,11 +68,9 @@ const NavbarCom = () => {
   // Memoized nav items to prevent unnecessary re-renders
   const navItems = React.useMemo(() => [
     { name: 'Home', path: '/' },
-    { name: 'Kids', path: '/kidspage' },
-    { name: 'Sale', path: '/publicsalesproductpage' },
-    { name: 'New IN', path: '/newarrivalspage', className: "hover-group" },
-    { name: 'Shop', path: '/publicproducts' },
-    { name: 'Collections', path: '/publiccategories' },
+    { name: 'About', path: '/about' },
+    { name: 'Services', path: '/services' },
+    { name: 'Reviews', path: '/Reviews' },
     { name: 'Contact', path: '/publiccontact' }
   ], [])
 
@@ -329,7 +327,7 @@ useEffect(() => {
         className="text-black"
       >
         <span className="text-xl font-light tracking-widest uppercase">
-          <span className="font-bold">GOHAR'S SHOP</span>
+          <span className="font-bold">HRMS SOLUTIONS</span>
         </span>
       </Link>
     </div>
@@ -360,7 +358,7 @@ useEffect(() => {
               onFocus={handleSearchFocus}
               onBlur={() => setTimeout(() => setShowSearchResults(false), 200)}
               onKeyDown={handleKeyDown}
-              placeholder="Search luxury collections..."
+              placeholder="Search our services..."
               className="px-3 py-1 border border-gray-300 rounded-l-md focus:outline-none focus:ring-1 focus:ring-blue-500 w-40 sm:w-60 text-sm text-black"
             />
             {searchQuery && (
