@@ -62,6 +62,11 @@ permissions = [
     {"name": "Read Image Category", "code": "read_image_category", "module_name": "Image Category", "description": "User can read Image Category"},
     {"name": "Update Image Category", "code": "update_image_category", "module_name": "Image Category", "description": "User can update Image Category"},
     {"name": "Delete Image Category", "code": "delete_image_category", "module_name": "Image Category", "description": "User can delete Image Category"},
+
+    {"name": "Create Employee Profile", "code": "create_employee_profile", "module_name": "Employee Profile", "description": "User can create Employee Profile"},
+    {"name": "Read Employee Profile", "code": "read_employee_profile", "module_name": "Employee Profile", "description": "User can read Employee Profile"},
+    {"name": "Update Employee Profile", "code": "update_employee_profile", "module_name": "Employee Profile", "description": "User can update Employee Profile"},
+    {"name": "Delete Employee Profile", "code": "delete_employee_profile", "module_name": "Employee Profile", "description": "User can delete Employee Profile"},  
 ]
 
 def add_permissions_to_db(db: Session):

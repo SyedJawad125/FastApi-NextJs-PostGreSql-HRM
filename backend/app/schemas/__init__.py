@@ -137,7 +137,14 @@ from .image import (
     ImageUpdate,
     ImageOut,
 )
-
+from .employee_profile import (
+    EmployeeProfileBase,
+    EmployeeProfileCreate,
+    EmployeeProfileUpdate,
+    EmployeeProfileOut,
+    PaginatedEmployeeProfiles,
+    EmployeeProfileListResponse
+)
 # define what will be exported on `from schemas import *`
 __all__ = [
     'UserBase', 'UserCreate', 'LoginRequest', 'UserUpdate', 'UserOut',
@@ -159,6 +166,7 @@ __all__ = [
     'PayslipStatus', 'PayslipBase', 'PayslipCreate', 'PayslipUpdate', 'PayslipOut', 'PayslipListResponse',
     'ChangeType', 'SalaryHistoryBase', 'SalaryHistoryCreate', 'SalaryHistoryUpdate', 'SalaryHistoryOut', 'SalaryHistoryListResponse',
     'ImageCategoryBase', 'ImageCategoryCreate', 'ImageCategoryUpdate', 'PaginatedImageCategory', 'ImageCategoryListResponse',
-    'ImageBase', 'ImageCreate', 'ImageUpdate', 'ImageOut'
+    'ImageBase', 'ImageCreate', 'ImageUpdate', 'ImageOut',
+    'EmployeeProfileBase', 'EmployeeProfileCreate', 'EmployeeProfileUpdate', 'EmployeeProfileOut', 'PaginatedEmployeeProfiles', 'EmployeeProfileListResponse'
 ]
 
