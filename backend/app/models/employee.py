@@ -34,3 +34,6 @@ class Employee(Base):
     
     # Add relationship for payslips
     payslips = relationship("Payslip", back_populates="employee")
+    
+    # Add one-to-one relationship with EmployeeProfile
+    profile = relationship("EmployeeProfile", back_populates="employee", uselist=False)
