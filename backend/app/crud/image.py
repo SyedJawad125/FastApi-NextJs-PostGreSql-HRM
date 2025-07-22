@@ -10,7 +10,7 @@ import uuid
 import imghdr
 from typing import Set, Optional
 
-UPLOAD_DIR = "uploaded_images"
+UPLOAD_DIR = "uploads/images"
 MAX_IMAGE_SIZE = 5 * 1024 * 1024  # 5MB
 ALLOWED_IMAGE_TYPES: Set[str] = {"jpeg", "jpg", "png", "gif"}
 

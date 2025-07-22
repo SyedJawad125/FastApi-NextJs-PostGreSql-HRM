@@ -15,8 +15,12 @@ from app.schemas.image import ImageCreate
 from app.crud.image import update_image
 from builtins import Exception
 from app.dependencies.permission import require
+import os
 
 router = APIRouter(prefix="/images", tags=["Images"])
+
+UPLOAD_DIR = "uploads/images"
+os.makedirs(UPLOAD_DIR, exist_ok=True)
 
 
 @router.post("/", response_model=ImageOut, dependencies=[require("read_image")])

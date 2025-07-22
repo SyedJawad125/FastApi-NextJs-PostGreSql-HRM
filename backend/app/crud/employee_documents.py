@@ -7,7 +7,7 @@ import uuid
 from datetime import datetime
 
 # File storage directory
-DOCUMENT_UPLOAD_DIR = Path("uploaded_docs")
+DOCUMENT_UPLOAD_DIR = Path("uploads/employees_documents")
 DOCUMENT_UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
 
 # Max file size (10MB for example)
