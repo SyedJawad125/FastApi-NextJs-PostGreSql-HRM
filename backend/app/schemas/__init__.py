@@ -145,6 +145,13 @@ from .employee_profile import (
     PaginatedEmployeeProfiles,
     EmployeeProfileListResponse
 )
+from .employee_documents import (
+    DocumentType,
+    EmployeeDocumentBase,
+    EmployeeDocumentCreate,
+    EmployeeDocumentUpdate,
+    EmployeeDocumentOut
+)
 # define what will be exported on `from schemas import *`
 __all__ = [
     'UserBase', 'UserCreate', 'LoginRequest', 'UserUpdate', 'UserOut',
@@ -167,6 +174,7 @@ __all__ = [
     'ChangeType', 'SalaryHistoryBase', 'SalaryHistoryCreate', 'SalaryHistoryUpdate', 'SalaryHistoryOut', 'SalaryHistoryListResponse',
     'ImageCategoryBase', 'ImageCategoryCreate', 'ImageCategoryUpdate', 'PaginatedImageCategory', 'ImageCategoryListResponse',
     'ImageBase', 'ImageCreate', 'ImageUpdate', 'ImageOut',
-    'EmployeeProfileBase', 'EmployeeProfileCreate', 'EmployeeProfileUpdate', 'EmployeeProfileOut', 'PaginatedEmployeeProfiles', 'EmployeeProfileListResponse'
+    'EmployeeProfileBase', 'EmployeeProfileCreate', 'EmployeeProfileUpdate', 'EmployeeProfileOut', 'PaginatedEmployeeProfiles', 'EmployeeProfileListResponse',
+    'DocumentType', 'EmployeeDocumentBase', 'EmployeeDocumentCreate', 'EmployeeDocumentUpdate', 'EmployeeDocumentOut'
 ]
 

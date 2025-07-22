@@ -37,3 +37,5 @@ class Employee(Base):
     
     # Add one-to-one relationship with EmployeeProfile
     profile = relationship("EmployeeProfile", back_populates="employee", uselist=False)
+
+    documents = relationship("EmployeeDocument", back_populates="employee", cascade="all, delete-orphan")
