@@ -12,32 +12,31 @@ class DocumentType(str, Enum):
     other = "other"
 
 
-# ----------- Shared Base Schema -----------
+# ----------- Base Schema -----------
 class EmployeeDocumentBase(BaseModel):
     employee_id: int
     document_type: DocumentType
     document_name: str
-    document_path: str
     description: Optional[str] = None
 
 
-# ----------- Create Schema (used for internal validation, not directly for FastAPI file upload) -----------
+# ----------- Create Schema (frontend does not send document_path) -----------
 class EmployeeDocumentCreate(EmployeeDocumentBase):
     pass
 
 
-# ----------- Patch Schema (for internal update logic) -----------
+# ----------- Update Schema (frontend does not send document_path) -----------
 class EmployeeDocumentUpdate(BaseModel):
     document_type: Optional[DocumentType] = None
     document_name: Optional[str] = None
-    document_path: Optional[str] = None
     description: Optional[str] = None
 
 
-# ----------- Output Schema -----------
+# ----------- Output Schema (response includes document_path) -----------
 class EmployeeDocumentOut(EmployeeDocumentBase):
     id: int
+    document_path: str  # ✅ Only shown in the response
     uploaded_at: datetime
 
     class Config:
-        orm_mode = True
+        from_attributes = True  # Replaces orm_mode in Pydantic v2
