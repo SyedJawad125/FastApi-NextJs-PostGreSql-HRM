@@ -165,6 +165,7 @@ from app import database, schemas, models, oauth2
 from app.utils import paginate_data
 from fastapi.responses import JSONResponse
 from datetime import datetime
+from sqlalchemy.orm import joinedload  # ✅ Already imported
 
 router = APIRouter(
     prefix="/employee_profiles",
@@ -179,9 +180,36 @@ def split_string_fields(profile: models.EmployeeProfile) -> dict:
             data[field] = data[field].split(",")
         else:
             data[field] = []
+    data["employee"] = profile.employee  # include nested employee relation
     return data
-
 # -------------------- GET All Profiles (with Pagination) --------------------
+# @router.get("/", response_model=schemas.EmployeeProfileListResponse)
+# def get_all_profiles(
+#     request: Request,
+#     db: Session = Depends(database.get_db),
+#     current_user: models.User = Depends(oauth2.get_current_user)
+# ):
+#     try:
+#         query = db.query(models.EmployeeProfile)
+#         data = query.all()
+#         paginated_data, count = paginate_data(data, request)
+
+#         serialized = [
+#             schemas.EmployeeProfileOut(**split_string_fields(profile))
+#             for profile in paginated_data
+#         ]
+
+#         return {
+#             "status": "SUCCESSFUL",
+#             "result": {
+#                 "count": count,
+#                 "data": serialized
+#             }
+#         }
+
+#     except Exception as e:
+#         raise HTTPException(status_code=500, detail=str(e))
+
 @router.get("/", response_model=schemas.EmployeeProfileListResponse)
 def get_all_profiles(
     request: Request,
@@ -189,12 +217,14 @@ def get_all_profiles(
     current_user: models.User = Depends(oauth2.get_current_user)
 ):
     try:
-        query = db.query(models.EmployeeProfile)
+        query = db.query(models.EmployeeProfile).options(joinedload(models.EmployeeProfile.employee))
         data = query.all()
+
         paginated_data, count = paginate_data(data, request)
 
+        # ✅ Convert comma-separated fields before model validation
         serialized = [
-            schemas.EmployeeProfileOut(**split_string_fields(profile))
+            schemas.EmployeeProfileOut.model_validate(split_string_fields(profile))
             for profile in paginated_data
         ]
 

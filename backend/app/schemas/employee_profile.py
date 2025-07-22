@@ -147,6 +147,7 @@ from typing import Optional, List
 from datetime import date
 from datetime import datetime
 from enum import Enum
+from .employee import Employee
 
 # ---------------------- Enums ----------------------
 
@@ -258,8 +259,10 @@ class EmployeeProfileOut(EmployeeProfileBase):
     updated_by_user_id: Optional[int] = None
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None
+     # ✅ Include full employee object
+    employee : Optional[Employee] = None
     model_config = ConfigDict(from_attributes=True)
-
+    
 # ---------------------- Paginated Response Schema ----------------------
 
 class PaginatedEmployeeProfiles(BaseModel):
