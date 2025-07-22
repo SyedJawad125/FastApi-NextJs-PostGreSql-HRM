@@ -553,7 +553,7 @@ const ImagesCom = () => {
                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
                 <div className="p-4 absolute bottom-0 left-0 right-0">
                   <h3 className="text-lg font-medium text-white line-clamp-1">{item.name}</h3>
-                  <p className="text-xs text-gray-300 line-clamp-2">{item.description}</p>
+                  <p className="text-xs text-gray-300 line-clamp-2">Description: {item.description}</p>
                   {item.category?.category && (
                     <p className="text-xs mt-1 text-amber-400 italic">
                       Category: {item.category.category}
@@ -659,7 +659,7 @@ const ImagesCom = () => {
         <h2 className="text-xl font-bold text-amber-400 mb-1 tracking-tight">
           {selectedImage.name}
         </h2>
-        <p className="text-sm text-gray-300 line-clamp-2">{selectedImage.description}</p>
+        <p className="text-sm text-gray-300 line-clamp-2">Description: {selectedImage.description}</p>
 
         <div className="flex flex-wrap gap-2 pt-1">
           {selectedImage.category?.category && (
