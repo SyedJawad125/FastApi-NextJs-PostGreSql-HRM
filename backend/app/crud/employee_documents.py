@@ -28,23 +28,11 @@ def save_uploaded_document(file: UploadFile) -> str:
 
     return str(file_path)
 
-# def create_employee_documents(db: Session, doc_data: dict, file: UploadFile):
-#     file_path = save_uploaded_document(file)
-#     doc_data["document_path"] = file_path
-#     doc_data["uploaded_at"] = datetime.utcnow()
-
-#     doc = models.EmployeeDocument(**doc_data)
-#     db.add(doc)
-#     db.commit()
-#     db.refresh(doc)
-#     return doc
-
-def create_employee_documents(db: Session, doc_data: dict, file: UploadFile):
-    file_path = save_uploaded_document(file)
-
-    doc_data["document_path"] = file_path
-    doc_data["uploaded_at"] = datetime.utcnow()
-
+def create_employee_documents(db: Session, doc_data: dict):
+    """
+    Create a new employee document record in the database
+    Expects doc_data to contain all necessary fields including document_path
+    """
     doc = models.EmployeeDocument(**doc_data)
     db.add(doc)
     db.commit()
@@ -57,14 +45,14 @@ def get_employee_documents(db: Session, employee_id: int):
 def get_employee_document_by_id(db: Session, document_id: int):
     return db.query(models.EmployeeDocument).filter_by(id=document_id).first()
 
-def update_employee_document(db: Session, document_id: int, update_data: dict, file: UploadFile = None):
+def update_employee_document(db: Session, document_id: int, update_data: dict):
+    """
+    Update document metadata
+    Expects update_data to contain fields to update
+    """
     doc = get_employee_document_by_id(db, document_id)
     if not doc:
         return None
-
-    if file:
-        new_path = save_uploaded_document(file)
-        update_data["document_path"] = new_path
 
     for key, value in update_data.items():
         setattr(doc, key, value)
