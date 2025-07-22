@@ -1,7 +1,9 @@
-from sqlalchemy import Column, Integer, String, Date, ForeignKey, Enum, Text
+from sqlalchemy import Column, Integer, String, Date, ForeignKey, Enum, Text, func
 from sqlalchemy.orm import relationship
 from app.database import Base
 import enum
+from sqlalchemy.types import DateTime
+
 
 class Gender(str, enum.Enum):
     MALE = "male"
@@ -63,8 +65,12 @@ class EmployeeProfile(Base):
     updated_by_user_id = Column(Integer, nullable=True)
 
     # Optional timestamps (if using `sqlalchemy.sql.func.now()`)
-    created_at = Column(Date, nullable=True)
-    updated_at = Column(Date, nullable=True)
+    # created_at = Column(Date, nullable=True)
+    # updated_at = Column(Date, nullable=True)
+
+    created_at = Column(DateTime(timezone=True), nullable=False, default=func.now())
+    updated_at = Column(DateTime(timezone=True), nullable=True, onupdate=func.now())
+
 
     # Relationship
     employee = relationship("Employee", back_populates="profile", uselist=False)

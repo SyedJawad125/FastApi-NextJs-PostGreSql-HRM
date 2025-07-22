@@ -171,8 +171,7 @@ router = APIRouter(
     tags=["Employee Profiles"]
 )
 
-# -------------------- Helper Function to Convert String to List --------------------
-
+# -------------------- Helper: Convert comma-separated string to list --------------------
 def split_string_fields(profile: models.EmployeeProfile) -> dict:
     data = profile.__dict__.copy()
     for field in ["professional_certifications", "skills", "languages", "hobbies"]:
@@ -182,8 +181,7 @@ def split_string_fields(profile: models.EmployeeProfile) -> dict:
             data[field] = []
     return data
 
-# -------------------- GET ALL with Pagination --------------------
-
+# -------------------- GET All Profiles (with Pagination) --------------------
 @router.get("/", response_model=schemas.EmployeeProfileListResponse)
 def get_all_profiles(
     request: Request,
@@ -211,8 +209,7 @@ def get_all_profiles(
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-# -------------------- GET ONE by ID --------------------
-
+# -------------------- GET One Profile by ID --------------------
 @router.get("/{id}", response_model=schemas.EmployeeProfileOut)
 def get_profile_by_id(
     id: int,
@@ -226,8 +223,7 @@ def get_profile_by_id(
 
     return schemas.EmployeeProfileOut(**split_string_fields(profile))
 
-# -------------------- POST: Create --------------------
-
+# -------------------- CREATE New Profile --------------------
 @router.post("/", status_code=status.HTTP_201_CREATED, response_model=schemas.EmployeeProfileOut)
 def create_profile(
     profile: schemas.EmployeeProfileCreate,
@@ -239,12 +235,10 @@ def create_profile(
         profile_data["created_by_user_id"] = current_user.id
 
         # Convert list fields to comma-separated strings
-        profile_data["professional_certifications"] = ",".join(profile.professional_certifications or [])
-        profile_data["skills"] = ",".join(profile.skills or [])
-        profile_data["languages"] = ",".join(profile.languages or [])
-        profile_data["hobbies"] = ",".join(profile.hobbies or [])
+        for field in ["professional_certifications", "skills", "languages", "hobbies"]:
+            profile_data[field] = ",".join(profile_data.get(field, []))
 
-        # Optional: check if employee exists
+        # Ensure employee exists
         employee = db.query(models.Employee).filter(models.Employee.id == profile.employee_id).first()
         if not employee:
             raise HTTPException(status_code=404, detail="Employee not found")
@@ -254,13 +248,13 @@ def create_profile(
         db.commit()
         db.refresh(new_profile)
 
+        # If you have a helper to split string fields back to lists
         return schemas.EmployeeProfileOut(**split_string_fields(new_profile))
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-# -------------------- PATCH: Update --------------------
-
+# -------------------- UPDATE Existing Profile --------------------
 @router.patch("/{id}", response_model=schemas.EmployeeProfileOut)
 def update_profile(
     id: int,
@@ -276,16 +270,16 @@ def update_profile(
 
         update_dict = updated_data.dict(exclude_unset=True)
 
-        # Convert list fields to strings if they are present
-        for key in ["professional_certifications", "skills", "languages", "hobbies"]:
-            if key in update_dict:
-                update_dict[key] = ",".join(update_dict[key]) if update_dict[key] else ""
+        # Convert list fields to comma-separated strings
+        for field in ["professional_certifications", "skills", "languages", "hobbies"]:
+            if field in update_dict:
+                update_dict[field] = ",".join(update_dict[field]) if update_dict[field] else ""
 
-        # Update the fields
+        # Update fields
         for key, value in update_dict.items():
             setattr(profile_instance, key, value)
 
-        # ✅ Inject system fields (NOT from request)
+        # Update system fields
         profile_instance.updated_by_user_id = current_user.id
         profile_instance.updated_at = datetime.utcnow()
 
@@ -297,8 +291,7 @@ def update_profile(
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-# -------------------- DELETE --------------------
-
+# -------------------- DELETE Profile --------------------
 @router.delete("/{id}", status_code=status.HTTP_200_OK)
 def delete_profile(
     id: int,

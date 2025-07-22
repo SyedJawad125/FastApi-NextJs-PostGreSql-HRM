@@ -145,6 +145,7 @@
 from pydantic import BaseModel, EmailStr, ConfigDict, Field
 from typing import Optional, List
 from datetime import date
+from datetime import datetime
 from enum import Enum
 
 # ---------------------- Enums ----------------------
@@ -186,8 +187,8 @@ class EmployeeProfileBase(BaseModel):
     field_of_study: Optional[str] = None
     institution: Optional[str] = None
     graduation_year: Optional[int] = None
-    professional_certifications: Optional[List[str]] = None
-    skills: Optional[List[str]] = None
+    professional_certifications: Optional[List[str]] = Field(default_factory=list)
+    skills: Optional[List[str]] = Field(default_factory=list)
 
     # --- Banking Information ---
     bank_name: str
@@ -199,8 +200,8 @@ class EmployeeProfileBase(BaseModel):
     blood_group: Optional[str] = None
     medical_conditions: Optional[str] = None
     dietary_restrictions: Optional[str] = None
-    languages: Optional[List[str]] = None
-    hobbies: Optional[List[str]] = None
+    languages: Optional[List[str]] = Field(default_factory=list)
+    hobbies: Optional[List[str]] = Field(default_factory=list)
 
     model_config = ConfigDict(from_attributes=True)
 
@@ -255,12 +256,11 @@ class EmployeeProfileOut(EmployeeProfileBase):
     id: int
     created_by_user_id: Optional[int] = None
     updated_by_user_id: Optional[int] = None
-    created_at: date
-    updated_at: Optional[date] = None
-
+    created_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
     model_config = ConfigDict(from_attributes=True)
 
-# ---------------------- Paginated Response ----------------------
+# ---------------------- Paginated Response Schema ----------------------
 
 class PaginatedEmployeeProfiles(BaseModel):
     count: int
