@@ -1,253 +1,3 @@
-# from fastapi import APIRouter, UploadFile, File, Form, Depends, HTTPException
-# from sqlalchemy.orm import Session
-# from typing import List, Optional
-# import os, shutil
-
-# from app import models
-# from app.database import get_db
-# from app.schemas.employee_documents import EmployeeDocumentOut
-# from app.crud.employee_documents import (
-#     create_employee_documents,
-#     get_employee_documents,
-#     update_employee_document,
-#     delete_employee_document,
-#     get_employee_document_by_id,
-# )
-
-# from app import schemas, crud, database
-# router = APIRouter(prefix="/employee-documents", tags=["Employee Documents"])
-
-# UPLOAD_DIR = "uploads/employees_documents"
-# os.makedirs(UPLOAD_DIR, exist_ok=True)
-
-
-# # -------------------- Upload Multiple Documents --------------------
-# @router.post("/upload-multiple/", response_model=List[schemas.EmployeeDocumentOut])
-# async def upload_multiple_documents(
-#     employee_id: int = Form(...),
-#     document_types: List[str] = Form(...),
-#     descriptions: List[str] = Form(...),
-#     files: List[UploadFile] = File(...),
-#     db: Session = Depends(database.get_db)
-# ):
-#     if len(files) != len(document_types) or len(files) != len(descriptions):
-#         raise HTTPException(status_code=400, detail="Files and metadata count mismatch.")
-
-#     saved_docs = []
-
-#     for i in range(len(files)):
-#         file = files[i]
-#         doc_data = {
-#             "employee_id": employee_id,
-#             "document_type": document_types[i],
-#             "document_name": file.filename,
-#             "description": descriptions[i]
-#         }
-#         saved_doc = crud.create_employee_documents(db=db, doc_data=doc_data, file=file)
-#         saved_docs.append(saved_doc)
-
-#     return saved_docs
-
-
-# # -------------------- Get Documents for Employee --------------------
-# @router.get("/{employee_id}", response_model=List[EmployeeDocumentOut])
-# def get_documents_by_employee(employee_id: int, db: Session = Depends(get_db)):
-#     return get_employee_documents(db, employee_id)
-
-
-# # -------------------- Update Document Metadata --------------------
-
-# @router.patch("/{document_id}", response_model=EmployeeDocumentOut)
-# async def patch_document(
-#     document_id: int,
-#     document_type: Optional[str] = Form(None),
-#     description: Optional[str] = Form(None),
-#     file: Optional[UploadFile] = File(None),
-#     db: Session = Depends(get_db),
-# ):
-#     # Fetch existing document
-#     existing_doc = get_employee_document_by_id(db, document_id)
-#     if not existing_doc:
-#         raise HTTPException(status_code=404, detail="Document not found")
-
-#     update_data = {}
-
-#     # Update type and description
-#     if document_type:
-#         update_data["document_type"] = document_type
-#     if description:
-#         update_data["description"] = description
-
-#     # If a new file is uploaded
-#     if file:
-#         # Delete old file from storage
-#         if existing_doc.document_path and os.path.exists(existing_doc.document_path):
-#             os.remove(existing_doc.document_path)
-
-#         # Save new file
-#         upload_dir = os.path.join(UPLOAD_DIR, str(existing_doc.employee_id))
-#         os.makedirs(upload_dir, exist_ok=True)
-
-#         file_path = os.path.join(upload_dir, file.filename)
-#         with open(file_path, "wb") as buffer:
-#             shutil.copyfileobj(file.file, buffer)
-
-#         update_data["document_name"] = file.filename
-#         update_data["document_path"] = file_path
-
-#     # Update DB record
-#     updated_doc = update_employee_document(db, document_id, update_data)
-#     return updated_doc
-
-
-
-# # -------------------- Delete Document --------------------
-# @router.delete("/{document_id}", status_code=204)
-# def delete_document(document_id: int, db: Session = Depends(get_db)):
-#     doc = get_employee_document_by_id(db, document_id)
-#     if not doc:
-#         raise HTTPException(status_code=404, detail="Document not found")
-
-#     # Also remove file from disk
-#     if doc.document_path and os.path.exists(doc.document_path):
-#         os.remove(doc.document_path)
-
-#     delete_employee_document(db, document_id)
-#     return
-
-
-
-
-
-
-
-# from fastapi import APIRouter, UploadFile, File, Form, Depends, HTTPException
-# from sqlalchemy.orm import Session
-# from typing import List, Optional
-# import os
-# import shutil
-
-# from app import models
-# from app.database import get_db
-# from app.schemas.employee_documents import EmployeeDocumentOut
-# from app.crud.employee_documents import (
-#     create_employee_documents,
-#     get_employee_documents,
-#     update_employee_document,
-#     delete_employee_document,
-#     get_employee_document_by_id,
-# )
-
-# router = APIRouter(prefix="/employee-documents", tags=["Employee Documents"])
-
-# UPLOAD_DIR = "uploads/employees_documents"
-# os.makedirs(UPLOAD_DIR, exist_ok=True)
-
-
-# # -------------------- Upload Multiple Documents --------------------
-# @router.post("/upload-multiple/", response_model=List[EmployeeDocumentOut])
-# async def upload_multiple_documents(
-#     employee_id: int = Form(...),
-#     document_types: List[str] = Form(...),
-#     descriptions: List[str] = Form(...),
-#     files: List[UploadFile] = File(...),
-#     db: Session = Depends(get_db)
-# ):
-#     if len(files) != len(document_types) or len(files) != len(descriptions):
-#         raise HTTPException(status_code=400, detail="Files and metadata count mismatch.")
-
-#     saved_docs = []
-
-#     for i in range(len(files)):
-#         file = files[i]
-
-#         # Save file to disk
-#         upload_dir = os.path.join(UPLOAD_DIR, str(employee_id))
-#         os.makedirs(upload_dir, exist_ok=True)
-#         file_path = os.path.join(upload_dir, file.filename)
-
-#         with open(file_path, "wb") as buffer:
-#             shutil.copyfileobj(file.file, buffer)
-
-#         # Prepare DB data
-#         doc_data = {
-#             "employee_id": employee_id,
-#             "document_type": document_types[i],
-#             "document_name": file.filename,
-#             "document_path": file_path,
-#             "description": descriptions[i]
-#         }
-
-#         # Save to DB
-#         saved_doc = create_employee_documents(db=db, doc_data=doc_data)
-#         saved_docs.append(saved_doc)
-
-#     return saved_docs
-
-
-# # -------------------- Get Documents for Employee --------------------
-# @router.get("/{employee_id}", response_model=List[EmployeeDocumentOut])
-# def get_documents_by_employee(employee_id: int, db: Session = Depends(get_db)):
-#     return get_employee_documents(db, employee_id)
-
-
-# # -------------------- Update Document Metadata --------------------
-# @router.patch("/{document_id}", response_model=EmployeeDocumentOut)
-# async def patch_document(
-#     document_id: int,
-#     document_type: Optional[str] = Form(None),
-#     description: Optional[str] = Form(None),
-#     file: Optional[UploadFile] = File(None),
-#     db: Session = Depends(get_db),
-# ):
-#     existing_doc = get_employee_document_by_id(db, document_id)
-#     if not existing_doc:
-#         raise HTTPException(status_code=404, detail="Document not found")
-
-#     update_data = {}
-
-#     if document_type:
-#         update_data["document_type"] = document_type
-#     if description:
-#         update_data["description"] = description
-
-#     if file:
-#         # Delete old file
-#         if existing_doc.document_path and os.path.exists(existing_doc.document_path):
-#             os.remove(existing_doc.document_path)
-
-#         # Save new file
-#         upload_dir = os.path.join(UPLOAD_DIR, str(existing_doc.employee_id))
-#         os.makedirs(upload_dir, exist_ok=True)
-#         file_path = os.path.join(upload_dir, file.filename)
-
-#         with open(file_path, "wb") as buffer:
-#             shutil.copyfileobj(file.file, buffer)
-
-#         update_data["document_name"] = file.filename
-#         update_data["document_path"] = file_path
-
-#     updated_doc = update_employee_document(db, document_id, update_data)
-#     return updated_doc
-
-
-# # -------------------- Delete Document --------------------
-# @router.delete("/{document_id}", status_code=204)
-# def delete_document(document_id: int, db: Session = Depends(get_db)):
-#     doc = get_employee_document_by_id(db, document_id)
-#     if not doc:
-#         raise HTTPException(status_code=404, detail="Document not found")
-
-#     if doc.document_path and os.path.exists(doc.document_path):
-#         os.remove(doc.document_path)
-
-#     delete_employee_document(db, document_id)
-
-
-
-
-
-
 import mimetypes
 from django.http import FileResponse
 from fastapi import APIRouter, UploadFile, File, Form, Depends, HTTPException, status
@@ -507,72 +257,113 @@ def download_document(document_id: int, db: Session = Depends(get_db)):
 @router.patch("/{document_id}", response_model=EmployeeDocumentOut)
 async def update_document(
     document_id: int,
+    employee_id: Optional[int] = Form(None),
     document_type: Optional[str] = Form(None),
     description: Optional[str] = Form(None),
-    file: Optional[UploadFile] = File(None),
+    file: Optional[UploadFile] = File(None, alias="files"),  # Accepts both 'file' and 'files'
     db: Session = Depends(get_db),
 ):
     """
-    Update document metadata and/or replace the file
+    Update employee document metadata and/or file.
     """
     existing_doc = get_employee_document_by_id(db, document_id)
     if not existing_doc:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="Document not found"
+            detail=f"Document with ID {document_id} not found"
         )
-    
+
     update_data = {}
-    
+
+    # ✅ Document Type validation
     if document_type:
-        update_data["document_type"] = document_type
+        try:
+            dt = document_type.strip().lower()
+            update_data["document_type"] = DocumentType(dt).value
+        except ValueError:
+            valid_types = [e.value for e in DocumentType]
+            raise HTTPException(
+                status_code=400,
+                detail=f"Invalid document type '{document_type}'. Valid types: {', '.join(valid_types)}"
+            )
+
+    # ✅ Description
     if description:
-        update_data["description"] = description
-    
+        update_data["description"] = description.strip()
+
+    # ✅ Optional employee ID change
+    if employee_id:
+        update_data["employee_id"] = employee_id
+
+    # ✅ File update
     if file:
         try:
-            # Save new file
-            new_path = save_document_file(file, existing_doc.employee_id)
-            
-            # Delete old file
-            if existing_doc.document_path and os.path.exists(existing_doc.document_path):
-                os.remove(existing_doc.document_path)
-            
-            update_data.update({
-                "document_name": file.filename,
-                "document_path": new_path
-            })
+            employee_for_path = employee_id or existing_doc.employee_id
+            new_file_path = save_document_file(file, employee_for_path)
+
+            # Delete old file from disk (safe check)
+            old_path = existing_doc.document_path
+            if old_path and os.path.exists(old_path):
+                os.remove(old_path)
+
+            update_data["document_name"] = file.filename
+            update_data["document_path"] = new_file_path
+
         except Exception as e:
             raise HTTPException(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                status_code=500,
                 detail=f"Failed to update file: {str(e)}"
             )
-    
+
+    # 🚨 Nothing to update
+    if not update_data:
+        raise HTTPException(
+            status_code=400,
+            detail="No valid fields provided for update"
+        )
+
+    # ✅ Update DB record
     updated_doc = update_employee_document(db, document_id, update_data)
     return updated_doc
 
+
+
 # -------------------- Delete Document --------------------
-@router.delete("/{document_id}", status_code=status.HTTP_204_NO_CONTENT)
+from fastapi.responses import JSONResponse
+
+@router.delete("/{document_id}", status_code=status.HTTP_200_OK)
 def delete_document(document_id: int, db: Session = Depends(get_db)):
     """
-    Delete a document and its associated file
+    Delete a document and its associated file from both the database and disk.
     """
     doc = get_employee_document_by_id(db, document_id)
+    
     if not doc:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="Document not found"
+            detail=f"Document with ID {document_id} not found"
         )
     
     try:
-        # Delete file
-        if doc.document_path and os.path.exists(doc.document_path):
-            os.remove(doc.document_path)
+        # Remove file from disk if exists
+        if doc.document_path:
+            file_path = doc.document_path.strip()
+            if os.path.exists(file_path):
+                os.remove(file_path)
+            else:
+                print(f"⚠ File not found on disk: {file_path}")
         
-        # Delete database record
+        # Delete document record from DB
         delete_employee_document(db, document_id)
+        
+        # Return success message
+        return JSONResponse(
+            status_code=status.HTTP_200_OK,
+            content={"message": f"Document with ID {document_id} deleted successfully"}
+        )
+
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Failed to delete document: {str(e)}"
+            detail=f"Failed to delete document ID {document_id}: {str(e)}"
         )
