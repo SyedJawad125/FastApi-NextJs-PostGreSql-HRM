@@ -152,6 +152,16 @@ from .employee_documents import (
     EmployeeDocumentUpdate,
     EmployeeDocumentOut
 )
+from .holiday_calendar import (
+    HolidayCalendarBase,
+    HolidayCalendarCreate,
+    HolidayCalendarUpdate,
+    HolidayCalendarOut,
+    PaginatedHolidayCalendars,
+    HolidayCalendarListResponse
+)   
+
+
 # define what will be exported on `from schemas import *`
 __all__ = [
     'UserBase', 'UserCreate', 'LoginRequest', 'UserUpdate', 'UserOut',
@@ -175,6 +185,7 @@ __all__ = [
     'ImageCategoryBase', 'ImageCategoryCreate', 'ImageCategoryUpdate', 'PaginatedImageCategory', 'ImageCategoryListResponse',
     'ImageBase', 'ImageCreate', 'ImageUpdate', 'ImageOut',
     'EmployeeProfileBase', 'EmployeeProfileCreate', 'EmployeeProfileUpdate', 'EmployeeProfileOut', 'PaginatedEmployeeProfiles', 'EmployeeProfileListResponse',
-    'DocumentType', 'EmployeeDocumentBase', 'EmployeeDocumentCreate', 'EmployeeDocumentUpdate', 'EmployeeDocumentOut'
+    'DocumentType', 'EmployeeDocumentBase', 'EmployeeDocumentCreate', 'EmployeeDocumentUpdate', 'EmployeeDocumentOut',
+    'HolidayCalendarBase', 'HolidayCalendarCreate', 'HolidayCalendarUpdate', 'HolidayCalendarOut', 'PaginatedHolidayCalendars', 'HolidayCalendarListResponse'
 ]
 

@@ -16,8 +16,11 @@ from .image_category import ImageCategory
 from .image import Image
 from .employee_profile import EmployeeProfile 
 from .employee_documents import EmployeeDocument
+from .holiday_calendar import HolidayCalendar
+
+
 
 
 __all__ = ["User", "Department", "Employee", "Role", "Permission", "Rank", "Attendance", "Timesheet", "Leave", "Notification", "EmployeeSalary",
-    "SalaryStructure", "Payslip", "SalaryHistory", "ImageCategory", "Image", "EmployeeProfile", "EmployeeDocument"]
+    "SalaryStructure", "Payslip", "SalaryHistory", "ImageCategory", "Image", "EmployeeProfile", "EmployeeDocument", "HolidayCalendar"]
 
