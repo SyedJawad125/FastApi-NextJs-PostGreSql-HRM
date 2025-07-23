@@ -125,17 +125,35 @@ def delete_holiday(
     current_user: models.User = Depends(oauth2.get_current_user)
 ):
     try:
-        holiday_query = db.query(models.HolidayCalendar).filter(models.HolidayCalendar.id == id)
-        holiday = holiday_query.first()
-
+        # Check if holiday exists
+        holiday = db.query(models.HolidayCalendar).get(id)
         if not holiday:
-            raise HTTPException(status_code=404, detail=f"Holiday with id {id} not found")
+            raise HTTPException(
+                status_code=404, 
+                detail=f"Holiday with id {id} not found"
+            )
 
-        holiday_query.delete(synchronize_session=False)
+        # Attempt deletion
+        db.delete(holiday)
         db.commit()
-
+        
         return {"message": "Holiday deleted successfully"}
 
+    except HTTPException:
+        # Re-raise HTTP exceptions (like the 404 we might raise)
+        raise
+        
+    except SQLAlchemyError as e:
+        db.rollback()
+        print(f"❌ Database error deleting holiday {id}: {str(e)}")
+        raise HTTPException(
+            status_code=500,
+            detail="Database error occurred while deleting holiday"
+        )
+        
     except Exception as e:
-        print(f"❌ ERROR deleting holiday {id}: {e}")
-        raise HTTPException(status_code=500, detail="Internal Server Error")
+        print(f"❌ Unexpected error deleting holiday {id}: {str(e)}")
+        raise HTTPException(
+            status_code=500,
+            detail="An unexpected error occurred"
+        )
