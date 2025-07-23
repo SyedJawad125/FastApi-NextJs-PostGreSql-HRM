@@ -17,3 +17,6 @@ class Department(Base):
     salary_structures = relationship("SalaryStructure", back_populates="department")
     salary_histories = relationship("SalaryHistory", back_populates="department")
     payslips = relationship("Payslip", back_populates="department")
+
+    holidays = relationship("HolidayCalendar", back_populates="department")
+
