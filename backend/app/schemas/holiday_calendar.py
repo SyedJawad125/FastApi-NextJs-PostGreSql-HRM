@@ -1,7 +1,6 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from typing import Optional, List
 from datetime import date
-
 
 # ---------------- Base Schema (Shared) ----------------
 class HolidayCalendarBase(BaseModel):
@@ -11,10 +10,9 @@ class HolidayCalendarBase(BaseModel):
     is_optional: Optional[bool] = False
     is_national: Optional[bool] = True
     department_id: Optional[int] = None
-    employee_ids: Optional[List[int]] = []  # For create/update only
+    employee_ids: Optional[List[int]] = []  # Only for creation or update
 
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 # ---------------- Create Schema ----------------
@@ -32,8 +30,15 @@ class HolidayCalendarUpdate(BaseModel):
     department_id: Optional[int] = None
     employee_ids: Optional[List[int]] = None
 
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)
+
+class EmployeeOut(BaseModel):
+    id: int
+    first_name: str
+    last_name: str
+    email: str
+
+    model_config = ConfigDict(from_attributes=True)
 
 
 # ---------------- Response Schema ----------------
@@ -49,7 +54,7 @@ class HolidayCalendarOut(BaseModel):
     updated_by_user_id: Optional[int]
     created_at: Optional[date]
     updated_at: Optional[date]
-    employees: Optional[List[int]] = []  # Returns list of employee IDs linked to the holiday
+    employees: Optional[List[EmployeeOut]] = []
 
-    class Config:
-        orm_mode = True
+
+    model_config = ConfigDict(from_attributes=True)

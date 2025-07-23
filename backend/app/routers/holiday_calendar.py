@@ -46,14 +46,15 @@ def create_holiday(
 ) -> Any:
     try:
         holiday_data = holiday.dict()
+        employee_ids = holiday_data.pop("employee_ids", [])  # Remove before creating model instance
         holiday_data["created_by_user_id"] = current_user.id
 
         # Create holiday record
         new_holiday = models.HolidayCalendar(**holiday_data)
 
         # Attach employees (many-to-many)
-        if holiday.employee_ids:
-            employees = db.query(models.Employee).filter(models.Employee.id.in_(holiday.employee_ids)).all()
+        if employee_ids:
+            employees = db.query(models.Employee).filter(models.Employee.id.in_(employee_ids)).all()
             new_holiday.employees = employees
 
         db.add(new_holiday)
@@ -64,6 +65,7 @@ def create_holiday(
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Create error: {str(e)}")
+
 
 
 # ---------------------- GET One Holiday ----------------------
@@ -122,13 +124,18 @@ def delete_holiday(
     db: Session = Depends(database.get_db),
     current_user: models.User = Depends(oauth2.get_current_user)
 ):
-    holiday_query = db.query(models.HolidayCalendar).filter(models.HolidayCalendar.id == id)
-    holiday = holiday_query.first()
+    try:
+        holiday_query = db.query(models.HolidayCalendar).filter(models.HolidayCalendar.id == id)
+        holiday = holiday_query.first()
 
-    if not holiday:
-        raise HTTPException(status_code=404, detail=f"Holiday with id {id} not found")
+        if not holiday:
+            raise HTTPException(status_code=404, detail=f"Holiday with id {id} not found")
 
-    holiday_query.delete(synchronize_session=False)
-    db.commit()
+        holiday_query.delete(synchronize_session=False)
+        db.commit()
 
-    return {"message": "Holiday deleted successfully"}
+        return {"message": "Holiday deleted successfully"}
+
+    except Exception as e:
+        print(f"❌ ERROR deleting holiday {id}: {e}")
+        raise HTTPException(status_code=500, detail="Internal Server Error")
