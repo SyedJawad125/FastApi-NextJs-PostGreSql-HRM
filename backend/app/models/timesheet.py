@@ -20,3 +20,7 @@ class Timesheet(Base):
     # Relationships
     attendance = relationship("Attendance", back_populates="timesheet")
     employee = relationship("Employee", back_populates="timesheets") 
+
+    # Add in Timesheet model
+    shift_id = Column(Integer, ForeignKey("shifts.id"))
+    shift = relationship("Shift", back_populates="timesheets")

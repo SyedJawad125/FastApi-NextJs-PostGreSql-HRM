@@ -39,3 +39,9 @@ class Employee(Base):
     profile = relationship("EmployeeProfile", back_populates="employee", uselist=False)
 
     documents = relationship("EmployeeDocument", back_populates="employee", cascade="all, delete-orphan")
+
+    # Add this in Employee class:
+    shift_id = Column(Integer, ForeignKey("shifts.id"))
+    shift = relationship("Shift", back_populates="employees")
+    
+    shift_assignments = relationship("ShiftAssignment", back_populates="employee", cascade="all, delete-orphan")

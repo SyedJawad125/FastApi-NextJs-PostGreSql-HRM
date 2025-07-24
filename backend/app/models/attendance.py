@@ -19,3 +19,6 @@ class Attendance(Base):
     employee = relationship("Employee", back_populates="attendances")
     timesheet = relationship("Timesheet", back_populates="attendance", uselist=False)
 
+    # Add in Attendance model
+    shift_id = Column(Integer, ForeignKey("shifts.id"))
+    shift = relationship("Shift", back_populates="attendances")
