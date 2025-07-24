@@ -16,11 +16,15 @@ from .image_category import ImageCategory
 from .image import Image
 from .employee_profile import EmployeeProfile 
 from .employee_documents import EmployeeDocument
-from .holiday_calendar import HolidayCalendar
+from .shift import Shift
+from .shift_assignments import ShiftAssignment
 
 
 
 
-__all__ = ["User", "Department", "Employee", "Role", "Permission", "Rank", "Attendance", "Timesheet", "Leave", "Notification", "EmployeeSalary",
-    "SalaryStructure", "Payslip", "SalaryHistory", "ImageCategory", "Image", "EmployeeProfile", "EmployeeDocument", "HolidayCalendar"]
+
+__all__ = ["User", "Department", "Employee", "Role", "Permission", "Rank", "Attendance", "Timesheet",
+ "Leave", "Notification", "EmployeeSalary","SalaryStructure", "Payslip", "SalaryHistory", 
+ "ImageCategory", "Image", "EmployeeProfile", "EmployeeDocument", "HolidayCalendar",
+  "Shift", "ShiftAssignment"]
 

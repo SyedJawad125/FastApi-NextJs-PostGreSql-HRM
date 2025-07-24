@@ -157,7 +157,19 @@ from .holiday_calendar import (
     HolidayCalendarCreate,
     HolidayCalendarUpdate,
     HolidayCalendarOut
-)   
+)  
+from .shift import (
+    ShiftBase,
+    ShiftCreate,
+    ShiftUpdate,
+    ShiftOut
+)
+from .shift_assignments import (
+    ShiftAssignmentBase,
+    ShiftAssignmentCreate,
+    ShiftAssignmentUpdate,
+    ShiftAssignmentOut
+)
 
 
 # define what will be exported on `from schemas import *`
@@ -184,6 +196,8 @@ __all__ = [
     'ImageBase', 'ImageCreate', 'ImageUpdate', 'ImageOut',
     'EmployeeProfileBase', 'EmployeeProfileCreate', 'EmployeeProfileUpdate', 'EmployeeProfileOut', 'PaginatedEmployeeProfiles', 'EmployeeProfileListResponse',
     'DocumentType', 'EmployeeDocumentBase', 'EmployeeDocumentCreate', 'EmployeeDocumentUpdate', 'EmployeeDocumentOut',
-    'HolidayCalendarBase', 'HolidayCalendarCreate', 'HolidayCalendarUpdate', 'HolidayCalendarOut', 'PaginatedHolidayCalendars', 'HolidayCalendarListResponse'
+    'HolidayCalendarBase', 'HolidayCalendarCreate', 'HolidayCalendarUpdate', 'HolidayCalendarOut', 'PaginatedHolidayCalendars', 'HolidayCalendarListResponse',
+    'ShiftBase', 'ShiftCreate', 'ShiftUpdate', 'ShiftOut',
+    'ShiftAssignmentBase', 'ShiftAssignmentCreate', 'ShiftAssignmentUpdate', 'ShiftAssignmentOut'
 ]
 

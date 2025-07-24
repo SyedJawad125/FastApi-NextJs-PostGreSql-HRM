@@ -502,6 +502,27 @@ def filter_images_all(query_params: dict[str, Any], query: Query) -> Query:
 
     return query
 
+
+def filter_shifts(query_params, query):
+    if "name" in query_params:
+        query = query.filter(models.Shift.name.ilike(f"%{query_params['name']}%"))
+    if "start_time" in query_params:
+        query = query.filter(models.Shift.start_time == query_params["start_time"])
+    if "end_time" in query_params:
+        query = query.filter(models.Shift.end_time == query_params["end_time"])
+    return query
+
+
+def filter_shift_assignments(query_params, query):
+    if "employee_id" in query_params:
+        query = query.filter(models.ShiftAssignment.employee_id == int(query_params["employee_id"]))
+    if "shift_id" in query_params:
+        query = query.filter(models.ShiftAssignment.shift_id == int(query_params["shift_id"]))
+    if "date" in query_params:
+        query = query.filter(models.ShiftAssignment.date == query_params["date"])
+    return query
+
+
 def filter_permissions(params, query):
     name = params.get("name")
     if name:

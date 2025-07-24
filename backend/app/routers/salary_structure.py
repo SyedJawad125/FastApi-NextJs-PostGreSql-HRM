@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, status, Request, HTTPException
 from sqlalchemy.orm import Session
 from typing import Any
 from .. import database, schemas, models, oauth2
-from app.utils import paginate_data
+from app.utils import filter_salary_structures, paginate_data
 
 router = APIRouter(
     prefix="/salary-structures",
