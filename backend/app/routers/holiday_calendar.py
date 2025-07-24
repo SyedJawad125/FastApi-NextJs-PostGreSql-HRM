@@ -90,24 +90,31 @@ def update_holiday(
     current_user: models.User = Depends(oauth2.get_current_user),
 ):
     try:
+        # Step 1: Fetch holiday
         holiday = db.query(models.HolidayCalendar).filter(models.HolidayCalendar.id == id).first()
         if not holiday:
             raise HTTPException(status_code=404, detail=f"Holiday with id {id} not found")
 
+        # Step 2: Extract fields that were actually sent
         update_fields = updated_data.dict(exclude_unset=True)
 
-        # Handle employee reassignment if provided
+        # Step 3: Handle employee_ids if present
         if "employee_ids" in update_fields:
-            employee_ids = update_fields.pop("employee_ids")
-            if employee_ids is not None:
-                employees = db.query(models.Employee).filter(models.Employee.id.in_(employee_ids)).all()
-                holiday.employees = employees
+            employee_ids = update_fields.pop("employee_ids")  # Could be [] or List[int]
+            employees = (
+                db.query(models.Employee).filter(models.Employee.id.in_(employee_ids)).all()
+                if employee_ids else []
+            )
+            holiday.employees = employees  # Assign or clear employees
 
+        # Step 4: Update remaining fields
         for key, value in update_fields.items():
             setattr(holiday, key, value)
 
+        # Step 5: Track the user who updated it
         holiday.updated_by_user_id = current_user.id
 
+        # Step 6: Save changes
         db.commit()
         db.refresh(holiday)
 
@@ -115,6 +122,7 @@ def update_holiday(
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Update error: {str(e)}")
+
 
 
 # ---------------------- DELETE Holiday ----------------------
