@@ -48,6 +48,7 @@ from app.database import Base
 from datetime import datetime
 from app.models.permission import Permission, user_permission
 from app.models.shift_assignments import ShiftAssignment
+from app.models.shift import Shift  # ✅ Needed to reference foreign_keys on Shift
 
 class User(Base):
     __tablename__ = "users"
@@ -61,14 +62,12 @@ class User(Base):
     created_at = Column(TIMESTAMP(timezone=True), nullable=False, default=datetime.utcnow)
 
     role_id = Column(Integer, ForeignKey("roles.id"))
-
     role = relationship("Role", back_populates="users", foreign_keys=[role_id])
 
     created_roles = relationship("Role", back_populates="creator", foreign_keys="Role.created_by_user_id")
     created_departments = relationship("Department", back_populates="creator")
     created_permissions = relationship("Permission", back_populates="creator")
     created_ranks = relationship("Rank", back_populates="creator")
-
     notifications = relationship("Notification", back_populates="user", foreign_keys="Notification.user_id")
     permissions = relationship("Permission", secondary=user_permission, back_populates="users")
 
@@ -79,16 +78,27 @@ class User(Base):
     created_payslips = relationship("Payslip", back_populates="creator", foreign_keys="Payslip.created_by_user_id")
     approved_payslips = relationship("Payslip", back_populates="approver", foreign_keys="Payslip.approved_by_user_id")
 
-    created_shifts = relationship("Shift", back_populates="creator")
+    # ✅ Explicit relationships to Shift using foreign keys
+    created_shifts = relationship(
+        "Shift",
+        foreign_keys=[Shift.created_by_user_id],
+        back_populates="creator"
+    )
 
-    # ✅ Explicit foreign keys for shift assignments
+    updated_shifts = relationship(
+        "Shift",
+        foreign_keys=[Shift.updated_by_user_id],
+        back_populates="updater"
+    )
+
+    # ✅ ShiftAssignment relationships (already correct)
     created_shift_assignments = relationship(
         "ShiftAssignment",
-        foreign_keys="[ShiftAssignment.created_by_user_id]",
+        foreign_keys=[ShiftAssignment.created_by_user_id],
         back_populates="creator"
     )
 
     updated_shift_assignments = relationship(
         "ShiftAssignment",
-        foreign_keys="[ShiftAssignment.updated_by_user_id]"
+        foreign_keys=[ShiftAssignment.updated_by_user_id]
     )

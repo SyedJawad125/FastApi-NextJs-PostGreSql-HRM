@@ -14,10 +14,18 @@ class Shift(Base):
     grace_period_minutes = Column(Integer, default=0)
 
     created_by_user_id = Column(Integer, ForeignKey("users.id"))
-    creator = relationship("User", back_populates="created_shifts")
+    creator = relationship(
+        "User",
+        foreign_keys=[created_by_user_id],
+        back_populates="created_shifts"
+    )
 
     updated_by_user_id = Column(Integer, ForeignKey("users.id"))
-    updater = relationship("User", foreign_keys=[updated_by_user_id])
+    updater = relationship(
+        "User",
+        foreign_keys=[updated_by_user_id],
+        back_populates="updated_shifts"
+    )
 
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
