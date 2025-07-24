@@ -162,13 +162,17 @@ from .shift import (
     ShiftBase,
     ShiftCreate,
     ShiftUpdate,
-    ShiftOut
+    ShiftOut,
+    PaginatedShifts,
+    ShiftListResponse
 )
 from .shift_assignments import (
     ShiftAssignmentBase,
     ShiftAssignmentCreate,
     ShiftAssignmentUpdate,
-    ShiftAssignmentOut
+    ShiftAssignmentOut, 
+    PaginatedShiftAssignments,
+    ShiftAssignmentListResponse
 )
 
 
@@ -197,7 +201,7 @@ __all__ = [
     'EmployeeProfileBase', 'EmployeeProfileCreate', 'EmployeeProfileUpdate', 'EmployeeProfileOut', 'PaginatedEmployeeProfiles', 'EmployeeProfileListResponse',
     'DocumentType', 'EmployeeDocumentBase', 'EmployeeDocumentCreate', 'EmployeeDocumentUpdate', 'EmployeeDocumentOut',
     'HolidayCalendarBase', 'HolidayCalendarCreate', 'HolidayCalendarUpdate', 'HolidayCalendarOut', 'PaginatedHolidayCalendars', 'HolidayCalendarListResponse',
-    'ShiftBase', 'ShiftCreate', 'ShiftUpdate', 'ShiftOut',
-    'ShiftAssignmentBase', 'ShiftAssignmentCreate', 'ShiftAssignmentUpdate', 'ShiftAssignmentOut'
+    'ShiftBase', 'ShiftCreate', 'ShiftUpdate', 'ShiftOut', 'PaginatedShifts', 'ShiftListResponse',
+    'ShiftAssignmentBase', 'ShiftAssignmentCreate', 'ShiftAssignmentUpdate', 'ShiftAssignmentOut','PaginatedShiftAssignments' , 'ShiftAssignmentListResponse',
 ]
 

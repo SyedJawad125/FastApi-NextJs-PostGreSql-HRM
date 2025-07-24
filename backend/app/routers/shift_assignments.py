@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, status, Request, HTTPException
 from sqlalchemy.orm import Session
-from typing import Any
+from typing import Any, List
 from .. import database, schemas, models, oauth2
 from app.utils import filter_shift_assignments, paginate_data
 from fastapi.responses import JSONResponse
@@ -10,7 +10,7 @@ router = APIRouter(
     tags=["Shift Assignments"]
 )
 
-@router.get("/shift-assignments", response_model=schemas.ShiftAssignmentListResponse)
+@router.get("/", response_model=schemas.ShiftAssignmentListResponse)
 def get_shift_assignments(
     request: Request,
     db: Session = Depends(database.get_db),
@@ -22,22 +22,17 @@ def get_shift_assignments(
         data = query.all()
         paginated_data, count = paginate_data(data, request)
 
-        serialized_data = [schemas.ShiftAssignment.from_orm(sa) for sa in paginated_data]
+        serialized_data = [schemas.ShiftAssignmentOut.from_orm(sa) for sa in paginated_data]
 
-        response_data = {
-            "count": count,
-            "data": serialized_data
-        }
-
-        return {
-            "status": "SUCCESSFUL",
-            "result": response_data
-        }
+        return schemas.ShiftAssignmentListResponse(
+            count=count,
+            data=serialized_data
+        )
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-@router.post("/", status_code=status.HTTP_201_CREATED, response_model=schemas.ShiftAssignment)
+@router.post("/", status_code=status.HTTP_201_CREATED, response_model=schemas.ShiftAssignmentOut)
 def create_shift_assignment(
     shift_assignment: schemas.ShiftAssignmentCreate,
     db: Session = Depends(database.get_db),
@@ -50,11 +45,11 @@ def create_shift_assignment(
         db.add(new_item)
         db.commit()
         db.refresh(new_item)
-        return new_item
+        return schemas.ShiftAssignmentOut.from_orm(new_item)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-@router.get("/{id}", response_model=schemas.ShiftAssignment)
+@router.get("/{id}", response_model=schemas.ShiftAssignmentOut)
 def get_shift_assignment(
     id: int,
     db: Session = Depends(database.get_db),
@@ -63,9 +58,9 @@ def get_shift_assignment(
     item = db.query(models.ShiftAssignment).filter(models.ShiftAssignment.id == id).first()
     if not item:
         raise HTTPException(status_code=404, detail=f"ShiftAssignment with id {id} not found")
-    return item
+    return schemas.ShiftAssignmentOut.from_orm(item)
 
-@router.patch("/{id}", response_model=schemas.ShiftAssignment)
+@router.patch("/{id}", response_model=schemas.ShiftAssignmentOut)
 def update_shift_assignment(
     id: int,
     shift_assignment_update: schemas.ShiftAssignmentUpdate,
@@ -84,7 +79,7 @@ def update_shift_assignment(
 
     db.commit()
     db.refresh(item)
-    return item
+    return schemas.ShiftAssignmentOut.from_orm(item)
 
 @router.delete("/{id}", status_code=status.HTTP_200_OK)
 def delete_shift_assignment(

@@ -28,6 +28,10 @@ from app.models.image import Image
 from app.models.employee_profile import EmployeeProfile
 from app.models.employee_documents import EmployeeDocument
 from app.models.holiday_calendar import HolidayCalendar
+from app.models.shift import Shift
+from app.models.shift_assignments import ShiftAssignment
+
+
 
 # Import routers
 from app.routers import (
@@ -39,7 +43,7 @@ from app.routers import (
     image, 
     employee_profile,
     employee_documents,
-    holiday_calendar
+    holiday_calendar, shift , shift_assignments
 )
 
 app = FastAPI(
@@ -124,6 +128,9 @@ app.include_router(image.router)
 app.include_router(employee_profile.router)
 app.include_router(employee_documents.router)
 app.include_router(holiday_calendar.router)
+app.include_router(shift.router)
+app.include_router(shift_assignments.router)
+
 
 
 

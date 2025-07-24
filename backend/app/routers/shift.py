@@ -3,14 +3,14 @@ from sqlalchemy.orm import Session
 from typing import Any
 from .. import database, schemas, models, oauth2
 from app.utils import filter_shifts, paginate_data
-from fastapi.responses import JSONResponse
 
 router = APIRouter(
     prefix="/shifts",
     tags=["Shifts"]
 )
 
-@router.get("/shifts", response_model=schemas.ShiftListResponse)
+
+@router.get("/", response_model=schemas.ShiftListResponse)
 def get_shifts(
     request: Request,
     db: Session = Depends(database.get_db),
@@ -22,32 +22,33 @@ def get_shifts(
         data = query.all()
         paginated_data, count = paginate_data(data, request)
 
-        serialized_data = [schemas.Shift.from_orm(shift) for shift in paginated_data]
-
-        response_data = {
-            "count": count,
-            "data": serialized_data
-        }
+        serialized_data = [schemas.ShiftOut.from_orm(shift) for shift in paginated_data]
 
         return {
-            "status": "SUCCESSFUL",
-            "result": response_data
+            "count": count,
+            "data": serialized_data
         }
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.post("/", status_code=status.HTTP_201_CREATED, response_model=schemas.Shift)
+@router.post("/", status_code=status.HTTP_201_CREATED, response_model=schemas.ShiftOut)
 def create_shift(
     shift: schemas.ShiftCreate,
     db: Session = Depends(database.get_db),
     current_user: models.User = Depends(oauth2.get_current_user)
 ) -> Any:
     try:
+        # Create a dictionary from the input data
         shift_data = shift.dict()
-        shift_data["created_by_user_id"] = current_user.id
-        new_shift = models.Shift(**shift_data)
+        
+        # Create the database model instance with all data at once
+        new_shift = models.Shift(
+            **shift_data,
+            created_by_user_id=current_user.id
+        )
+        
         db.add(new_shift)
         db.commit()
         db.refresh(new_shift)
@@ -55,7 +56,8 @@ def create_shift(
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-@router.get("/{id}", response_model=schemas.Shift)
+
+@router.get("/{id}", response_model=schemas.ShiftOut)
 def get_shift(
     id: int,
     db: Session = Depends(database.get_db),
@@ -66,7 +68,8 @@ def get_shift(
         raise HTTPException(status_code=404, detail=f"Shift with id {id} not found")
     return shift
 
-@router.patch("/{id}", response_model=schemas.Shift)
+
+@router.patch("/{id}", response_model=schemas.ShiftOut)
 def update_shift(
     id: int,
     shift_update: schemas.ShiftUpdate,
@@ -86,6 +89,7 @@ def update_shift(
     db.commit()
     db.refresh(shift)
     return shift
+
 
 @router.delete("/{id}", status_code=status.HTTP_200_OK)
 def delete_shift(

@@ -1,22 +1,22 @@
-from ast import List
+from typing import List, Optional
 from pydantic import BaseModel
-from typing import Optional
 from datetime import date, datetime
 
-from app.models.shift_assignments import ShiftAssignment
 
-
+# ✅ Base schema used in create/update
 class ShiftAssignmentBase(BaseModel):
     employee_id: int
     shift_id: int
     date: date
 
 
+# ✅ Create input schema
 class ShiftAssignmentCreate(ShiftAssignmentBase):
     class Config:
         extra = "forbid"
 
 
+# ✅ Update input schema
 class ShiftAssignmentUpdate(BaseModel):
     employee_id: Optional[int] = None
     shift_id: Optional[int] = None
@@ -26,7 +26,7 @@ class ShiftAssignmentUpdate(BaseModel):
         extra = "forbid"
 
 
-# ✅ Outgoing response model
+# ✅ Outgoing response schema (used in lists, single response)
 class ShiftAssignmentOut(ShiftAssignmentBase):
     id: int
     created_by_user_id: Optional[int]
@@ -34,13 +34,26 @@ class ShiftAssignmentOut(ShiftAssignmentBase):
     created_at: Optional[datetime]
     updated_at: Optional[datetime]
 
-    class Config:
-        from_attributes = True
+    model_config = {
+        "from_attributes": True
+    }
 
+
+# ✅ Paginated response schema
 class PaginatedShiftAssignments(BaseModel):
     count: int
-    data: List[ShiftAssignment]
+    data: List[ShiftAssignmentOut]
 
+    model_config = {
+        "from_attributes": True
+    }
+
+
+# ✅ Basic list response schema
 class ShiftAssignmentListResponse(BaseModel):
     count: int
-    data: List[ShiftAssignment]
+    data: List[ShiftAssignmentOut]
+
+    model_config = {
+        "from_attributes": True
+    }

@@ -49,6 +49,7 @@ from sqlalchemy.orm import relationship
 from app.database import Base
 from datetime import datetime
 from app.models.permission import Permission, user_permission
+from app.models.shift_assignments import ShiftAssignment
 
 class User(Base):
     __tablename__ = "users"
@@ -80,3 +81,8 @@ class User(Base):
 
     created_payslips = relationship("Payslip", back_populates="creator", foreign_keys="Payslip.created_by_user_id")
     approved_payslips = relationship("Payslip", back_populates="approver", foreign_keys="Payslip.approved_by_user_id")
+
+    created_shifts = relationship("Shift", back_populates="creator")
+    created_shift_assignments = relationship("ShiftAssignment", back_populates="creator")
+    updated_shift_assignments = relationship("ShiftAssignment", foreign_keys=[ShiftAssignment.updated_by_user_id])
+
