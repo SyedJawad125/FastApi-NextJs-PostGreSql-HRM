@@ -44,7 +44,7 @@ def create_shift_assignment(
         new_item = models.ShiftAssignment(
             **data,
             created_by_user_id=current_user.id,
-            updated_by_user_id=current_user.id  # Optional initial update
+            updated_by_user_id=None  # Set to NULL on creation
         )
         db.add(new_item)
         db.commit()
@@ -73,19 +73,26 @@ def update_shift_assignment(
     db: Session = Depends(database.get_db),
     current_user: models.User = Depends(oauth2.get_current_user)
 ):
-    item = db.query(models.ShiftAssignment).filter(models.ShiftAssignment.id == id).first()
-    if not item:
+    # Retrieve the existing shift assignment by ID
+    assignment = db.query(models.ShiftAssignment).filter(models.ShiftAssignment.id == id).first()
+
+    # Return 404 if not found
+    if not assignment:
         raise HTTPException(status_code=404, detail=f"ShiftAssignment with id {id} not found")
 
+    # Extract only the provided fields
     update_data = shift_assignment_update.dict(exclude_unset=True)
+
+    # Add the updater's user ID
     update_data["updated_by_user_id"] = current_user.id
 
+    # Apply updates
     for key, value in update_data.items():
-        setattr(item, key, value)
+        setattr(assignment, key, value)
 
     db.commit()
-    db.refresh(item)
-    return item
+    db.refresh(assignment)
+    return assignment
 
 
 @router.delete("/{id}", status_code=status.HTTP_200_OK)

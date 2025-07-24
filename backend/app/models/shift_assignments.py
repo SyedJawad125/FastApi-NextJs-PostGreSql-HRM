@@ -18,7 +18,7 @@ class ShiftAssignment(Base):
     updater = relationship("User", foreign_keys=[updated_by_user_id])
 
     created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    updated_at = Column(DateTime, nullable=True, onupdate=datetime.utcnow)
 
     __table_args__ = (
         UniqueConstraint('employee_id', 'date', name='uq_employee_shift_date'),

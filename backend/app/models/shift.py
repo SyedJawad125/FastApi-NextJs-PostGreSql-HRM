@@ -28,7 +28,8 @@ class Shift(Base):
     )
 
     created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    updated_at = Column(DateTime, nullable=True, onupdate=datetime.utcnow)
+
 
     employees = relationship("Employee", back_populates="shift")
     attendances = relationship("Attendance", back_populates="shift")
