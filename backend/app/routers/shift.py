@@ -44,7 +44,7 @@ def create_shift(
         new_shift = models.Shift(
             **shift_data,
             created_by_user_id=current_user.id,
-            updated_by_user_id=current_user.id  # optional, for initial consistency
+            updated_by_user_id=None  # Set to NULL on creation
         )
         db.add(new_shift)
         db.commit()
@@ -52,6 +52,7 @@ def create_shift(
         return new_shift
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
 
 
 @router.get("/{id}", response_model=schemas.ShiftOut)
@@ -74,18 +75,24 @@ def update_shift(
     current_user: models.User = Depends(oauth2.get_current_user)
 ):
     shift = db.query(models.Shift).filter(models.Shift.id == id).first()
+
     if not shift:
         raise HTTPException(status_code=404, detail=f"Shift with id {id} not found")
 
+    # Extract updated fields
     update_data = shift_update.dict(exclude_unset=True)
+
+    # Set the updated_by_user_id field to the current user's ID
     update_data["updated_by_user_id"] = current_user.id
 
+    # Apply updates to the shift instance
     for key, value in update_data.items():
         setattr(shift, key, value)
 
     db.commit()
     db.refresh(shift)
     return shift
+
 
 
 @router.delete("/{id}", status_code=status.HTTP_200_OK)
