@@ -2,36 +2,35 @@ from pydantic import BaseModel
 from typing import Optional, List
 from datetime import time, datetime
 
-# ✅ Shared fields
+
+# ✅ Shared base
 class ShiftBase(BaseModel):
     name: str
     start_time: time
     end_time: time
     break_minutes: Optional[int] = 0
-    grace_period_minutes: Optional[int] = 0  # ✅ Newly added
-    
+    grace_period_minutes: Optional[int] = 0
 
 
-# ✅ For creating a new shift
+# ✅ Create schema (no created_by_user_id)
 class ShiftCreate(ShiftBase):
     class Config:
         extra = "forbid"
 
 
-# ✅ For updating an existing shift
+# ✅ Update schema (no updated_by_user_id)
 class ShiftUpdate(BaseModel):
     name: Optional[str] = None
     start_time: Optional[time] = None
     end_time: Optional[time] = None
     break_minutes: Optional[int] = None
-    grace_period_minutes: Optional[int] = None  # ✅ Newly added
-    
+    grace_period_minutes: Optional[int] = None
 
     class Config:
         extra = "forbid"
 
 
-# ✅ Outgoing single shift response
+# ✅ Response schema (includes created_by, updated_by, timestamps)
 class ShiftOut(ShiftBase):
     id: int
     created_by_user_id: Optional[int]
@@ -40,11 +39,11 @@ class ShiftOut(ShiftBase):
     updated_at: Optional[datetime]
 
     model_config = {
-        "from_attributes": True  # For Pydantic v2 compatibility with ORM
+        "from_attributes": True
     }
 
 
-# ✅ Paginated list of shifts
+# ✅ For paginated responses
 class PaginatedShifts(BaseModel):
     count: int
     data: List[ShiftOut]
@@ -54,7 +53,7 @@ class PaginatedShifts(BaseModel):
     }
 
 
-# ✅ Simple list of shifts
+# ✅ Simple list response
 class ShiftListResponse(BaseModel):
     count: int
     data: List[ShiftOut]

@@ -40,15 +40,12 @@ def create_shift(
     current_user: models.User = Depends(oauth2.get_current_user)
 ) -> Any:
     try:
-        # Create a dictionary from the input data
         shift_data = shift.dict()
-        
-        # Create the database model instance with all data at once
         new_shift = models.Shift(
             **shift_data,
-            created_by_user_id=current_user.id
+            created_by_user_id=current_user.id,
+            updated_by_user_id=current_user.id  # optional, for initial consistency
         )
-        
         db.add(new_shift)
         db.commit()
         db.refresh(new_shift)
