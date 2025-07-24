@@ -12,7 +12,7 @@ class ShiftAssignment(Base):
     date = Column(Date, nullable=False)
 
     created_by_user_id = Column(Integer, ForeignKey("users.id"))
-    creator = relationship("User", back_populates="created_shift_assignments")
+    creator = relationship("User", foreign_keys=[created_by_user_id], back_populates="created_shift_assignments")
 
     updated_by_user_id = Column(Integer, ForeignKey("users.id"))
     updater = relationship("User", foreign_keys=[updated_by_user_id])
