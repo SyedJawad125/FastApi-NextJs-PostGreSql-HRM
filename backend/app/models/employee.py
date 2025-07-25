@@ -46,3 +46,7 @@ class Employee(Base):
     
     shift_assignments = relationship("ShiftAssignment", back_populates="employee", cascade="all, delete-orphan")
     created_recruitments = relationship("Recruitment", back_populates="created_by_employee")
+
+    performance_reviews = relationship("PerformanceReview", back_populates="employee", cascade="all, delete-orphan")
+
+    
