@@ -523,6 +523,25 @@ def filter_shift_assignments(query_params, query):
     return query
 
 
+def filter_candidates(params, query):
+    if "name" in params:
+        query = query.filter(models.Candidate.name.ilike(f"%{params['name']}%"))
+    if "email" in params:
+        query = query.filter(models.Candidate.email.ilike(f"%{params['email']}%"))
+    if "recruitment_id" in params:
+        query = query.filter(models.Candidate.recruitment_id == int(params["recruitment_id"]))
+    return query
+
+def filter_recruitments(params, query):
+    if "job_title" in params:
+        query = query.filter(models.Recruitment.job_title.ilike(f"%{params['job_title']}%"))
+    if "department_id" in params:
+        query = query.filter(models.Recruitment.department_id == int(params["department_id"]))
+    if "posted_date" in params:
+        query = query.filter(models.Recruitment.posted_date == params["posted_date"])
+    return query
+
+
 def filter_permissions(params, query):
     name = params.get("name")
     if name:

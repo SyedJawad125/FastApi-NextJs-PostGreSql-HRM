@@ -102,3 +102,8 @@ class User(Base):
         "ShiftAssignment",
         foreign_keys=[ShiftAssignment.updated_by_user_id]
     )
+    created_recruitments = relationship("Recruitment", foreign_keys='Recruitment.created_by_user_id', back_populates="creator")
+    updated_recruitments = relationship("Recruitment", foreign_keys='Recruitment.updated_by_user_id', back_populates="updater")
+
+    created_candidates = relationship("Candidate", foreign_keys='Candidate.created_by_user_id', back_populates="creator")
+    updated_candidates = relationship("Candidate", foreign_keys='Candidate.updated_by_user_id', back_populates="updater")

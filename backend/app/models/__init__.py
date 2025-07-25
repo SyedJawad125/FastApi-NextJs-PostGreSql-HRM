@@ -18,6 +18,8 @@ from .employee_profile import EmployeeProfile
 from .employee_documents import EmployeeDocument
 from .shift import Shift
 from .shift_assignments import ShiftAssignment
+from .candidate import Candidate
+from .recruitment import Recruitment
 
 
 
@@ -26,5 +28,5 @@ from .shift_assignments import ShiftAssignment
 __all__ = ["User", "Department", "Employee", "Role", "Permission", "Rank", "Attendance", "Timesheet",
  "Leave", "Notification", "EmployeeSalary","SalaryStructure", "Payslip", "SalaryHistory", 
  "ImageCategory", "Image", "EmployeeProfile", "EmployeeDocument", "HolidayCalendar",
-  "Shift", "ShiftAssignment"]
+  "Shift", "ShiftAssignment", "Candidate", "Recruitment"]
 

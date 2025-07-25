@@ -45,3 +45,4 @@ class Employee(Base):
     shift = relationship("Shift", back_populates="employees")
     
     shift_assignments = relationship("ShiftAssignment", back_populates="employee", cascade="all, delete-orphan")
+    created_recruitments = relationship("Recruitment", back_populates="created_by_employee")
