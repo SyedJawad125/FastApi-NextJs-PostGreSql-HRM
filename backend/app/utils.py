@@ -13,6 +13,8 @@ from sqlalchemy import or_
 from typing import Mapping
 from app.models import PerformanceReview
 
+from fastapi import Query as FastAPIQuery
+from starlette.datastructures import QueryParams
  # ✅ Keep this if enums are in the same schemas file
 
 
@@ -576,6 +578,35 @@ def filter_performance_reviews(query_params: Mapping[str, str], query: SAQuery) 
 
     return query
 
+
+
+
+def filter_trainings(query_params: QueryParams, query: Query) -> Query:
+    if "employee_id" in query_params:
+        query = query.filter_by(employee_id=query_params.get("employee_id"))
+
+    if "trainer_id" in query_params:
+        query = query.filter_by(trainer_id=query_params.get("trainer_id"))
+
+    if "department_id" in query_params:
+        query = query.filter_by(department_id=query_params.get("department_id"))
+
+    if "training_date" in query_params:
+        query = query.filter_by(training_date=query_params.get("training_date"))
+
+    if "from_date" in query_params:
+        query = query.filter(models.Training.training_date >= query_params.get("from_date"))
+
+    if "to_date" in query_params:
+        query = query.filter(models.Training.training_date <= query_params.get("to_date"))
+
+    if "training_title" in query_params:
+        query = query.filter(models.Training.training_title.ilike(f"%{query_params.get('training_title')}%"))
+
+    if "description" in query_params:
+        query = query.filter(models.Training.description.ilike(f"%{query_params.get('description')}%"))
+
+    return query
 
 
 def filter_permissions(params, query):
