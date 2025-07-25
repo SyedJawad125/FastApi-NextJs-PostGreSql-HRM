@@ -190,6 +190,14 @@ from .recruitment import (
     PaginatedRecruitments,
     RecruitmentListResponse
 )
+from .performance_review import (
+    PerformanceReviewBase,
+    PerformanceReviewCreate,
+    PerformanceReviewUpdate,
+    PerformanceReviewOut,
+    PaginatedPerformanceReviews,
+    PerformanceReviewListResponse   
+)
 # define what will be exported on `from schemas import *`
 __all__ = [
     'UserBase', 'UserCreate', 'LoginRequest', 'UserUpdate', 'UserOut',
@@ -219,5 +227,6 @@ __all__ = [
     'ShiftAssignmentBase', 'ShiftAssignmentCreate', 'ShiftAssignmentUpdate', 'ShiftAssignmentOut','PaginatedShiftAssignments' , 'ShiftAssignmentListResponse',
     'CandidateBase', 'CandidateCreate', 'CandidateUpdate', 'CandidateOut', 'PaginatedCandidates', 'CandidateListResponse',
     'RecruitmentBase', 'RecruitmentCreate', 'RecruitmentUpdate', 'RecruitmentOut', 'PaginatedRecruitments', 'RecruitmentListResponse',
-]
+    'PerformanceReviewBase', 'PerformanceReviewCreate', 'PerformanceReviewUpdate', 'PerformanceReviewOut', 'PaginatedPerformanceReviews', 'PerformanceReviewListResponse',
+    ]
 

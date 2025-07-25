@@ -7,6 +7,12 @@ from app import models, schemas
 from fastapi.responses import JSONResponse
 from fastapi.exceptions import RequestValidationError
 
+from fastapi import Query
+from sqlalchemy.orm import Query as SAQuery
+from sqlalchemy import or_
+from typing import Mapping
+from app.models import PerformanceReview
+
  # ✅ Keep this if enums are in the same schemas file
 
 
@@ -541,6 +547,35 @@ def filter_recruitments(params, query):
     if "posted_date" in params:
         query = query.filter(models.Recruitment.posted_date == params["posted_date"])
     return query
+
+
+def filter_performance_reviews(query_params: Mapping[str, str], query: SAQuery) -> SAQuery:
+    if "employee_id" in query_params:
+        query = query.filter(PerformanceReview.employee_id == int(query_params["employee_id"]))
+
+    if "reviewer_id" in query_params:
+        query = query.filter(PerformanceReview.reviewer_id == int(query_params["reviewer_id"]))
+
+    if "rating" in query_params:
+        query = query.filter(PerformanceReview.rating == int(query_params["rating"]))
+
+    if "min_rating" in query_params:
+        query = query.filter(PerformanceReview.rating >= int(query_params["min_rating"]))
+
+    if "max_rating" in query_params:
+        query = query.filter(PerformanceReview.rating <= int(query_params["max_rating"]))
+
+    if "start_date" in query_params:
+        query = query.filter(PerformanceReview.review_date >= query_params["start_date"])
+
+    if "end_date" in query_params:
+        query = query.filter(PerformanceReview.review_date <= query_params["end_date"])
+
+    if "comment_contains" in query_params:
+        query = query.filter(PerformanceReview.comments.ilike(f"%{query_params['comment_contains']}%"))
+
+    return query
+
 
 
 def filter_permissions(params, query):

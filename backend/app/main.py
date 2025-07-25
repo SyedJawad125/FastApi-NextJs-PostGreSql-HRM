@@ -5,6 +5,7 @@ from fastapi.responses import JSONResponse
 # Enable SQLAlchemy logging
 import logging
 
+from app.models import performance_review
 from app.utils import get_first_error_message
 logging.basicConfig()
 logging.getLogger('sqlalchemy.engine').setLevel(logging.INFO)
@@ -35,6 +36,8 @@ from app.models.shift import Shift
 from app.models.shift_assignments import ShiftAssignment
 from app.models.candidate import Candidate
 from app.models.recruitment import Recruitment
+from app.models.performance_review import PerformanceReview
+
 # Import routers
 from app.routers import (
     employee, department, auth, user, 
@@ -46,7 +49,7 @@ from app.routers import (
     employee_profile,
     employee_documents,
     holiday_calendar, shift , shift_assignments, 
-    candidate, recruitment
+    candidate, recruitment, performance_review
 )
 
 app = FastAPI(
@@ -144,6 +147,7 @@ app.include_router(shift.router)
 app.include_router(shift_assignments.router)
 app.include_router(candidate.router)
 app.include_router(recruitment.router)
+app.include_router(performance_review.router)
 
 
 

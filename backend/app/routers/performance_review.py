@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from typing import Any
 
 from app import database, schemas, models, oauth2
-from app.utils import paginate_data
+from app.utils import paginate_data, filter_performance_reviews
 from fastapi.responses import JSONResponse
 
 router = APIRouter(
@@ -20,6 +20,7 @@ def get_performance_reviews(
 ):
     try:
         query = db.query(models.PerformanceReview)
+        query = filter_performance_reviews(request.query_params, query)
 
         all_data = query.all()
         paginated_data, count = paginate_data(all_data, request)
@@ -49,6 +50,7 @@ def create_performance_review(
     try:
         review_data = review.dict()
         review_data["created_by_user_id"] = current_user.id
+        review_data["reviewer_id"] = current_user.id  # <-- Set reviewer_id explicitly
         review_data["updated_by_user_id"] = None
 
         new_review = models.PerformanceReview(**review_data)
@@ -57,10 +59,8 @@ def create_performance_review(
         db.refresh(new_review)
 
         return new_review
-
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-
 
 @router.get("/{id}", response_model=schemas.PerformanceReviewOut)
 def get_performance_review(
