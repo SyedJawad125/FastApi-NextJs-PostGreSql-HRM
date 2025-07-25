@@ -1,8 +1,11 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
-
+from fastapi.exceptions import RequestValidationError
+from fastapi.responses import JSONResponse
 # Enable SQLAlchemy logging
 import logging
+
+from app.utils import get_first_error_message
 logging.basicConfig()
 logging.getLogger('sqlalchemy.engine').setLevel(logging.INFO)
 
@@ -32,9 +35,6 @@ from app.models.shift import Shift
 from app.models.shift_assignments import ShiftAssignment
 from app.models.candidate import Candidate
 from app.models.recruitment import Recruitment
-
-
-
 # Import routers
 from app.routers import (
     employee, department, auth, user, 
@@ -84,6 +84,15 @@ app = FastAPI(
         }
     ]
 )
+
+@app.exception_handler(RequestValidationError)
+async def validation_exception_handler(request: Request, exc: RequestValidationError):
+    message = get_first_error_message(exc)
+    return JSONResponse(
+        status_code=422,
+        content={"detail": message}
+    )
+
 # CORS settings to allow requests from frontend
 app.add_middleware(
     CORSMiddleware,

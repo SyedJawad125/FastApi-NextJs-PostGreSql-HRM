@@ -5,6 +5,7 @@ from app import models
 from sqlalchemy.orm import Query
 from app import models, schemas 
 from fastapi.responses import JSONResponse
+from fastapi.exceptions import RequestValidationError
 
  # ✅ Keep this if enums are in the same schemas file
 
@@ -557,6 +558,20 @@ def filter_roles(params, query):
     # Add more filters as needed
     return query
 
+
+
+def get_first_error_message(exc: RequestValidationError, default_message="Invalid input"):
+    try:
+        first_error = exc.errors()[0]
+        loc = first_error.get("loc", [])
+        msg = first_error.get("msg", default_message)
+
+        if loc:
+            field = loc[-1]  # the field name (e.g., job_title)
+            return f"{field}: {msg}"
+        return msg
+    except Exception:
+        return default_message
 
 
 
