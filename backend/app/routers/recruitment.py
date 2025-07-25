@@ -3,9 +3,8 @@ from sqlalchemy.orm import Session
 from typing import Any
 
 from .. import database, schemas, models, oauth2
-from app.utils import paginate_data
+from app.utils import paginate_data, filter_recruitments
 from fastapi.responses import JSONResponse
-from app.utils.filter_recruitments import filter_recruitments
 
 router = APIRouter(
     prefix="/recruitments",
