@@ -174,8 +174,22 @@ from .shift_assignments import (
     PaginatedShiftAssignments,
     ShiftAssignmentListResponse
 )
-
-
+from .candidate import (
+    CandidateBase,
+    CandidateCreate,
+    CandidateUpdate,
+    CandidateOut,
+    PaginatedCandidates,
+    CandidateListResponse
+)
+from .recruitment import (
+    RecruitmentBase,
+    RecruitmentCreate,
+    RecruitmentUpdate,
+    RecruitmentOut,
+    PaginatedRecruitments,
+    RecruitmentListResponse
+)
 # define what will be exported on `from schemas import *`
 __all__ = [
     'UserBase', 'UserCreate', 'LoginRequest', 'UserUpdate', 'UserOut',
@@ -203,5 +217,7 @@ __all__ = [
     'HolidayCalendarBase', 'HolidayCalendarCreate', 'HolidayCalendarUpdate', 'HolidayCalendarOut', 'PaginatedHolidayCalendars', 'HolidayCalendarListResponse',
     'ShiftBase', 'ShiftCreate', 'ShiftUpdate', 'ShiftOut', 'PaginatedShifts', 'ShiftListResponse',
     'ShiftAssignmentBase', 'ShiftAssignmentCreate', 'ShiftAssignmentUpdate', 'ShiftAssignmentOut','PaginatedShiftAssignments' , 'ShiftAssignmentListResponse',
+    'CandidateBase', 'CandidateCreate', 'CandidateUpdate', 'CandidateOut', 'PaginatedCandidates', 'CandidateListResponse',
+    'RecruitmentBase', 'RecruitmentCreate', 'RecruitmentUpdate', 'RecruitmentOut', 'PaginatedRecruitments', 'RecruitmentListResponse',
 ]
 
