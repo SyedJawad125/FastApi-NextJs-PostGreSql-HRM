@@ -15,6 +15,8 @@ from app.models import PerformanceReview
 
 from fastapi import Query as FastAPIQuery
 from starlette.datastructures import QueryParams
+from app import models
+
  # ✅ Keep this if enums are in the same schemas file
 
 
@@ -605,6 +607,22 @@ def filter_trainings(query_params: QueryParams, query: Query) -> Query:
 
     if "description" in query_params:
         query = query.filter(models.Training.description.ilike(f"%{query_params.get('description')}%"))
+
+    return query
+
+
+def filter_training_participants(query_params: QueryParams, query: Query) -> Query:
+    if "training_id" in query_params:
+        query = query.filter(models.TrainingParticipant.training_id == query_params.get("training_id"))
+
+    if "employee_id" in query_params:
+        query = query.filter(models.TrainingParticipant.employee_id == query_params.get("employee_id"))
+
+    if "created_by_user_id" in query_params:
+        query = query.filter(models.TrainingParticipant.created_by_user_id == query_params.get("created_by_user_id"))
+
+    if "updated_by_user_id" in query_params:
+        query = query.filter(models.TrainingParticipant.updated_by_user_id == query_params.get("updated_by_user_id"))
 
     return query
 

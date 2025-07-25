@@ -37,6 +37,8 @@ from app.models.shift_assignments import ShiftAssignment
 from app.models.candidate import Candidate
 from app.models.recruitment import Recruitment
 from app.models.performance_review import PerformanceReview
+from app.models.training import Training
+from app.models.training_participant import TrainingParticipant
 
 # Import routers
 from app.routers import (
@@ -49,7 +51,7 @@ from app.routers import (
     employee_profile,
     employee_documents,
     holiday_calendar, shift , shift_assignments, 
-    candidate, recruitment, performance_review
+    candidate, recruitment, performance_review, training, training_participant
 )
 
 app = FastAPI(
@@ -148,6 +150,9 @@ app.include_router(shift_assignments.router)
 app.include_router(candidate.router)
 app.include_router(recruitment.router)
 app.include_router(performance_review.router)
+app.include_router(training.router)
+app.include_router(training_participant.router)
+
 
 
 

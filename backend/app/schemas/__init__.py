@@ -198,6 +198,22 @@ from .performance_review import (
     PaginatedPerformanceReviews,
     PerformanceReviewListResponse   
 )
+from .training import (
+    TrainingBase,
+    TrainingCreate,
+    TrainingUpdate,
+    TrainingOut,
+    PaginatedTrainings,
+    TrainingListResponse    
+)
+from .training_participant import (
+    TrainingParticipantBase,
+    TrainingParticipantCreate,
+    TrainingParticipantUpdate,
+    TrainingParticipantOut,
+    PaginatedTrainingParticipants,
+    TrainingParticipantListResponse     
+)
 # define what will be exported on `from schemas import *`
 __all__ = [
     'UserBase', 'UserCreate', 'LoginRequest', 'UserUpdate', 'UserOut',
@@ -228,5 +244,7 @@ __all__ = [
     'CandidateBase', 'CandidateCreate', 'CandidateUpdate', 'CandidateOut', 'PaginatedCandidates', 'CandidateListResponse',
     'RecruitmentBase', 'RecruitmentCreate', 'RecruitmentUpdate', 'RecruitmentOut', 'PaginatedRecruitments', 'RecruitmentListResponse',
     'PerformanceReviewBase', 'PerformanceReviewCreate', 'PerformanceReviewUpdate', 'PerformanceReviewOut', 'PaginatedPerformanceReviews', 'PerformanceReviewListResponse',
+    'TrainingBase', 'TrainingCreate', 'TrainingUpdate', 'TrainingOut', 'PaginatedTrainings', 'TrainingListResponse',
+    'TrainingParticipantBase', 'TrainingParticipantCreate', 'TrainingParticipantUpdate', 'TrainingParticipantOut', 'PaginatedTrainingParticipants', 'TrainingParticipantListResponse',
     ]
 

@@ -3,8 +3,7 @@ from sqlalchemy.orm import Session
 from typing import Any
 
 from .. import database, schemas, models, oauth2
-from app.utils import paginate_data
-from app.utils.filter_training_participants import filter_training_participants
+from app.utils import paginate_data, filter_training_participants
 
 router = APIRouter(
     prefix="/training-participants",
