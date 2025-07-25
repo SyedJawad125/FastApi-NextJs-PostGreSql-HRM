@@ -81,3 +81,15 @@ class User(Base):
     created_trainings = relationship("Training", foreign_keys="Training.created_by_user_id", back_populates="creator")
 
     updated_trainings = relationship("Training", foreign_keys="Training.updated_by_user_id", back_populates="updater")
+
+    created_participations = relationship(
+    "TrainingParticipant",
+    foreign_keys="TrainingParticipant.created_by_user_id",
+    back_populates="creator"
+    )
+
+    updated_participations = relationship(
+    "TrainingParticipant",
+    foreign_keys="TrainingParticipant.updated_by_user_id",
+    back_populates="updater"
+    )

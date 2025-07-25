@@ -32,6 +32,12 @@ class Training(Base):
     employee = relationship("Employee", back_populates="trainings")
     department = relationship("Department", back_populates="trainings")
 
+    participants = relationship(
+    "TrainingParticipant",
+    back_populates="training",
+    cascade="all, delete-orphan"
+    )
+
     trainer = relationship(
         "User",
         foreign_keys=[trainer_id],

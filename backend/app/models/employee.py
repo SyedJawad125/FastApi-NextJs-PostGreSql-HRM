@@ -50,3 +50,9 @@ class Employee(Base):
     performance_reviews = relationship("PerformanceReview", back_populates="employee", cascade="all, delete-orphan")
 
     trainings = relationship("Training", back_populates="employee", cascade="all, delete")
+
+    trainings_attended = relationship(
+    "TrainingParticipant",
+    back_populates="employee",
+    cascade="all, delete-orphan"
+    )

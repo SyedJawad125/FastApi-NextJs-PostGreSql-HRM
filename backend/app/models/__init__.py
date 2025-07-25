@@ -21,6 +21,8 @@ from .shift_assignments import ShiftAssignment
 from .candidate import Candidate
 from .recruitment import Recruitment
 from .performance_review import PerformanceReview
+from .training import Training
+from .training_participant import TrainingParticipant
 
 
 
@@ -30,5 +32,5 @@ from .performance_review import PerformanceReview
 __all__ = ["User", "Department", "Employee", "Role", "Permission", "Rank", "Attendance", "Timesheet",
  "Leave", "Notification", "EmployeeSalary","SalaryStructure", "Payslip", "SalaryHistory", 
  "ImageCategory", "Image", "EmployeeProfile", "EmployeeDocument", "HolidayCalendar",
-  "Shift", "ShiftAssignment", "Candidate", "Recruitment", "PerformanceReview"]
+  "Shift", "ShiftAssignment", "Candidate", "Recruitment", "PerformanceReview", "Training", "TrainingParticipant"]
 
