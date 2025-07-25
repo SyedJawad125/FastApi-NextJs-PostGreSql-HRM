@@ -1,6 +1,8 @@
-from sqlalchemy import Column, Integer, String, Date, ForeignKey
+from sqlalchemy import Column, Integer, String, Date, ForeignKey, DateTime
 from sqlalchemy.orm import relationship
 from app.database import Base
+from datetime import datetime
+
 
 class Candidate(Base):
     __tablename__ = "candidates"
@@ -14,6 +16,9 @@ class Candidate(Base):
 
     recruitment_id = Column(Integer, ForeignKey("recruitments.id", ondelete="CASCADE"))
     recruitment = relationship("Recruitment", back_populates="candidates")
+
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, nullable=True, onupdate=datetime.utcnow)
 
     # Audit fields
     created_by_user_id = Column(Integer, ForeignKey("users.id"))

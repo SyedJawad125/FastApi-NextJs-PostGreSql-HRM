@@ -1,6 +1,6 @@
 from typing import Optional
 from pydantic import BaseModel, Field
-from datetime import date
+from datetime import date, datetime
 
 
 class CandidateBase(BaseModel):
@@ -24,6 +24,8 @@ class CandidateOut(CandidateBase):
     id: int
     created_by_user_id: int
     updated_by_user_id: Optional[int] = None
+    created_at: Optional[datetime]
+    updated_at: Optional[datetime]
 
     class Config:
         from_attributes = True
