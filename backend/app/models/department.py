@@ -20,4 +20,6 @@ class Department(Base):
 
     holidays = relationship("HolidayCalendar", back_populates="department")
     recruitments = relationship("Recruitment", back_populates="department")
+    trainings = relationship("Training", back_populates="department", cascade="all, delete-orphan")
+
 

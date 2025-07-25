@@ -75,3 +75,9 @@ class User(Base):
     # reviews where user is the updater
     updated_reviews = relationship("PerformanceReview", foreign_keys="PerformanceReview.updated_by_user_id",
         back_populates="updater")
+
+    trainings_given = relationship("Training", foreign_keys="Training.trainer_id", back_populates="trainer")
+
+    created_trainings = relationship("Training", foreign_keys="Training.created_by_user_id", back_populates="creator")
+
+    updated_trainings = relationship("Training", foreign_keys="Training.updated_by_user_id", back_populates="updater")

@@ -28,7 +28,7 @@ class PerformanceReview(Base):
     comments = Column(Text)
 
     created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(DateTime, onupdate=datetime.utcnow)
+    updated_at = Column(DateTime, nullable=True, onupdate=datetime.utcnow)
 
     created_by_user_id = Column(Integer, ForeignKey("users.id", ondelete="SET NULL"))
     updated_by_user_id = Column(Integer, ForeignKey("users.id", ondelete="SET NULL"))
