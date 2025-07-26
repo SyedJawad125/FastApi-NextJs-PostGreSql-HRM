@@ -9,11 +9,11 @@ class AuditLogBase(BaseModel):
     record_id: Optional[int] = None
     description: Optional[str] = None
     performed_by_user_id: Optional[int] = None
-    logged_by_user_id: Optional[int] = None
+    # ⚠️ DO NOT include logged_by_user_id here
 
 
 class AuditLogCreate(AuditLogBase):
-    pass
+    pass  # logged_by_user_id will be set on server side, not by user
 
 
 class AuditLogUpdate(AuditLogBase):
@@ -24,6 +24,7 @@ class AuditLogOut(AuditLogBase):
     id: int
     created_by_user_id: int
     updated_by_user_id: Optional[int] = None
+    logged_by_user_id: Optional[int] = None  # ✅ Included only in response
     created_at: Optional[datetime]
     updated_at: Optional[datetime]
 
