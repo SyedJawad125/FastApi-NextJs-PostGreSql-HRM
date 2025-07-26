@@ -267,3 +267,8 @@ class User(Base):
     foreign_keys=[EducationExperience.updated_by_user_id],
     back_populates="updater"
     )
+
+    created_experiences = relationship("EmployeeExperience",
+        foreign_keys="[EmployeeExperience.created_by_user_id]", back_populates="creator")
+    updated_experiences = relationship("EmployeeExperience", 
+        foreign_keys="[EmployeeExperience.updated_by_user_id]", back_populates="updater")
