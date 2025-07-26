@@ -4,7 +4,7 @@ from typing import List, Optional
 
 from app.utils import filter_employee_experiences, paginate_data
 from app import models
-from app.schemas.employee_experience import (
+from app.schemas import (
     EmployeeExperienceCreate,
     EmployeeExperienceUpdate,
     EmployeeExperienceOut,

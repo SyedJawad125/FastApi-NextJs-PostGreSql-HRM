@@ -1,5 +1,3 @@
-# app/routers/education_experience.py
-
 from fastapi import APIRouter, HTTPException, status, Request, Depends
 from sqlalchemy.orm import Session
 from typing import List, Optional
@@ -47,16 +45,21 @@ def get_all_education_experiences(
     query = db.query(models.EducationExperience)
     params = dict(request.query_params)
 
-    # Default pagination params
-    page = int(params.pop("page", 1))
-    limit = int(params.pop("limit", 10))
+    # Remove pagination params from filters if present
+    params.pop("page", None)
+    params.pop("page_size", None)
 
+    # Apply filters
     query = filter_education_experiences(params, query)
-
     all_results = query.all()
-    paginated_data, total = paginate_data(all_results, request, page=page, limit=limit)
 
-    return {"count": total, "data": paginated_data}
+    # Apply pagination
+    paginated_data, total = paginate_data(all_results, request)
+
+    return {
+        "count": total,
+        "data": paginated_data
+    }
 
 
 # -------------------- Get by Employee --------------------
