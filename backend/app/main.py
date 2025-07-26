@@ -41,6 +41,7 @@ from app.models.training import Training
 from app.models.training_participant import TrainingParticipant
 from app.models.audit_logs import AuditLog
 from app.models.education_experience import EducationExperience
+from app.models.employee_experiences import EmployeeExperience
 
 # Import routers
 from app.routers import (
@@ -53,7 +54,8 @@ from app.routers import (
     employee_profile,
     employee_documents,
     holiday_calendar, shift , shift_assignments, 
-    candidate, recruitment, performance_review, training, training_participant, audit_logs, education_experience
+    candidate, recruitment, performance_review, training, training_participant,
+    audit_logs, education_experience, employee_experiences
 )
 
 app = FastAPI(
@@ -156,6 +158,8 @@ app.include_router(training.router)
 app.include_router(training_participant.router)
 app.include_router(audit_logs.router)
 app.include_router(education_experience.router)
+app.include_router(employee_experiences.router)
+
 
 
 
