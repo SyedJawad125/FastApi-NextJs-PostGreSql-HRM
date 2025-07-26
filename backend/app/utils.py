@@ -626,6 +626,19 @@ def filter_training_participants(query_params: QueryParams, query: Query) -> Que
 
     return query
 
+def filter_audit_logs(params, query):
+    if action := params.get("action"):
+        query = query.filter(models.AuditLog.action.ilike(f"%{action}%"))
+    if table := params.get("table_name"):
+        query = query.filter(models.AuditLog.table_name.ilike(f"%{table}%"))
+    if performed_by := params.get("performed_by_user_id"):
+        query = query.filter(models.AuditLog.performed_by_user_id == int(performed_by))
+    if logged_by := params.get("logged_by_user_id"):
+        query = query.filter(models.AuditLog.logged_by_user_id == int(logged_by))
+    if record_id := params.get("record_id"):
+        query = query.filter(models.AuditLog.record_id == int(record_id))
+    return query
+
 
 def filter_permissions(params, query):
     name = params.get("name")
