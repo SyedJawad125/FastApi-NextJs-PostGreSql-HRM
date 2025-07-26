@@ -1,8 +1,11 @@
-from fastapi import APIRouter, HTTPException, status, Depends, Form
+# app/routers/education_experience.py
+
+from fastapi import APIRouter, HTTPException, status, Request, Depends
 from sqlalchemy.orm import Session
 from typing import List, Optional
 
 from app import models
+from app.utils import filter_education_experiences, paginate_data
 from app.schemas.education_experience import (
     EducationExperienceCreate,
     EducationExperienceUpdate,
@@ -21,11 +24,8 @@ router = APIRouter(
 def create_education_experiences(
     items: List[EducationExperienceCreate],
     db: Session = Depends(get_db),
-    created_by_user_id: Optional[int] = 1  # replace with user from token/session
+    created_by_user_id: Optional[int] = 1
 ):
-    """
-    Create one or multiple education experiences.
-    """
     created = []
     for item in items:
         experience = models.EducationExperience(**item.dict())
@@ -38,27 +38,30 @@ def create_education_experiences(
     return created
 
 
-# -------------------- Get All with Pagination --------------------
+# -------------------- Get All with Filtering & Pagination --------------------
 @router.get("/", response_model=PaginatedEducationExperiences)
 def get_all_education_experiences(
-    skip: int = 0,
-    limit: int = 10,
+    request: Request,
     db: Session = Depends(get_db)
 ):
-    """
-    Get paginated list of all education experiences.
-    """
-    total = db.query(models.EducationExperience).count()
-    experiences = db.query(models.EducationExperience).offset(skip).limit(limit).all()
-    return {"count": total, "data": experiences}
+    query = db.query(models.EducationExperience)
+    params = dict(request.query_params)
+
+    # Default pagination params
+    page = int(params.pop("page", 1))
+    limit = int(params.pop("limit", 10))
+
+    query = filter_education_experiences(params, query)
+
+    all_results = query.all()
+    paginated_data, total = paginate_data(all_results, request, page=page, limit=limit)
+
+    return {"count": total, "data": paginated_data}
 
 
 # -------------------- Get by Employee --------------------
 @router.get("/employee/{employee_id}", response_model=List[EducationExperienceOut])
 def get_by_employee_id(employee_id: int, db: Session = Depends(get_db)):
-    """
-    Get all education experiences for a specific employee.
-    """
     results = db.query(models.EducationExperience).filter_by(employee_id=employee_id).all()
     if not results:
         raise HTTPException(
@@ -74,11 +77,8 @@ def update_education_experience(
     experience_id: int,
     update_data: EducationExperienceUpdate,
     db: Session = Depends(get_db),
-    updated_by_user_id: Optional[int] = 1  # replace with user from token/session
+    updated_by_user_id: Optional[int] = 1
 ):
-    """
-    Update a single education experience.
-    """
     exp = db.query(models.EducationExperience).filter_by(id=experience_id).first()
     if not exp:
         raise HTTPException(status_code=404, detail="Education experience not found")
@@ -95,9 +95,6 @@ def update_education_experience(
 # -------------------- Delete Education Experience --------------------
 @router.delete("/{experience_id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_education_experience(experience_id: int, db: Session = Depends(get_db)):
-    """
-    Delete a specific education experience.
-    """
     exp = db.query(models.EducationExperience).filter_by(id=experience_id).first()
     if not exp:
         raise HTTPException(status_code=404, detail="Education experience not found")

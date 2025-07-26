@@ -639,6 +639,42 @@ def filter_audit_logs(params, query):
         query = query.filter(models.AuditLog.record_id == int(record_id))
     return query
 
+def filter_education_experiences(params: dict, query):
+    if "degree" in params:
+        query = query.filter(models.EducationExperience.degree.ilike(f"%{params['degree']}%"))
+    if "institution_name" in params:
+        query = query.filter(models.EducationExperience.institution_name.ilike(f"%{params['institution_name']}%"))
+    if "field_of_study" in params:
+        query = query.filter(models.EducationExperience.field_of_study.ilike(f"%{params['field_of_study']}%"))
+    if "employee_id" in params:
+        query = query.filter(models.EducationExperience.employee_id == int(params["employee_id"]))
+    return query
+
+
+from typing import Dict
+from sqlalchemy.orm import Query
+from app import models
+
+
+def filter_employee_experiences(params: Dict, query: Query):
+    if employee_id := params.get("employee_id"):
+        query = query.filter(models.EmployeeExperience.employee_id == int(employee_id))
+
+    if job_title := params.get("job_title"):
+        query = query.filter(models.EmployeeExperience.job_title.ilike(f"%{job_title}%"))
+
+    if company_name := params.get("company_name"):
+        query = query.filter(models.EmployeeExperience.company_name.ilike(f"%{company_name}%"))
+
+    if start_date := params.get("start_date"):
+        query = query.filter(models.EmployeeExperience.start_date >= start_date)
+
+    if end_date := params.get("end_date"):
+        query = query.filter(models.EmployeeExperience.end_date <= end_date)
+
+    return query
+
+
 
 def filter_permissions(params, query):
     name = params.get("name")
