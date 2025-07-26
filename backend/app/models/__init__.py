@@ -23,6 +23,7 @@ from .recruitment import Recruitment
 from .performance_review import PerformanceReview
 from .training import Training
 from .training_participant import TrainingParticipant
+from .audit_logs import AuditLog
 
 
 
@@ -32,5 +33,6 @@ from .training_participant import TrainingParticipant
 __all__ = ["User", "Department", "Employee", "Role", "Permission", "Rank", "Attendance", "Timesheet",
  "Leave", "Notification", "EmployeeSalary","SalaryStructure", "Payslip", "SalaryHistory", 
  "ImageCategory", "Image", "EmployeeProfile", "EmployeeDocument", "HolidayCalendar",
-  "Shift", "ShiftAssignment", "Candidate", "Recruitment", "PerformanceReview", "Training", "TrainingParticipant"]
+  "Shift", "ShiftAssignment", "Candidate", "Recruitment", "PerformanceReview", "Training", "TrainingParticipant",
+  "AuditLog"]
 
