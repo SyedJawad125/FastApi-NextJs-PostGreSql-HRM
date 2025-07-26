@@ -108,6 +108,8 @@ from datetime import datetime
 from app.models.permission import Permission, user_permission
 from app.models.shift_assignments import ShiftAssignment
 from app.models.shift import Shift
+from app.models.education_experience import EducationExperience
+
 
 class User(Base):
     __tablename__ = "users"
@@ -252,4 +254,16 @@ class User(Base):
         "AuditLog", 
         foreign_keys="AuditLog.logged_by_user_id", 
         back_populates="logged_by"
+    )
+    
+    created_educations = relationship(
+    "EducationExperience",
+    foreign_keys=[EducationExperience.created_by_user_id],
+    back_populates="creator"
+    )
+
+    updated_educations = relationship(
+    "EducationExperience",
+    foreign_keys=[EducationExperience.updated_by_user_id],
+    back_populates="updater"
     )
