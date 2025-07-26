@@ -39,6 +39,7 @@ class UserUpdate(BaseModel):
 
 class UserOut(UserBase):
     id: int
+    username: Optional[str] = None
     is_active: bool
     
     class Config:
