@@ -222,6 +222,14 @@ from .audit_logs import (
     PaginatedAuditLogs,
     AuditLogListResponse
 )   
+from .education_experience import (
+    EducationExperienceBase,
+    EducationExperienceCreate,
+    EducationExperienceUpdate,
+    EducationExperienceOut,
+    PaginatedEducationExperiences,
+    EducationExperienceListResponse 
+)
 # define what will be exported on `from schemas import *`
 __all__ = [
     'UserBase', 'UserCreate', 'LoginRequest', 'UserUpdate', 'UserOut',
@@ -255,5 +263,6 @@ __all__ = [
     'TrainingBase', 'TrainingCreate', 'TrainingUpdate', 'TrainingOut', 'PaginatedTrainings', 'TrainingListResponse',
     'TrainingParticipantBase', 'TrainingParticipantCreate', 'TrainingParticipantUpdate', 'TrainingParticipantOut', 'PaginatedTrainingParticipants', 'TrainingParticipantListResponse',
     'AuditLogBase', 'AuditLogCreate', 'AuditLogUpdate', 'AuditLogOut', 'PaginatedAuditLogs', 'AuditLogListResponse',
+    'EducationExperienceBase', 'EducationExperienceCreate', 'EducationExperienceUpdate', 'EducationExperienceOut', 'PaginatedEducationExperiences', 'EducationExperienceListResponse',
     ]
 
