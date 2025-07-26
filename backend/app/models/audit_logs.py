@@ -20,7 +20,7 @@ class AuditLog(Base):
     updated_by_user_id = Column(Integer)
 
     created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    updated_at = Column(DateTime, nullable=True, onupdate=datetime.utcnow)
 
     # Define the relationship back to the User model
     performed_by = relationship("User", foreign_keys=[performed_by_user_id], back_populates="performed_audits")
