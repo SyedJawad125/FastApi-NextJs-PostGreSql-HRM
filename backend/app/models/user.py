@@ -128,7 +128,9 @@ class User(Base):
     created_roles = relationship("Role", back_populates="creator", foreign_keys="Role.created_by_user_id")
 
     # Department relationships
-    created_departments = relationship("Department", back_populates="creator")
+    created_departments = relationship("Department", foreign_keys="[Department.created_by_user_id]", back_populates="creator")
+    updated_departments = relationship("Department", foreign_keys="[Department.updated_by_user_id]", back_populates="updater")
+
 
     # Permission relationships
     created_permissions = relationship("Permission", back_populates="creator")
