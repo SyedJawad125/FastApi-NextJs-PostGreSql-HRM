@@ -62,3 +62,7 @@ class Employee(Base):
     experiences = relationship("EmployeeExperience", back_populates="employee", cascade="all, delete-orphan")
     
     assets = relationship("EmployeeAsset", back_populates="employee")
+
+    # Inside Employee class
+    contracts = relationship("EmployeeContract", back_populates="employee")
+

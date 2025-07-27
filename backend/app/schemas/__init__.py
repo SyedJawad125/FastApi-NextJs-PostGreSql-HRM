@@ -245,7 +245,14 @@ from .employee_assets import (
     EmployeeAssetOut,
     PaginatedEmployeeAssets,
     EmployeeAssetListResponse
-    
+)
+from .employee_contract import (
+    EmployeeContractBase,
+    EmployeeContractCreate,
+    EmployeeContractUpdate,
+    EmployeeContractOut,
+    PaginatedEmployeeContracts,
+    EmployeeContractListResponse
 )
 # define what will be exported on `from schemas import *`
 __all__ = [
@@ -283,5 +290,6 @@ __all__ = [
     'EducationExperienceBase', 'EducationExperienceCreate', 'EducationExperienceUpdate', 'EducationExperienceOut', 'PaginatedEducationExperiences', 'EducationExperienceListResponse',
     'EmployeeExperienceBase', 'EmployeeExperienceCreate', 'EmployeeExperienceUpdate', 'EmployeeExperienceOut', 'PaginatedEmployeeExperiences', 'EmployeeExperienceListResponse',
     'EmployeeAssetBase', 'EmployeeAssetCreate', 'EmployeeAssetUpdate', 'EmployeeAssetOut', 'PaginatedEmployeeAssets', 'EmployeeAssetListResponse',
+    'EmployeeContractBase', 'EmployeeContractCreate', 'EmployeeContractUpdate', 'EmployeeContractOut', 'PaginatedEmployeeContracts', 'EmployeeContractListResponse',
     ]
 

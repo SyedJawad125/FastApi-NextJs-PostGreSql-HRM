@@ -279,3 +279,15 @@ class User(Base):
                                        foreign_keys="[EmployeeAsset.created_by_user_id]", back_populates="creator")
     updated_assets = relationship("EmployeeAsset",
                                        foreign_keys="[EmployeeAsset.updated_by_user_id]", back_populates="updater")
+    
+    # Inside User class
+    created_employee_contracts = relationship("EmployeeContract",
+    foreign_keys="[EmployeeContract.created_by_user_id]",
+    back_populates="creator"
+    )
+
+    updated_employee_contracts = relationship("EmployeeContract",
+    foreign_keys="[EmployeeContract.updated_by_user_id]",
+    back_populates="updater"
+    )
+
