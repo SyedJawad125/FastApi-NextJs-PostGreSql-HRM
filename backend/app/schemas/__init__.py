@@ -238,6 +238,15 @@ from .employee_experiences import (
     PaginatedEmployeeExperiences,
     EmployeeExperienceListResponse  
 )
+from .employee_asset import (
+    EmployeeAssetBase,
+    EmployeeAssetCreate,
+    EmployeeAssetUpdate,
+    EmployeeAssetOut,
+    PaginatedEmployeeAssets,
+    EmployeeAssetListResponse
+    
+)
 # define what will be exported on `from schemas import *`
 __all__ = [
     'UserBase', 'UserCreate', 'LoginRequest', 'UserUpdate', 'UserOut',
@@ -273,5 +282,6 @@ __all__ = [
     'AuditLogBase', 'AuditLogCreate', 'AuditLogUpdate', 'AuditLogOut', 'PaginatedAuditLogs', 'AuditLogListResponse',
     'EducationExperienceBase', 'EducationExperienceCreate', 'EducationExperienceUpdate', 'EducationExperienceOut', 'PaginatedEducationExperiences', 'EducationExperienceListResponse',
     'EmployeeExperienceBase', 'EmployeeExperienceCreate', 'EmployeeExperienceUpdate', 'EmployeeExperienceOut', 'PaginatedEmployeeExperiences', 'EmployeeExperienceListResponse',
+    'EmployeeAssetBase', 'EmployeeAssetCreate', 'EmployeeAssetUpdate', 'EmployeeAssetOut', 'PaginatedEmployeeAssets', 'EmployeeAssetListResponse',
     ]
 
