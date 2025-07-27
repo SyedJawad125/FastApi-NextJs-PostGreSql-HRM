@@ -165,9 +165,17 @@ app.include_router(employee_assets.router)
 
 
 
+from app.database import Base  # Ensure Base is imported
+from app.models.events import setup_model_event_hooks
 
+@app.on_event("startup")
+def startup_event():
+    print("Creating database tables...")
+    Base.metadata.create_all(bind=engine)
+    print("Database tables created.")
 
-
+    setup_model_event_hooks(Base)  # ✅ Pass Base here
+    print("Audit event hooks registered.")
 
 
 

@@ -17,7 +17,10 @@ from fastapi import Query as FastAPIQuery
 from starlette.datastructures import QueryParams
 
 from typing import Dict
-from sqlalchemy.orm import Query
+from sqlalchemy.orm import Query, Session
+
+
+
 
 
  # ✅ Keep this if enums are in the same schemas file
@@ -30,6 +33,29 @@ def get_password_hash(password: str):
 
 def verify_password(plain_password: str, hashed_password: str):
     return pwd_context.verify(plain_password, hashed_password)
+
+
+def create_audit_log_entry(
+    db: Session,
+    action: str,
+    table_name: str,
+    record_id: int,
+    description: str,
+    performed_by_user_id: int = None,
+    logged_by_user_id: int = None,
+    created_by_user_id: int = None,
+):
+    audit_log = models.AuditLog(
+        action=action,
+        table_name=table_name,
+        record_id=record_id,
+        description=description,
+        performed_by_user_id=performed_by_user_id,
+        logged_by_user_id=logged_by_user_id,
+        created_by_user_id=created_by_user_id,
+        created_at=datetime.utcnow()
+    )
+    db.add(audit_log)
 
 
 def paginate_data(data, request):
