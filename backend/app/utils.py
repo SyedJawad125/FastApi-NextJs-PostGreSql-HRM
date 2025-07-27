@@ -15,7 +15,10 @@ from app.models import PerformanceReview
 
 from fastapi import Query as FastAPIQuery
 from starlette.datastructures import QueryParams
-from app import models
+
+from typing import Dict
+from sqlalchemy.orm import Query
+
 
  # ✅ Keep this if enums are in the same schemas file
 
@@ -674,6 +677,30 @@ def filter_employee_experiences(params: Dict, query: Query):
 
     return query
 
+
+def filter_employee_assets(params: Dict, query: Query):
+    if employee_id := params.get("employee_id"):
+        query = query.filter(models.EmployeeAsset.employee_id == int(employee_id))
+
+    if department_id := params.get("department_id"):
+        query = query.filter(models.EmployeeAsset.department_id == int(department_id))
+
+    if asset_name := params.get("asset_name"):
+        query = query.filter(models.EmployeeAsset.asset_name.ilike(f"%{asset_name}%"))
+
+    if asset_type := params.get("asset_type"):
+        query = query.filter(models.EmployeeAsset.asset_type.ilike(f"%{asset_type}%"))
+
+    if brand := params.get("brand"):
+        query = query.filter(models.EmployeeAsset.brand.ilike(f"%{brand}%"))
+
+    if issued_from := params.get("issued_from"):
+        query = query.filter(models.EmployeeAsset.issued_date >= issued_from)
+
+    if issued_to := params.get("issued_to"):
+        query = query.filter(models.EmployeeAsset.issued_date <= issued_to)
+
+    return query
 
 
 def filter_permissions(params, query):

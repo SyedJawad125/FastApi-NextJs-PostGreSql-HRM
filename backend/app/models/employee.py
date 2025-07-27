@@ -60,3 +60,5 @@ class Employee(Base):
     educations = relationship("EducationExperience", back_populates="employee", cascade="all, delete-orphan")
 
     experiences = relationship("EmployeeExperience", back_populates="employee", cascade="all, delete-orphan")
+    
+    assets = relationship("EmployeeAsset", back_populates="employee")

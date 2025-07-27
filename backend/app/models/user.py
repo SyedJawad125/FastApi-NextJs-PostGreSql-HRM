@@ -272,3 +272,8 @@ class User(Base):
         foreign_keys="[EmployeeExperience.created_by_user_id]", back_populates="creator")
     updated_experiences = relationship("EmployeeExperience", 
         foreign_keys="[EmployeeExperience.updated_by_user_id]", back_populates="updater")
+    
+    created_assets = relationship("EmployeeAsset",
+                                       foreign_keys="[EmployeeAsset.created_by_user_id]", back_populates="creator")
+    updated_assets = relationship("EmployeeAsset",
+                                       foreign_keys="[EmployeeAsset.updated_by_user_id]", back_populates="updater")

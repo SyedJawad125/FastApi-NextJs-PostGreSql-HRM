@@ -26,6 +26,7 @@ from .training_participant import TrainingParticipant
 from .audit_logs import AuditLog
 from .education_experience import EducationExperience
 from .employee_experiences import EmployeeExperience
+from .employee_assets import EmployeeAsset
 
 
 
@@ -35,5 +36,5 @@ __all__ = ["User", "Department", "Employee", "Role", "Permission", "Rank", "Atte
  "Leave", "Notification", "EmployeeSalary","SalaryStructure", "Payslip", "SalaryHistory", 
  "ImageCategory", "Image", "EmployeeProfile", "EmployeeDocument", "HolidayCalendar",
   "Shift", "ShiftAssignment", "Candidate", "Recruitment", "PerformanceReview", "Training", "TrainingParticipant",
-  "AuditLog", "EducationExperience", "EmployeeExperience"]
+  "AuditLog", "EducationExperience", "EmployeeExperience", "EmployeeAsset"]
 
