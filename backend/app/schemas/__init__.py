@@ -238,7 +238,7 @@ from .employee_experiences import (
     PaginatedEmployeeExperiences,
     EmployeeExperienceListResponse  
 )
-from .employee_asset import (
+from .employee_assets import (
     EmployeeAssetBase,
     EmployeeAssetCreate,
     EmployeeAssetUpdate,

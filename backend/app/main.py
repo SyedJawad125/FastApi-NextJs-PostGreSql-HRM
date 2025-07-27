@@ -56,7 +56,7 @@ from app.routers import (
     employee_documents,
     holiday_calendar, shift , shift_assignments, 
     candidate, recruitment, performance_review, training, training_participant,
-    audit_logs, education_experience, employee_experiences, employee_asset
+    audit_logs, education_experience, employee_experiences, employee_assets
 )
 
 app = FastAPI(
@@ -160,7 +160,7 @@ app.include_router(training_participant.router)
 app.include_router(audit_logs.router)
 app.include_router(education_experience.router)
 app.include_router(employee_experiences.router)
-app.include_router(employee_asset.router)
+app.include_router(employee_assets.router)
 
 
 

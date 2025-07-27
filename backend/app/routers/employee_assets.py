@@ -2,8 +2,8 @@ from fastapi import APIRouter, HTTPException, status, Request, Depends
 from sqlalchemy.orm import Session
 from typing import List, Optional
 
-from app import models
-from app.schemas.employee_asset import (
+from app import models, oauth2
+from app.schemas.employee_assets import (
     EmployeeAssetCreate,
     EmployeeAssetUpdate,
     EmployeeAssetOut,
@@ -11,6 +11,9 @@ from app.schemas.employee_asset import (
 )
 from app.database import get_db
 from app.utils import filter_employee_assets, paginate_data
+
+from fastapi import Body
+from typing import Union
 
 router = APIRouter(
     prefix="/employee-assets",
@@ -20,10 +23,14 @@ router = APIRouter(
 # -------------------- Create One or Many --------------------
 @router.post("/", response_model=List[EmployeeAssetOut])
 def create_employee_assets(
-    items: List[EmployeeAssetCreate],
+    items: Union[EmployeeAssetCreate, List[EmployeeAssetCreate]] = Body(...),
     db: Session = Depends(get_db),
     created_by_user_id: Optional[int] = 1
 ):
+    # Wrap single item into a list
+    if isinstance(items, EmployeeAssetCreate):
+        items = [items]
+
     created = []
     for item in items:
         asset = models.EmployeeAsset(**item.dict())
@@ -89,12 +96,19 @@ def update_employee_asset(
     return asset
 
 # -------------------- Delete Asset --------------------
-@router.delete("/{asset_id}", status_code=status.HTTP_204_NO_CONTENT)
-def delete_employee_asset(asset_id: int, db: Session = Depends(get_db)):
-    asset = db.query(models.EmployeeAsset).filter_by(id=asset_id).first()
-    if not asset:
-        raise HTTPException(status_code=404, detail="Employee asset not found")
+@router.delete("/{asset_id}", status_code=status.HTTP_200_OK)
+def delete_employee_asset(
+    asset_id: int,
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(oauth2.get_current_user)  # Optional: if needed for authentication
+):
+    asset_query = db.query(models.EmployeeAsset).filter(models.EmployeeAsset.id == asset_id)
+    asset = asset_query.first()
 
-    db.delete(asset)
+    if not asset:
+        raise HTTPException(status_code=404, detail=f"Employee asset with id {asset_id} not found")
+
+    asset_query.delete(synchronize_session=False)
     db.commit()
-    return None
+
+    return {"message": "Employee asset deleted successfully"}

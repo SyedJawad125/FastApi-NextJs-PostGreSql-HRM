@@ -31,7 +31,6 @@ from .employee_assets import EmployeeAsset
 
 
 
-
 __all__ = ["User", "Department", "Employee", "Role", "Permission", "Rank", "Attendance", "Timesheet",
  "Leave", "Notification", "EmployeeSalary","SalaryStructure", "Payslip", "SalaryHistory", 
  "ImageCategory", "Image", "EmployeeProfile", "EmployeeDocument", "HolidayCalendar",
