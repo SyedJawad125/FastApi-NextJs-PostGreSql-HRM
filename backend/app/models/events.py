@@ -20,7 +20,7 @@ def setup_model_event_hooks(Base: DeclarativeMeta):
             logged_by_user_id=getattr(target, 'created_by_user_id', None),
             created_by_user_id=getattr(target, 'created_by_user_id', None)
         )
-        db.commit()
+        db.flush()
 
     def after_update(mapper, connection, target):
         db = Session(bind=connection)
@@ -34,7 +34,7 @@ def setup_model_event_hooks(Base: DeclarativeMeta):
             logged_by_user_id=getattr(target, 'updated_by_user_id', None),
             created_by_user_id=getattr(target, 'created_by_user_id', None)
         )
-        db.commit()
+        db.flush()
 
     def after_delete(mapper, connection, target):
         db = Session(bind=connection)
@@ -48,7 +48,7 @@ def setup_model_event_hooks(Base: DeclarativeMeta):
             logged_by_user_id=None,
             created_by_user_id=None
         )
-        db.commit()
+        db.flush()
 
     for cls in Base.__subclasses__():
         if cls.__tablename__ != "audit_logs":  # Avoid self-logging
