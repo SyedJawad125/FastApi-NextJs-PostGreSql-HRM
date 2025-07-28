@@ -12,7 +12,7 @@ class UserOut(BaseModel):
 
 class EmployeeOut(BaseModel):
     id: int
-    # name: str  # Adjust according to your Employee model
+    name: str  # Adjust according to your Employee model
 
     class Config:
         from_attributes = True

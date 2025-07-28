@@ -12,6 +12,7 @@ from .user import (
 
 # employee schemas
 from .employee import (
+    EmployeeBase,
     Employee,
     EmployeeCreate,
     PaginatedEmployees,
@@ -266,7 +267,7 @@ from .health_checkup import (
 __all__ = [
     'UserBase', 'UserCreate', 'LoginRequest', 'UserUpdate', 'UserOut',
     'Token', 'TokenData', 'TokenResponse',
-    'Employee', 'EmployeeCreate','PaginatedEmployees','EmployeeListResponse','EmployeeUpdate',
+    'Employee', 'EmployeeCreate','PaginatedEmployees','EmployeeListResponse','EmployeeUpdate','EmployeeBase',
     'DepartmentBase', 'DepartmentCreate', 'Department', 'DepartmentUpdate',
     'PaginatedDepartments', 'DepartmentListResponse',
     'RankBase', 'RankCreate', 'Rank', 'RankUpdate', 'PaginatedRanks', 'RankListResponse',

@@ -1,6 +1,7 @@
 from sqlalchemy import Column, Integer, String, Date, Float, ForeignKey
 from sqlalchemy.orm import relationship
 from app.database import Base
+from sqlalchemy.ext.hybrid import hybrid_property
 from app.models import User
 
 class Employee(Base):
@@ -15,6 +16,10 @@ class Employee(Base):
     job_title = Column(String(100), nullable=False)
     salary = Column(Float, nullable=False)
     department_id = Column(Integer, ForeignKey("departments.id"))
+    
+    @hybrid_property
+    def name(self) -> str:
+        return f"{self.first_name} {self.last_name}"
     
     department = relationship("Department", back_populates="employees")
     # ✅ Foreign key column
