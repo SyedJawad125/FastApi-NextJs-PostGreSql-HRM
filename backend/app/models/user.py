@@ -291,3 +291,16 @@ class User(Base):
     back_populates="updater"
     )
 
+    # ✅ Relationships for HealthCheckUp
+    created_health_checkups = relationship(
+        "HealthCheckUp",
+        foreign_keys="[HealthCheckUp.created_by_user_id]",
+        back_populates="creator"
+    )
+    
+    updated_health_checkups = relationship(
+        "HealthCheckUp",
+        foreign_keys="[HealthCheckUp.updated_by_user_id]",
+        back_populates="updater"
+    )
+

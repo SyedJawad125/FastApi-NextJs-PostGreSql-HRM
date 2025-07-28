@@ -23,6 +23,8 @@ class Department(Base):
     trainings = relationship("Training", back_populates="department", cascade="all, delete-orphan")
     assets = relationship("EmployeeAsset", back_populates="department")
     employee_contracts = relationship("EmployeeContract", back_populates="department")
+    health_checkups = relationship("HealthCheckUp", back_populates="department")
+
 
     
     created_at = Column(DateTime, default=datetime.utcnow)

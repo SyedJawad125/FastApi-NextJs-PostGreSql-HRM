@@ -66,3 +66,5 @@ class Employee(Base):
     # Inside Employee class
     contracts = relationship("EmployeeContract", back_populates="employee")
 
+    # Inside Employee model
+    health_checkups = relationship("HealthCheckUp", back_populates="employee")
