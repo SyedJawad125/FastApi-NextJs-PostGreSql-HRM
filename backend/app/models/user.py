@@ -304,3 +304,10 @@ class User(Base):
         back_populates="updater"
     )
 
+    created_advanced_salaries = relationship("AdvancedSalary", back_populates="creator",
+        foreign_keys="[AdvancedSalary.created_by_user_id]"
+    )
+
+    updated_advanced_salaries = relationship("AdvancedSalary", back_populates="updater",
+        foreign_keys="[AdvancedSalary.updated_by_user_id]"
+    )

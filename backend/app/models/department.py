@@ -24,6 +24,7 @@ class Department(Base):
     assets = relationship("EmployeeAsset", back_populates="department")
     employee_contracts = relationship("EmployeeContract", back_populates="department")
     health_checkups = relationship("HealthCheckUp", back_populates="department")
+    advanced_salaries = relationship("AdvancedSalary", back_populates="department")
 
 
     
