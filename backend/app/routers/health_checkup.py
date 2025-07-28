@@ -81,6 +81,34 @@ def get_health_checkup_by_id(
 
 
 # --- ✏️ UPDATE (PATCH) ---
+# @router.patch("/{id}", response_model=schemas.HealthCheckUpOut)
+# def update_health_checkup(
+#     id: int,
+#     updated_data: schemas.HealthCheckUpUpdate,
+#     db: Session = Depends(database.get_db),
+#     current_user: models.User = Depends(oauth2.get_current_user)
+# ):
+#     try:
+#         instance = db.query(models.HealthCheckUp).filter(models.HealthCheckUp.id == id).first()
+
+#         if not instance:
+#             raise HTTPException(status_code=404, detail=f"HealthCheckUp with id {id} not found")
+
+#         update_dict = updated_data.dict(exclude_unset=True)
+#         update_dict["updated_by_user_id"] = current_user.id
+
+#         for key, value in update_dict.items():
+#             setattr(instance, key, value)
+
+#         db.commit()
+#         db.refresh(instance)
+
+#         return instance
+
+#     except Exception as e:
+#         raise HTTPException(status_code=500, detail=str(e))
+
+from datetime import datetime
 @router.patch("/{id}", response_model=schemas.HealthCheckUpOut)
 def update_health_checkup(
     id: int,
@@ -95,7 +123,11 @@ def update_health_checkup(
             raise HTTPException(status_code=404, detail=f"HealthCheckUp with id {id} not found")
 
         update_dict = updated_data.dict(exclude_unset=True)
+        if not update_dict:
+            raise HTTPException(status_code=400, detail="No fields provided for update")
+
         update_dict["updated_by_user_id"] = current_user.id
+        update_dict["updated_at"] = datetime.utcnow()  # Optional if `onupdate` doesn't work automatically
 
         for key, value in update_dict.items():
             setattr(instance, key, value)
@@ -107,7 +139,6 @@ def update_health_checkup(
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-
 
 # --- ❌ DELETE ---
 @router.delete("/{id}", status_code=status.HTTP_200_OK)

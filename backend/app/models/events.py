@@ -22,6 +22,20 @@ def setup_model_event_hooks(Base: DeclarativeMeta):
         )
         db.flush()
 
+    # def after_update(mapper, connection, target):
+    #     db = Session(bind=connection)
+    #     create_audit_log_entry(
+    #         db=db,
+    #         action="UPDATE",
+    #         table_name=target.__tablename__,
+    #         record_id=target.id,
+    #         description=f"Updated record in {target.__tablename__} with ID {target.id}",
+    #         performed_by_user_id=getattr(target, 'updated_by_user_id', None),
+    #         logged_by_user_id=getattr(target, 'updated_by_user_id', None),
+    #         created_by_user_id=getattr(target, 'created_by_user_id', None)
+    #     )
+    #     db.flush()
+
     def after_update(mapper, connection, target):
         db = Session(bind=connection)
         create_audit_log_entry(
@@ -29,7 +43,7 @@ def setup_model_event_hooks(Base: DeclarativeMeta):
             action="UPDATE",
             table_name=target.__tablename__,
             record_id=target.id,
-            description=f"Updated record in {target.__tablename__} with ID {target.id}",
+            description=f"Updated record in {target.__tablename__} with ID {target.id} by user ID {getattr(target, 'updated_by_user_id', None)}",
             performed_by_user_id=getattr(target, 'updated_by_user_id', None),
             logged_by_user_id=getattr(target, 'updated_by_user_id', None),
             created_by_user_id=getattr(target, 'created_by_user_id', None)
