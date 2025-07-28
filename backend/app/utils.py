@@ -729,6 +729,16 @@ def filter_employee_assets(params: Dict, query: Query):
     return query
 
 
+# --- 🔍 Optional: Filter Function ---
+def filter_health_checkups(query_params, query):
+    if "employee_id" in query_params:
+        query = query.filter(models.HealthCheckUp.employee_id == int(query_params["employee_id"]))
+    if "department_id" in query_params:
+        query = query.filter(models.HealthCheckUp.department_id == int(query_params["department_id"]))
+    if "date" in query_params:
+        query = query.filter(models.HealthCheckUp.checkup_date == query_params["date"])
+    return query
+
 def filter_permissions(params, query):
     name = params.get("name")
     if name:

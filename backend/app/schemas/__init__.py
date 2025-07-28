@@ -254,6 +254,14 @@ from .employee_contract import (
     PaginatedEmployeeContracts,
     EmployeeContractListResponse
 )
+from .health_checkup import (
+    HealthCheckUpBase,
+    HealthCheckUpCreate,
+    HealthCheckUpUpdate,
+    HealthCheckUpOut,
+    PaginatedHealthCheckUps,
+    HealthCheckUpListResponse
+)
 # define what will be exported on `from schemas import *`
 __all__ = [
     'UserBase', 'UserCreate', 'LoginRequest', 'UserUpdate', 'UserOut',
@@ -291,5 +299,6 @@ __all__ = [
     'EmployeeExperienceBase', 'EmployeeExperienceCreate', 'EmployeeExperienceUpdate', 'EmployeeExperienceOut', 'PaginatedEmployeeExperiences', 'EmployeeExperienceListResponse',
     'EmployeeAssetBase', 'EmployeeAssetCreate', 'EmployeeAssetUpdate', 'EmployeeAssetOut', 'PaginatedEmployeeAssets', 'EmployeeAssetListResponse',
     'EmployeeContractBase', 'EmployeeContractCreate', 'EmployeeContractUpdate', 'EmployeeContractOut', 'PaginatedEmployeeContracts', 'EmployeeContractListResponse',
+    'HealthCheckUpBase', 'HealthCheckUpCreate', 'HealthCheckUpUpdate', 'HealthCheckUpOut', 'PaginatedHealthCheckUps', 'HealthCheckUpListResponse',
     ]
 
