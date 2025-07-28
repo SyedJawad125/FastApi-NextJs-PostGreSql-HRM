@@ -45,6 +45,7 @@ from app.models.employee_experiences import EmployeeExperience
 from app.models.employee_assets import EmployeeAsset
 from app.models.employee_contract import EmployeeContract
 from app.models.health_checkup import HealthCheckUp
+from app.models.advanced_salaries import AdvancedSalary
 
 
 # Import routers
@@ -59,7 +60,8 @@ from app.routers import (
     employee_documents,
     holiday_calendar, shift , shift_assignments, 
     candidate, recruitment, performance_review, training, training_participant,
-    audit_logs, education_experience, employee_experiences, employee_assets, employee_contract, health_checkup
+    audit_logs, education_experience, employee_experiences, employee_assets, 
+    employee_contract, health_checkup, advanced_salaries
 )
 
 app = FastAPI(
@@ -166,6 +168,7 @@ app.include_router(employee_experiences.router)
 app.include_router(employee_assets.router)
 app.include_router(employee_contract.router)
 app.include_router(health_checkup.router)
+app.include_router(advanced_salaries.router)
 
 
 

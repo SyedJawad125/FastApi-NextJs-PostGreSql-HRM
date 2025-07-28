@@ -739,6 +739,20 @@ def filter_health_checkups(query_params, query):
         query = query.filter(models.HealthCheckUp.checkup_date == query_params["date"])
     return query
 
+
+
+def filter_advanced_salaries(query_params, query):
+    if "employee_id" in query_params:
+        query = query.filter(models.AdvancedSalary.employee_id == int(query_params["employee_id"]))
+    if "department_id" in query_params:
+        query = query.filter(models.AdvancedSalary.department_id == int(query_params["department_id"]))
+    if "status" in query_params:
+        query = query.filter(models.AdvancedSalary.status == query_params["status"])
+    if "request_date" in query_params:
+        query = query.filter(models.AdvancedSalary.request_date == query_params["request_date"])
+    return query
+
+
 def filter_permissions(params, query):
     name = params.get("name")
     if name:
