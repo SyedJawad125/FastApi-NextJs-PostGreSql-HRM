@@ -263,6 +263,14 @@ from .health_checkup import (
     PaginatedHealthCheckUps,
     HealthCheckUpListResponse
 )
+from .advanced_salaries import(
+    AdvancedSalaryBase,
+    AdvancedSalaryCreate,
+    AdvancedSalaryUpdate,
+    AdvancedSalaryOut,
+    PaginatedAdvancedSalaries,
+    AdvancedSalaryListResponse
+)
 # define what will be exported on `from schemas import *`
 __all__ = [
     'UserBase', 'UserCreate', 'LoginRequest', 'UserUpdate', 'UserOut',
@@ -301,5 +309,6 @@ __all__ = [
     'EmployeeAssetBase', 'EmployeeAssetCreate', 'EmployeeAssetUpdate', 'EmployeeAssetOut', 'PaginatedEmployeeAssets', 'EmployeeAssetListResponse',
     'EmployeeContractBase', 'EmployeeContractCreate', 'EmployeeContractUpdate', 'EmployeeContractOut', 'PaginatedEmployeeContracts', 'EmployeeContractListResponse',
     'HealthCheckUpBase', 'HealthCheckUpCreate', 'HealthCheckUpUpdate', 'HealthCheckUpOut', 'PaginatedHealthCheckUps', 'HealthCheckUpListResponse',
+    'AdvancedSalaryBase', 'AdvancedSalaryCreate', 'AdvancedSalaryUpdate', 'AdvancedSalaryOut', 'PaginatedAdvancedSalaries', 'AdvancedSalaryListResponse', 
     ]
 

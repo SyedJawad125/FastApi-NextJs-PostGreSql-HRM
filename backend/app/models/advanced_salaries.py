@@ -5,7 +5,6 @@ from app.database import Base
 from datetime import datetime
 import enum
 
-
 class AdvanceStatus(str, enum.Enum):
     PENDING = "pending"
     APPROVED = "approved"
