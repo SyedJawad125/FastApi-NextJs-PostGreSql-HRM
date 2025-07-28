@@ -311,3 +311,15 @@ class User(Base):
     updated_advanced_salaries = relationship("AdvancedSalary", back_populates="updater",
         foreign_keys="[AdvancedSalary.updated_by_user_id]"
     )
+
+    company_announcements_created = relationship(
+        "CompanyAnnouncement",
+        foreign_keys="[CompanyAnnouncement.created_by_user_id]",
+        back_populates="creator"
+    )
+
+    company_announcements_updated = relationship(
+        "CompanyAnnouncement",
+        foreign_keys="[CompanyAnnouncement.updated_by_user_id]",
+        back_populates="updater"
+    )

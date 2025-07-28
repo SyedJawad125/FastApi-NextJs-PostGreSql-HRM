@@ -30,6 +30,8 @@ from .employee_assets import EmployeeAsset
 from .employee_contract import EmployeeContract
 from .health_checkup import HealthCheckUp
 from .advanced_salaries import AdvancedSalary
+from .company_announcements import CompanyAnnouncement
+
 
 
 
@@ -40,5 +42,5 @@ __all__ = ["User", "Department", "Employee", "Role", "Permission", "Rank", "Atte
  "ImageCategory", "Image", "EmployeeProfile", "EmployeeDocument", "HolidayCalendar",
   "Shift", "ShiftAssignment", "Candidate", "Recruitment", "PerformanceReview", "Training", "TrainingParticipant",
   "AuditLog", "EducationExperience", "EmployeeExperience", "EmployeeAsset", "EmployeeContract", "HealthCheckUp",
-  "AdvancedSalary"]
+  "AdvancedSalary", "CompanyAnnouncement"]
 
