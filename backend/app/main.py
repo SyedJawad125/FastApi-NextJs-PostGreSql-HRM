@@ -47,6 +47,7 @@ from app.models.employee_contract import EmployeeContract
 from app.models.health_checkup import HealthCheckUp
 from app.models.advanced_salaries import AdvancedSalary
 from app.models.company_announcements import CompanyAnnouncement
+from app.models.job_application import JobApplication
 
 
 # Import routers
@@ -62,7 +63,7 @@ from app.routers import (
     holiday_calendar, shift , shift_assignments, 
     candidate, recruitment, performance_review, training, training_participant,
     audit_logs, education_experience, employee_experiences, employee_assets, 
-    employee_contract, health_checkup, advanced_salaries, company_announcements
+    employee_contract, health_checkup, advanced_salaries, company_announcements, job_application
 )
 
 app = FastAPI(
@@ -171,6 +172,7 @@ app.include_router(employee_contract.router)
 app.include_router(health_checkup.router)
 app.include_router(advanced_salaries.router)
 app.include_router(company_announcements.router)
+app.include_router(job_application.router)
 
 
 
