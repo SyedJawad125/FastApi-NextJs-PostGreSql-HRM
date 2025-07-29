@@ -49,6 +49,7 @@ from app.models.advanced_salaries import AdvancedSalary
 from app.models.company_announcements import CompanyAnnouncement
 from app.models.job_application import JobApplication
 from app.models.interviews import Interview
+from app.models.offer_letters import OfferLetter
 
 
 # Import routers
@@ -65,7 +66,7 @@ from app.routers import (
     candidate, recruitment, performance_review, training, training_participant,
     audit_logs, education_experience, employee_experiences, employee_assets, 
     employee_contract, health_checkup, advanced_salaries, 
-    company_announcements, job_application, interviews,
+    company_announcements, job_application, interviews, offer_letters
 )
 
 app = FastAPI(
@@ -176,6 +177,7 @@ app.include_router(advanced_salaries.router)
 app.include_router(company_announcements.router)
 app.include_router(job_application.router)
 app.include_router(interviews.router)
+app.include_router(offer_letters.router)
 
 
 
