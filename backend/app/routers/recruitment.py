@@ -272,7 +272,66 @@ router = APIRouter(
     tags=["Recruitments"]
 )
 
-logger = logging.getLogger(__name__)
+# logger = logging.getLogger(__name__)
+
+# @router.get("/", response_model=schemas.RecruitmentListResponse)
+# def get_recruitments(
+#     request: Request,
+#     db: Session = Depends(database.get_db),
+#     current_user: models.User = Depends(oauth2.get_current_user)
+# ):
+#     """
+#     Get all recruitments with pagination and filtering
+#     """
+#     try:
+#         # Base query
+#         query = db.query(models.Recruitment)
+        
+#         # Apply filters from query parameters
+#         query = filter_recruitments(request.query_params, query)
+        
+#         # Eager load relationships to prevent N+1 queries
+#         query = query.options(
+#             joinedload(models.Recruitment.department),
+#             joinedload(models.Recruitment.creator),
+#             joinedload(models.Recruitment.updater),
+#             joinedload(models.Recruitment.created_by_employee),
+#             joinedload(models.Recruitment.hiring_manager)
+#         )
+        
+#         # Get total count before pagination
+#         total_count = query.count()
+        
+#         # Apply pagination
+#         paginated_query = paginate_data(query, request)
+#         recruitments = paginated_query.all()
+        
+#         # Serialize data
+#         serialized_data = [
+#             schemas.RecruitmentOut.model_validate(recruitment) 
+#             for recruitment in recruitments
+#         ]
+
+#         return {
+#             "status": "SUCCESS",
+#             "result": {
+#                 "count": total_count,
+#                 "data": serialized_data
+#             }
+#         }
+
+#     except SQLAlchemyError as e:
+#         logger.error(f"Database error fetching recruitments: {str(e)}")
+#         raise HTTPException(
+#             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+#             detail="Database error occurred"
+#         )
+#     except Exception as e:
+#         logger.error(f"Unexpected error fetching recruitments: {str(e)}")
+#         raise HTTPException(
+#             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+#             detail="Failed to fetch recruitments"
+#         )
 
 @router.get("/", response_model=schemas.RecruitmentListResponse)
 def get_recruitments(
@@ -280,17 +339,10 @@ def get_recruitments(
     db: Session = Depends(database.get_db),
     current_user: models.User = Depends(oauth2.get_current_user)
 ):
-    """
-    Get all recruitments with pagination and filtering
-    """
     try:
-        # Base query
         query = db.query(models.Recruitment)
-        
-        # Apply filters from query parameters
         query = filter_recruitments(request.query_params, query)
-        
-        # Eager load relationships to prevent N+1 queries
+
         query = query.options(
             joinedload(models.Recruitment.department),
             joinedload(models.Recruitment.creator),
@@ -298,45 +350,29 @@ def get_recruitments(
             joinedload(models.Recruitment.created_by_employee),
             joinedload(models.Recruitment.hiring_manager)
         )
-        
-        # Get total count before pagination
-        total_count = query.count()
-        
-        # Apply pagination
-        paginated_query = paginate_data(query, request)
-        recruitments = paginated_query.all()
-        
-        # Serialize data
+
+        all_data = query.all()
+        paginated_data, count = paginate_data(all_data, request)
+
         serialized_data = [
-            schemas.RecruitmentOut.model_validate(recruitment) 
-            for recruitment in recruitments
+            schemas.RecruitmentOut.model_validate(item) for item in paginated_data
         ]
 
-        return {
-            "status": "SUCCESS",
-            "result": {
-                "count": total_count,
-                "data": serialized_data
-            }
+        response_data = {
+            "count": count,
+            "data": serialized_data
         }
 
-    except SQLAlchemyError as e:
-        logger.error(f"Database error fetching recruitments: {str(e)}")
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Database error occurred"
-        )
+        return {
+            "status": "SUCCESSFUL",
+            "result": response_data
+        }
+
     except Exception as e:
-        logger.error(f"Unexpected error fetching recruitments: {str(e)}")
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Failed to fetch recruitments"
-        )
+        raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.post("/", 
-             status_code=status.HTTP_201_CREATED, 
-             response_model=schemas.RecruitmentOut)
+@router.post("/", status_code=status.HTTP_201_CREATED, response_model=schemas.RecruitmentOut)
 def create_recruitment(
     payload: schemas.RecruitmentCreate,
     db: Session = Depends(database.get_db),
