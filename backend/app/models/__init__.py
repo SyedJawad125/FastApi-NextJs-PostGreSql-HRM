@@ -32,8 +32,7 @@ from .health_checkup import HealthCheckUp
 from .advanced_salaries import AdvancedSalary
 from .company_announcements import CompanyAnnouncement
 from .job_application import JobApplication
-
-
+from .interviews import Interview
 
 
 
@@ -45,5 +44,5 @@ __all__ = ["User", "Department", "Employee", "Role", "Permission", "Rank", "Atte
  "ImageCategory", "Image", "EmployeeProfile", "EmployeeDocument", "HolidayCalendar",
   "Shift", "ShiftAssignment", "Candidate", "Recruitment", "PerformanceReview", "Training", "TrainingParticipant",
   "AuditLog", "EducationExperience", "EmployeeExperience", "EmployeeAsset", "EmployeeContract", "HealthCheckUp",
-  "AdvancedSalary", "CompanyAnnouncement","job_application"]
+  "AdvancedSalary", "CompanyAnnouncement","JobApplication", "Interview"]
 

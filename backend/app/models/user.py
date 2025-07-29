@@ -329,3 +329,6 @@ class User(Base):
 
     created_job_applications = relationship("JobApplication", foreign_keys='JobApplication.created_by_user_id', back_populates="creator")
     updated_job_applications = relationship("JobApplication", foreign_keys='JobApplication.updated_by_user_id', back_populates="updater")
+
+    created_interviews = relationship("Interview", foreign_keys="[Interview.created_by_user_id]", back_populates="creator")
+    updated_interviews = relationship("Interview", foreign_keys="[Interview.updated_by_user_id]", back_populates="updater")

@@ -9,7 +9,7 @@ from fastapi.exceptions import RequestValidationError
 
 from fastapi import Query
 from sqlalchemy.orm import Query as SAQuery
-from sqlalchemy import or_
+from sqlalchemy import Date, or_
 from typing import Mapping
 from app.models import PerformanceReview
 
@@ -773,6 +773,18 @@ def filter_company_announcements(query_params, query: Query):
 
     return query
 
+def filter_interviews(query_params, query):
+    if "job_application_id" in query_params:
+        query = query.filter(models.Interview.job_application_id == int(query_params["job_application_id"]))
+    if "interviewer_id" in query_params:
+        query = query.filter(models.Interview.interviewer_id == int(query_params["interviewer_id"]))
+    if "status" in query_params:
+        query = query.filter(models.Interview.status == query_params["status"])
+    if "mode" in query_params:
+        query = query.filter(models.Interview.mode == query_params["mode"])
+    if "interview_date" in query_params:
+        query = query.filter(models.Interview.interview_datetime.cast(Date) == query_params["interview_date"])  # assuming date is string in 'YYYY-MM-DD'
+    return query
 
 
 def filter_permissions(params, query):

@@ -287,6 +287,14 @@ from .job_application import(
     PaginatedJobApplications,
     JobApplicationListResponse
 )
+from .interviews import(
+    InterviewBase,
+    InterviewCreate,
+    InterviewUpdate,
+    InterviewOut,
+    PaginatedInterviews,
+    InterviewListResponse
+)
 # define what will be exported on `from schemas import *`
 __all__ = [
     'UserBase', 'UserCreate', 'LoginRequest', 'UserUpdate', 'UserOut',
@@ -328,5 +336,6 @@ __all__ = [
     'AdvancedSalaryBase', 'AdvancedSalaryCreate', 'AdvancedSalaryUpdate', 'AdvancedSalaryOut', 'PaginatedAdvancedSalaries', 'AdvancedSalaryListResponse', 
     'CompanyAnnouncementBase', 'CompanyAnnouncementCreate', 'CompanyAnnouncementUpdate', 'CompanyAnnouncementOut', 'PaginatedCompanyAnnouncements', 'CompanyAnnouncementListResponse',
     'JobApplicationBase', 'JobApplicationCreate', 'JobApplicationUpdate', 'JobApplicationOut', 'PaginatedJobApplications', 'JobApplicationListResponse', 
+    'InterviewBase', 'InterviewCreate', 'InterviewUpdate', 'InterviewOut', 'PaginatedInterviews', 'InterviewListResponse',
     ]
 
