@@ -148,6 +148,8 @@ class Recruitment(Base):
     created_by_user_id = Column(Integer, ForeignKey("users.id"))
     updated_by_user_id = Column(Integer, ForeignKey("users.id"))
 
+    job_applications = relationship("JobApplication", back_populates="recruitment", cascade="all, delete-orphan")
+
     # Relationships
     department = relationship("Department", back_populates="recruitments")
     created_by_employee = relationship(
