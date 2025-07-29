@@ -166,6 +166,8 @@ class Recruitment(Base):
     updater = relationship("User", foreign_keys=[updated_by_user_id])
 
     candidates = relationship("Candidate", back_populates="recruitment", cascade="all, delete-orphan")
+    offer_letters = relationship("OfferLetter", back_populates="recruitment")
+
     # applications = relationship("Application", back_populates="recruitment", cascade="all, delete-orphan")
     # interviews = relationship("Interview", back_populates="recruitment")
 

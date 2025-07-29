@@ -332,3 +332,6 @@ class User(Base):
 
     created_interviews = relationship("Interview", foreign_keys="[Interview.created_by_user_id]", back_populates="creator")
     updated_interviews = relationship("Interview", foreign_keys="[Interview.updated_by_user_id]", back_populates="updater")
+
+    created_offer_letters = relationship("OfferLetter", foreign_keys='OfferLetter.created_by_user_id', back_populates="creator")
+    updated_offer_letters = relationship("OfferLetter", foreign_keys='OfferLetter.updated_by_user_id', back_populates="updater")

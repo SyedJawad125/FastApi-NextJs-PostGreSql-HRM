@@ -68,6 +68,8 @@ class Candidate(Base):
     # Relationships
     recruitment = relationship("Recruitment", back_populates="candidates")
     job_applications = relationship("JobApplication", back_populates="candidate", cascade="all, delete-orphan")
+    offer_letters = relationship("OfferLetter", back_populates="candidate")
+
 
     
     created_by_user_id = Column(Integer, ForeignKey("users.id"))

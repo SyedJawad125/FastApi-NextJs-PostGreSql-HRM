@@ -46,6 +46,8 @@ class JobApplication(Base):
     candidate = relationship("Candidate", back_populates="job_applications")
     recruitment = relationship("Recruitment", back_populates="job_applications")
     interviews = relationship("Interview", back_populates="job_application")
+    offer_letters = relationship("OfferLetter", back_populates="job_application")
+
 
 
     creator = relationship("User", foreign_keys=[created_by_user_id], back_populates="created_job_applications")
