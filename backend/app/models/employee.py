@@ -50,7 +50,7 @@ class Employee(Base):
     shift = relationship("Shift", back_populates="employees")
     
     shift_assignments = relationship("ShiftAssignment", back_populates="employee", cascade="all, delete-orphan")
-    created_recruitments = relationship("Recruitment", back_populates="created_by_employee")
+    # created_recruitments = relationship("Recruitment", back_populates="created_by_employee")
 
     performance_reviews = relationship("PerformanceReview", back_populates="employee", cascade="all, delete-orphan")
 
@@ -74,3 +74,15 @@ class Employee(Base):
     # Inside Employee model
     health_checkups = relationship("HealthCheckUp", back_populates="employee")
     advanced_salaries = relationship("AdvancedSalary", back_populates="employee")
+
+    created_recruitments = relationship(
+        "Recruitment", 
+        foreign_keys="[Recruitment.created_by_employee_id]",
+        back_populates="created_by_employee"
+    )
+
+    managed_recruitments = relationship(
+        "Recruitment", 
+        foreign_keys="[Recruitment.hiring_manager_id]",
+        back_populates="hiring_manager"
+    )

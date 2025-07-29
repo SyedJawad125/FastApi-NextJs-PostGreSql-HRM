@@ -178,15 +178,17 @@ class User(Base):
 
     # Recruitment relationships
     created_recruitments = relationship(
-        "Recruitment", 
-        foreign_keys='Recruitment.created_by_user_id', 
-        back_populates="creator"
+        "Recruitment",
+        foreign_keys="[Recruitment.created_by_user_id]",
+        backref="created_by_user"
     )
+
     updated_recruitments = relationship(
-        "Recruitment", 
-        foreign_keys='Recruitment.updated_by_user_id', 
-        back_populates="updater"
+        "Recruitment",
+        foreign_keys="[Recruitment.updated_by_user_id]",
+        backref="updated_by_user"
     )
+
 
     # Candidate relationships
     created_candidates = relationship(
