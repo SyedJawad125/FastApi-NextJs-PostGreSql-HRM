@@ -271,6 +271,14 @@ from .advanced_salaries import(
     PaginatedAdvancedSalaries,
     AdvancedSalaryListResponse
 )
+from .company_announcements import(
+    CompanyAnnouncementBase,
+    CompanyAnnouncementCreate,
+    CompanyAnnouncementUpdate,
+    CompanyAnnouncementOut,
+    PaginatedCompanyAnnouncements,
+    CompanyAnnouncementListResponse
+)
 # define what will be exported on `from schemas import *`
 __all__ = [
     'UserBase', 'UserCreate', 'LoginRequest', 'UserUpdate', 'UserOut',
@@ -310,5 +318,6 @@ __all__ = [
     'EmployeeContractBase', 'EmployeeContractCreate', 'EmployeeContractUpdate', 'EmployeeContractOut', 'PaginatedEmployeeContracts', 'EmployeeContractListResponse',
     'HealthCheckUpBase', 'HealthCheckUpCreate', 'HealthCheckUpUpdate', 'HealthCheckUpOut', 'PaginatedHealthCheckUps', 'HealthCheckUpListResponse',
     'AdvancedSalaryBase', 'AdvancedSalaryCreate', 'AdvancedSalaryUpdate', 'AdvancedSalaryOut', 'PaginatedAdvancedSalaries', 'AdvancedSalaryListResponse', 
+    'CompanyAnnouncementBase', 'CompanyAnnouncementCreate', 'CompanyAnnouncementUpdate', 'CompanyAnnouncementOut', 'PaginatedCompanyAnnouncements', 'CompanyAnnouncementListResponse',
     ]
 

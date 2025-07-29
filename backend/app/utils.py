@@ -753,6 +753,28 @@ def filter_advanced_salaries(query_params, query):
     return query
 
 
+
+def filter_company_announcements(query_params, query: Query):
+    if "title" in query_params:
+        query = query.filter(models.CompanyAnnouncement.title.ilike(f"%{query_params['title']}%"))
+
+    if "is_active" in query_params:
+        is_active = query_params["is_active"].lower()
+        if is_active in ["true", "1"]:
+            query = query.filter(models.CompanyAnnouncement.is_active == True)
+        elif is_active in ["false", "0"]:
+            query = query.filter(models.CompanyAnnouncement.is_active == False)
+
+    if "created_by_user_id" in query_params:
+        query = query.filter(models.CompanyAnnouncement.created_by_user_id == int(query_params["created_by_user_id"]))
+
+    if "created_at" in query_params:
+        query = query.filter(models.CompanyAnnouncement.created_at.cast(str).like(f"{query_params['created_at']}%"))
+
+    return query
+
+
+
 def filter_permissions(params, query):
     name = params.get("name")
     if name:
