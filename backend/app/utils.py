@@ -787,6 +787,73 @@ def filter_interviews(query_params, query):
     return query
 
 
+from sqlalchemy import or_
+from typing import Dict, Any
+
+
+def parse_int(value: Any) -> int | None:
+    try: return int(value)
+    except: return None
+
+def parse_date(value: str) -> datetime | None:
+    try: return datetime.fromisoformat(value.replace("Z", "+00:00"))
+    except: return None
+
+def filter_interview_feedbacks(params: Dict[str, Any], query: Query) -> Query:
+    F = models.InterviewFeedback
+
+    filters = [
+        (parse_int(params.get("interview_id")), lambda v: F.interview_id == v),
+        (parse_int(params.get("panel_member_id")), lambda v: F.panel_member_id == v),
+        (params.get("recommendation") if params.get("recommendation") in {"strong_yes", "yes", "neutral", "no", "strong_no"} else None, lambda v: F.recommendation == v),
+        (params.get("is_final"), lambda v: F.is_final == v.lower() in {"true", "1", "yes"}),
+        (parse_int(params.get("min_rating")), lambda v: F.rating >= v),
+        (parse_int(params.get("max_rating")), lambda v: F.rating <= v),
+        (parse_int(params.get("rating")), lambda v: F.rating == v),
+        (parse_int(params.get("created_by")), lambda v: F.created_by_user_id == v),
+        (parse_int(params.get("updated_by")), lambda v: F.updated_by_user_id == v),
+        (parse_date(params.get("submitted_from")), lambda v: F.submitted_at >= v),
+        (parse_date(params.get("submitted_to")), lambda v: F.submitted_at <= v),
+        (parse_date(params.get("created_from")), lambda v: F.created_at >= v),
+        (parse_date(params.get("created_to")), lambda v: F.created_at <= v),
+        (parse_date(params.get("updated_from")), lambda v: F.updated_at >= v),
+        (parse_date(params.get("updated_to")), lambda v: F.updated_at <= v),
+    ]
+    for val, cond in filters:
+        if val is not None:
+            query = query.filter(cond(val))
+
+    if search := params.get("search"):
+        like = f"%{search}%"
+        query = query.filter(or_(F.strengths.ilike(like), F.weaknesses.ilike(like), F.overall_comment.ilike(like)))
+
+    for key, field in [("strengths_search", F.strengths), ("weaknesses_search", F.weaknesses), ("comment_search", F.overall_comment)]:
+        if val := params.get(key):
+            query = query.filter(field.ilike(f"%{val}%"))
+
+    def split_int_list(key: str) -> list[int]:
+        try: return [int(v.strip()) for v in params.get(key, "").split(",") if v.strip()]
+        except: return []
+
+    if ids := split_int_list("interview_ids"):
+        query = query.filter(F.interview_id.in_(ids))
+    if ids := split_int_list("panel_member_ids"):
+        query = query.filter(F.panel_member_id.in_(ids))
+
+    if recs := [r for r in params.get("recommendations", "").split(",") if r.strip() in {"strong_yes", "yes", "neutral", "no", "strong_no"}]:
+        query = query.filter(F.recommendation.in_(recs))
+
+    order_by = params.get("order_by", "created_at")
+    direction = params.get("order_direction", "desc")
+    if hasattr(F, order_by):
+        field = getattr(F, order_by)
+        query = query.order_by(field.asc() if direction.lower() == "asc" else field.desc())
+    else:
+        query = query.order_by(F.created_at.desc())
+
+    return query
+
+
 def filter_permissions(params, query):
     name = params.get("name")
     if name:

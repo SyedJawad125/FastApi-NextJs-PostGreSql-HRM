@@ -303,6 +303,15 @@ from .offer_letters import(
     PaginatedOfferLetters,
     OfferLetterListResponse
 )
+from .interview_feedback import (
+    FeedbackRecommendation,
+    InterviewFeedbackBase,
+    InterviewFeedbackCreate,
+    InterviewFeedbackUpdate,
+    InterviewFeedbackOut,
+    PaginatedInterviewFeedbacks,
+    InterviewFeedbackListResponse
+)
 # define what will be exported on `from schemas import *`
 __all__ = [
     'UserBase', 'UserCreate', 'LoginRequest', 'UserUpdate', 'UserOut',
@@ -346,5 +355,7 @@ __all__ = [
     'JobApplicationBase', 'JobApplicationCreate', 'JobApplicationUpdate', 'JobApplicationOut', 'PaginatedJobApplications', 'JobApplicationListResponse', 
     'InterviewBase', 'InterviewCreate', 'InterviewUpdate', 'InterviewOut', 'PaginatedInterviews', 'InterviewListResponse',
     'OfferLetterBase', 'OfferLetterCreate', 'OfferLetterUpdate', 'OfferLetterOut', 'PaginatedOfferLetters', 'OfferLetterListResponse',
+    'FeedbackRecommendation', 'InterviewFeedbackBase', 'InterviewFeedbackCreate', 'InterviewFeedbackUpdate',
+    'InterviewFeedbackOut', 'PaginatedInterviewFeedbacks','InterviewFeedbackListResponse',
     ]
 
