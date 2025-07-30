@@ -27,7 +27,7 @@ class Department(Base):
     advanced_salaries = relationship("AdvancedSalary", back_populates="department")
 
     grievances = relationship("Grievance", back_populates="department", cascade="all, delete-orphan")
-
+    travel_expenses = relationship("TravelExpense", back_populates="department")
     
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, nullable=True, onupdate=datetime.utcnow)

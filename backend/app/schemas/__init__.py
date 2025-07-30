@@ -344,6 +344,14 @@ from .disciplinary_actions import (
     PaginatedDisciplinaryAction,
     DisciplinaryActionListResponse
 )
+from .travel_expenses import (
+    TravelExpenseBase,
+    TravelExpenseCreate,
+    TravelExpenseUpdate,
+    TravelExpenseOut,
+    PaginatedTravelExpense,
+    TravelExpenseListResponse
+)
 # define what will be exported on `from schemas import *`
 __all__ = [
     'UserBase', 'UserCreate', 'LoginRequest', 'UserUpdate', 'UserOut',
@@ -394,5 +402,6 @@ __all__ = [
     'PromotionHistoryBase', 'PromotionHistoryCreate', 'PromotionHistoryUpdate', 'PromotionHistoryOut', 'PaginatedPromotionHistory', 'PromotionHistoryListResponse', 
     'GrievanceBase', 'GrievanceCreate', 'GrievanceUpdate', 'GrievanceOut', 'PaginatedGrievance', 'GrievanceListResponse', 
     'DisciplinaryActionBase', 'DisciplinaryActionCreate', 'DisciplinaryActionUpdate', 'DisciplinaryActionOut', 'PaginatedDisciplinaryAction', 'DisciplinaryActionListResponse',
+    'TravelExpenseBase', 'TravelExpenseCreate', 'TravelExpenseUpdate', 'TravelExpenseOut', 'PaginatedTravelExpense', 'TravelExpenseListResponse',
     ]
 

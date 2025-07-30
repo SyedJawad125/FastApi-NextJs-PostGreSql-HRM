@@ -78,6 +78,8 @@ class Employee(Base):
     promotion_histories = relationship("PromotionHistory", back_populates="employee")
     grievances = relationship("Grievance", back_populates="employee", cascade="all, delete")
     disciplinary_actions = relationship("DisciplinaryAction", back_populates="employee")
+    travel_expenses = relationship("TravelExpense", back_populates="employee")
+
 
 
 

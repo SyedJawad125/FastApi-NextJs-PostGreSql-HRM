@@ -109,6 +109,7 @@ from app.models.permission import Permission, user_permission
 from app.models.shift_assignments import ShiftAssignment
 from app.models.shift import Shift
 from app.models.education_experience import EducationExperience
+from app.models.travel_expenses import TravelExpense
 
 
 class User(Base):
@@ -394,3 +395,7 @@ class User(Base):
         back_populates="updater"
     )
 
+    created_travel_expenses = relationship("TravelExpense", foreign_keys=[TravelExpense.created_by_user_id], back_populates="creator")
+    updated_travel_expenses = relationship("TravelExpense", foreign_keys=[TravelExpense.updated_by_user_id], back_populates="updater")
+    submitted_travel_expenses = relationship("TravelExpense", foreign_keys=[TravelExpense.submitted_by_user_id])
+    approved_travel_expenses = relationship("TravelExpense", foreign_keys=[TravelExpense.approved_by_user_id])

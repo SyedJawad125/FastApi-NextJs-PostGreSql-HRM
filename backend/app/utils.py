@@ -894,7 +894,6 @@ def filter_interview_schedules(query_params: dict, query: Query) -> Query:
 
 
 from sqlalchemy import or_
-from sqlalchemy.orm import Query
 from typing import Optional
 from datetime import date
 from app.models import PromotionHistory  # Adjust the import as per your project structure
@@ -973,6 +972,30 @@ def filter_disciplinary_actions(params, query: Query):
 
     if issued_by:
         query = query.filter(DisciplinaryAction.issued_by.ilike(f"%{issued_by}%"))
+
+    return query
+
+
+from typing import Optional
+from app.models import TravelExpense
+
+def filter_travel_expenses(params, query: Query):
+    employee_id: Optional[int] = params.get("employee_id")
+    status: Optional[str] = params.get("status")
+    department_id: Optional[int] = params.get("department_id")
+    purpose: Optional[str] = params.get("purpose")
+
+    if employee_id:
+        query = query.filter(TravelExpense.employee_id == int(employee_id))
+
+    if status:
+        query = query.filter(TravelExpense.status == status)
+
+    if department_id:
+        query = query.filter(TravelExpense.department_id == int(department_id))
+
+    if purpose:
+        query = query.filter(TravelExpense.purpose.ilike(f"%{purpose}%"))
 
     return query
 
