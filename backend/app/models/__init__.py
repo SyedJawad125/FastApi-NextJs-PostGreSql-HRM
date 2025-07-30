@@ -35,6 +35,7 @@ from .job_application import JobApplication
 from .interviews import Interview
 from .offer_letters import OfferLetter
 from .interview_feedback import InterviewFeedback
+from .interview_schedules import InterviewSchedule
 
 
 
@@ -48,5 +49,6 @@ __all__ = ["User", "Department", "Employee", "Role", "Permission", "Rank", "Atte
  "ImageCategory", "Image", "EmployeeProfile", "EmployeeDocument", "HolidayCalendar",
   "Shift", "ShiftAssignment", "Candidate", "Recruitment", "PerformanceReview", "Training", "TrainingParticipant",
   "AuditLog", "EducationExperience", "EmployeeExperience", "EmployeeAsset", "EmployeeContract", "HealthCheckUp",
-  "AdvancedSalary", "CompanyAnnouncement","JobApplication", "Interview", "OfferLetter", "InterviewFeedback"]
+  "AdvancedSalary", "CompanyAnnouncement","JobApplication", "Interview", "OfferLetter", "InterviewFeedback",
+  "InterviewSchedule"]
 

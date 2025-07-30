@@ -353,3 +353,22 @@ class User(Base):
         foreign_keys="[InterviewFeedback.updated_by_user_id]",
         back_populates="updater"
     )
+
+    scheduled_interviews = relationship(
+        "InterviewSchedule",
+        foreign_keys="[InterviewSchedule.scheduled_by_user_id]",
+        back_populates="scheduler"
+    )
+
+    created_schedules = relationship(
+        "InterviewSchedule",
+        foreign_keys="[InterviewSchedule.created_by_user_id]",
+        back_populates="creator"
+    )
+
+    updated_schedules = relationship(
+        "InterviewSchedule",
+        foreign_keys="[InterviewSchedule.updated_by_user_id]",
+        back_populates="updater"
+    )
+

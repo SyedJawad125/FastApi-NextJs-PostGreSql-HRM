@@ -48,6 +48,7 @@ class Interview(Base):
     job_application = relationship("JobApplication", back_populates="interviews")
     offer_letters = relationship("OfferLetter", back_populates="interview")
     interview_feedbacks = relationship("InterviewFeedback", back_populates="interview", cascade="all, delete-orphan")
+    interview_schedule = relationship("InterviewSchedule", back_populates="interview", uselist=False, cascade="all, delete-orphan")
     interviewer = relationship("User", foreign_keys=[interviewer_id])
     creator = relationship("User", foreign_keys=[created_by_user_id], back_populates="created_interviews")
     updater = relationship("User", foreign_keys=[updated_by_user_id], back_populates="updated_interviews")

@@ -312,6 +312,14 @@ from .interview_feedback import (
     PaginatedInterviewFeedbacks,
     InterviewFeedbackListResponse
 )
+from .interview_schedules import (
+    InterviewScheduleBase,
+    InterviewScheduleCreate,
+    InterviewScheduleUpdate,
+    InterviewScheduleOut,
+    PaginatedInterviewSchedules,
+    InterviewScheduleListResponse
+)
 # define what will be exported on `from schemas import *`
 __all__ = [
     'UserBase', 'UserCreate', 'LoginRequest', 'UserUpdate', 'UserOut',
@@ -357,5 +365,7 @@ __all__ = [
     'OfferLetterBase', 'OfferLetterCreate', 'OfferLetterUpdate', 'OfferLetterOut', 'PaginatedOfferLetters', 'OfferLetterListResponse',
     'FeedbackRecommendation', 'InterviewFeedbackBase', 'InterviewFeedbackCreate', 'InterviewFeedbackUpdate',
     'InterviewFeedbackOut', 'PaginatedInterviewFeedbacks','InterviewFeedbackListResponse',
+    'InterviewScheduleBase', 'InterviewScheduleCreate', 'InterviewScheduleUpdate', 'InterviewScheduleOut', 
+    'PaginatedInterviewSchedules', 'InterviewScheduleListResponse'
     ]
 

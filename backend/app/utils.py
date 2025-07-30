@@ -854,6 +854,44 @@ def filter_interview_feedbacks(params: Dict[str, Any], query: Query) -> Query:
     return query
 
 
+
+
+from sqlalchemy import cast, Date
+
+
+def filter_interview_schedules(query_params: dict, query: Query) -> Query:
+    """
+    Filters the InterviewSchedule query based on provided query parameters.
+
+    Supported filters:
+    - interview_id
+    - scheduled_by_id
+    - status
+    - scheduled_date (format: YYYY-MM-DD)
+    - location (partial match)
+    """
+
+    if "interview_id" in query_params:
+        query = query.filter(models.InterviewSchedule.interview_id == int(query_params["interview_id"]))
+
+    if "scheduled_by_id" in query_params:
+        query = query.filter(models.InterviewSchedule.scheduled_by_id == int(query_params["scheduled_by_id"]))
+
+    if "status" in query_params:
+        query = query.filter(models.InterviewSchedule.status == query_params["status"])
+
+    if "scheduled_date" in query_params:
+        query = query.filter(
+            cast(models.InterviewSchedule.scheduled_at, Date) == query_params["scheduled_date"]
+        )
+
+    if "location" in query_params:
+        query = query.filter(models.InterviewSchedule.location.ilike(f"%{query_params['location']}%"))
+
+    return query
+
+
+
 def filter_permissions(params, query):
     name = params.get("name")
     if name:
