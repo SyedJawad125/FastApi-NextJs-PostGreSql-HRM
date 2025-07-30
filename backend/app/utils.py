@@ -955,6 +955,28 @@ def filter_grievances(query_params, query: Query):
     return query
 
 
+
+from fastapi import Query as FastAPIQuery
+from app.models import DisciplinaryAction
+
+
+def filter_disciplinary_actions(params, query: Query):
+    employee_id: Optional[int] = params.get("employee_id")
+    status: Optional[str] = params.get("status")
+    issued_by: Optional[str] = params.get("issued_by")
+
+    if employee_id:
+        query = query.filter(DisciplinaryAction.employee_id == int(employee_id))
+
+    if status:
+        query = query.filter(DisciplinaryAction.status == status)
+
+    if issued_by:
+        query = query.filter(DisciplinaryAction.issued_by.ilike(f"%{issued_by}%"))
+
+    return query
+
+
 def filter_permissions(params, query):
     name = params.get("name")
     if name:

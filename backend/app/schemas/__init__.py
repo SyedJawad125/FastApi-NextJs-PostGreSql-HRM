@@ -336,6 +336,14 @@ from .grievances import (
     PaginatedGrievance,
     GrievanceListResponse
 )
+from .disciplinary_actions import (
+    DisciplinaryActionBase,
+    DisciplinaryActionCreate,
+    DisciplinaryActionUpdate,
+    DisciplinaryActionOut,
+    PaginatedDisciplinaryAction,
+    DisciplinaryActionListResponse
+)
 # define what will be exported on `from schemas import *`
 __all__ = [
     'UserBase', 'UserCreate', 'LoginRequest', 'UserUpdate', 'UserOut',
@@ -385,5 +393,6 @@ __all__ = [
     'PaginatedInterviewSchedules', 'InterviewScheduleListResponse',
     'PromotionHistoryBase', 'PromotionHistoryCreate', 'PromotionHistoryUpdate', 'PromotionHistoryOut', 'PaginatedPromotionHistory', 'PromotionHistoryListResponse', 
     'GrievanceBase', 'GrievanceCreate', 'GrievanceUpdate', 'GrievanceOut', 'PaginatedGrievance', 'GrievanceListResponse', 
+    'DisciplinaryActionBase', 'DisciplinaryActionCreate', 'DisciplinaryActionUpdate', 'DisciplinaryActionOut', 'PaginatedDisciplinaryAction', 'DisciplinaryActionListResponse',
     ]
 
