@@ -931,6 +931,30 @@ def filter_promotion_histories(
     return query
 
 
+
+
+def filter_grievances(query_params, query: Query):
+    if "employee_id" in query_params:
+        query = query.filter(models.Grievance.employee_id == int(query_params["employee_id"]))
+
+    if "department_id" in query_params:
+        query = query.join(models.Employee).filter(models.Employee.department_id == int(query_params["department_id"]))
+
+    if "status" in query_params:
+        query = query.filter(models.Grievance.status == query_params["status"])
+
+    if "submitted_date" in query_params:
+        query = query.filter(models.Grievance.submitted_at.cast(Date) == query_params["submitted_date"])
+
+    if "resolved_date" in query_params:
+        query = query.filter(models.Grievance.resolved_at.cast(Date) == query_params["resolved_date"])
+
+    if "created_by" in query_params:
+        query = query.filter(models.Grievance.created_by == int(query_params["created_by"]))
+
+    return query
+
+
 def filter_permissions(params, query):
     name = params.get("name")
     if name:

@@ -378,3 +378,6 @@ class User(Base):
     updated_promotion_histories = relationship(
         "PromotionHistory", foreign_keys="[PromotionHistory.updated_by_user_id]", back_populates="updater"
     )
+
+    created_grievances = relationship("Grievance", foreign_keys="[Grievance.created_by]", back_populates="creator")
+    updated_grievances = relationship("Grievance", foreign_keys="[Grievance.updated_by]", back_populates="updater")

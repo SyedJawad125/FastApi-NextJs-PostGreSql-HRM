@@ -328,6 +328,14 @@ from .promotion_history import (
     PaginatedPromotionHistory,
     PromotionHistoryListResponse
 )
+from .grievances import (
+    GrievanceBase,
+    GrievanceCreate,
+    GrievanceUpdate,
+    GrievanceOut,
+    PaginatedGrievance,
+    GrievanceListResponse
+)
 # define what will be exported on `from schemas import *`
 __all__ = [
     'UserBase', 'UserCreate', 'LoginRequest', 'UserUpdate', 'UserOut',
@@ -376,5 +384,6 @@ __all__ = [
     'InterviewScheduleBase', 'InterviewScheduleCreate', 'InterviewScheduleUpdate', 'InterviewScheduleOut', 
     'PaginatedInterviewSchedules', 'InterviewScheduleListResponse',
     'PromotionHistoryBase', 'PromotionHistoryCreate', 'PromotionHistoryUpdate', 'PromotionHistoryOut', 'PaginatedPromotionHistory', 'PromotionHistoryListResponse', 
+    'GrievanceBase', 'GrievanceCreate', 'GrievanceUpdate', 'GrievanceOut', 'PaginatedGrievance', 'GrievanceListResponse', 
     ]
 

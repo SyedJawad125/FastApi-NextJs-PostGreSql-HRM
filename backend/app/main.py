@@ -53,6 +53,7 @@ from app.models.offer_letters import OfferLetter
 from app.models.interview_feedback import InterviewFeedback
 from app.models.interview_schedules import InterviewSchedule
 from app.models.promotion_history import PromotionHistory
+from app.models.grievances import Grievance
 
 
 # Import routers
@@ -66,7 +67,7 @@ from app.routers import (
     training_participant, audit_logs, education_experience, employee_experiences, 
     employee_assets, employee_contract, health_checkup, advanced_salaries, 
     company_announcements, job_application, interviews, offer_letters, 
-    interview_feedback, interview_schedules, promotion_history
+    interview_feedback, interview_schedules, promotion_history, grievances
 )
 
 app = FastAPI(
@@ -181,6 +182,7 @@ app.include_router(offer_letters.router)
 app.include_router(interview_feedback.router)
 app.include_router(interview_schedules.router)
 app.include_router(promotion_history.router)
+app.include_router(grievances.router)
 
 
 

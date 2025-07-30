@@ -76,6 +76,7 @@ class Employee(Base):
     advanced_salaries = relationship("AdvancedSalary", back_populates="employee")
     # Inside Employee class
     promotion_histories = relationship("PromotionHistory", back_populates="employee")
+    grievances = relationship("Grievance", back_populates="employee", cascade="all, delete")
 
 
     created_recruitments = relationship(
