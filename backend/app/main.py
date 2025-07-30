@@ -60,15 +60,12 @@ from app.routers import (
     role, permission, rank, attendance, 
     timesheet, leave, notification, employee_salary,
     salary_structure, payslip, salary_history, 
-    image_category,
-    image, 
-    employee_profile,
-    employee_documents,
-    holiday_calendar, shift , shift_assignments, 
-    candidate, recruitment, performance_review, training, training_participant,
-    audit_logs, education_experience, employee_experiences, employee_assets, 
-    employee_contract, health_checkup, advanced_salaries, 
-    company_announcements, job_application, interviews, offer_letters, interview_feedback, interview_schedules
+    image_category, image, employee_profile, employee_documents, holiday_calendar, 
+    shift , shift_assignments, candidate, recruitment, performance_review, training,
+    training_participant, audit_logs, education_experience, employee_experiences, 
+    employee_assets, employee_contract, health_checkup, advanced_salaries, 
+    company_announcements, job_application, interviews, offer_letters, 
+    interview_feedback, interview_schedules
 )
 
 app = FastAPI(
