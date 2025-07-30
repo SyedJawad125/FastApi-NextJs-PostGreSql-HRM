@@ -335,3 +335,21 @@ class User(Base):
 
     created_offer_letters = relationship("OfferLetter", foreign_keys='OfferLetter.created_by_user_id', back_populates="creator")
     updated_offer_letters = relationship("OfferLetter", foreign_keys='OfferLetter.updated_by_user_id', back_populates="updater")
+
+    interview_feedbacks = relationship(
+    "InterviewFeedback",
+    foreign_keys="[InterviewFeedback.panel_member_id]",
+    back_populates="panel_member"
+    )
+
+    created_interview_feedbacks = relationship(
+        "InterviewFeedback",
+        foreign_keys="[InterviewFeedback.created_by_user_id]",
+        back_populates="creator"
+    )
+
+    updated_interview_feedbacks = relationship(
+        "InterviewFeedback",
+        foreign_keys="[InterviewFeedback.updated_by_user_id]",
+        back_populates="updater"
+    )
