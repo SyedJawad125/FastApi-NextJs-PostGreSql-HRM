@@ -19,6 +19,8 @@ from starlette.datastructures import QueryParams
 from typing import Dict
 from sqlalchemy.orm import Query, Session
 
+from app.models.promotion_history import PromotionHistory
+
 
 
 
@@ -890,6 +892,43 @@ def filter_interview_schedules(query_params: dict, query: Query) -> Query:
 
     return query
 
+
+from sqlalchemy import or_
+from sqlalchemy.orm import Query
+from typing import Optional
+from datetime import date
+from app.models import PromotionHistory  # Adjust the import as per your project structure
+
+def filter_promotion_histories(
+    query: Query,
+    employee_id: Optional[int] = None,
+    previous_rank_id: Optional[int] = None,
+    new_rank_id: Optional[int] = None,
+    promotion_date: Optional[date] = None,
+    search: Optional[str] = None
+):
+    if employee_id:
+        query = query.filter(PromotionHistory.employee_id == employee_id)
+
+    if previous_rank_id:
+        query = query.filter(PromotionHistory.previous_rank_id == previous_rank_id)
+
+    if new_rank_id:
+        query = query.filter(PromotionHistory.new_rank_id == new_rank_id)
+
+    if promotion_date:
+        query = query.filter(PromotionHistory.promotion_date == promotion_date)
+
+    if search:
+        search_pattern = f"%{search}%"
+        query = query.filter(
+            or_(
+                PromotionHistory.remarks.ilike(search_pattern),
+                # You can add more searchable fields here if needed
+            )
+        )
+
+    return query
 
 
 def filter_permissions(params, query):
