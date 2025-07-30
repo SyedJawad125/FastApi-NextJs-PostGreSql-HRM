@@ -74,6 +74,9 @@ class Employee(Base):
     # Inside Employee model
     health_checkups = relationship("HealthCheckUp", back_populates="employee")
     advanced_salaries = relationship("AdvancedSalary", back_populates="employee")
+    # Inside Employee class
+    promotion_histories = relationship("PromotionHistory", back_populates="employee")
+
 
     created_recruitments = relationship(
         "Recruitment", 

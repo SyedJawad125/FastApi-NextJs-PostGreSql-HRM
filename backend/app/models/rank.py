@@ -19,3 +19,11 @@ class Rank(Base):
     employee_salaries = relationship("EmployeeSalary", back_populates="rank")
     salary_structures = relationship("SalaryStructure", back_populates="rank")
     payslips = relationship("Payslip", back_populates="rank") 
+
+    promotions_as_previous_rank = relationship(
+        "PromotionHistory", foreign_keys="[PromotionHistory.previous_rank_id]"
+    )
+
+    promotions_as_new_rank = relationship(
+       "PromotionHistory", foreign_keys="[PromotionHistory.new_rank_id]"
+    )

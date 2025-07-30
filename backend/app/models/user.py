@@ -372,3 +372,9 @@ class User(Base):
         back_populates="updater"
     )
 
+    created_promotion_histories = relationship(
+        "PromotionHistory", foreign_keys="[PromotionHistory.created_by_user_id]", back_populates="creator"
+    )
+    updated_promotion_histories = relationship(
+        "PromotionHistory", foreign_keys="[PromotionHistory.updated_by_user_id]", back_populates="updater"
+    )
