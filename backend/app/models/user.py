@@ -381,3 +381,16 @@ class User(Base):
 
     created_grievances = relationship("Grievance", foreign_keys="[Grievance.created_by]", back_populates="creator")
     updated_grievances = relationship("Grievance", foreign_keys="[Grievance.updated_by]", back_populates="updater")
+
+    created_disciplinary_actions = relationship(
+    "DisciplinaryAction",
+    foreign_keys="[DisciplinaryAction.created_by_user_id]",
+    back_populates="creator"
+    )
+
+    updated_disciplinary_actions = relationship(
+        "DisciplinaryAction",
+        foreign_keys="[DisciplinaryAction.updated_by_user_id]",
+        back_populates="updater"
+    )
+

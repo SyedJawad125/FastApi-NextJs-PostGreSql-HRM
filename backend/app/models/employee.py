@@ -77,6 +77,8 @@ class Employee(Base):
     # Inside Employee class
     promotion_histories = relationship("PromotionHistory", back_populates="employee")
     grievances = relationship("Grievance", back_populates="employee", cascade="all, delete")
+    disciplinary_actions = relationship("DisciplinaryAction", back_populates="employee")
+
 
 
     created_recruitments = relationship(
