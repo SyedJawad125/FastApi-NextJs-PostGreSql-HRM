@@ -33,7 +33,7 @@ class JobApplicationBasicOut(BaseModel):
 
 class RecruitmentBasicOut(BaseModel):
     id: int
-    title: str
+    job_title: str
 
     class Config:
         from_attributes = True
