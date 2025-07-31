@@ -2,7 +2,8 @@ from fastapi import APIRouter, HTTPException, status, Request, Depends
 from sqlalchemy.orm import Session
 from typing import List, Optional
 
-from app import models
+from app import models, oauth2, schemas
+from app import database
 from app.utils import filter_education_experiences, paginate_data
 from app.schemas.education_experience import (
     EducationExperienceCreate,
@@ -18,24 +19,31 @@ router = APIRouter(
 )
 
 # -------------------- Create One or Many --------------------
-@router.post("/", response_model=List[EducationExperienceOut])
+@router.post("/", status_code=status.HTTP_201_CREATED, response_model=List[schemas.EducationExperienceOut])
 def create_education_experiences(
-    items: List[EducationExperienceCreate],
-    db: Session = Depends(get_db),
-    created_by_user_id: Optional[int] = 1
+    items: List[schemas.EducationExperienceCreate],
+    db: Session = Depends(database.get_db),
+    current_user: models.User = Depends(oauth2.get_current_user)
 ):
-    created = []
-    for item in items:
-        experience = models.EducationExperience(**item.dict())
-        experience.created_by_user_id = created_by_user_id
-        db.add(experience)
-        created.append(experience)
-    db.commit()
-    for c in created:
-        db.refresh(c)
-    return created
+    try:
+        created = []
+        for item in items:
+            experience = models.EducationExperience(
+                **item.dict(),
+                created_by_user_id=current_user.id,
+                updated_by_user_id=None
+            )
+            db.add(experience)
+            created.append(experience)
 
+        db.commit()
+        for c in created:
+            db.refresh(c)
 
+        return created
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 # -------------------- Get All with Filtering & Pagination --------------------
 @router.get("/", response_model=PaginatedEducationExperiences)
 def get_all_education_experiences(
@@ -75,12 +83,12 @@ def get_by_employee_id(employee_id: int, db: Session = Depends(get_db)):
 
 
 # -------------------- Update Education Experience --------------------
-@router.patch("/{experience_id}", response_model=EducationExperienceOut)
+@router.patch("/{experience_id}", response_model=schemas.EducationExperienceOut)
 def update_education_experience(
     experience_id: int,
-    update_data: EducationExperienceUpdate,
-    db: Session = Depends(get_db),
-    updated_by_user_id: Optional[int] = 1
+    update_data: schemas.EducationExperienceUpdate,
+    db: Session = Depends(database.get_db),
+    current_user: models.User = Depends(oauth2.get_current_user)
 ):
     exp = db.query(models.EducationExperience).filter_by(id=experience_id).first()
     if not exp:
@@ -89,11 +97,10 @@ def update_education_experience(
     for key, value in update_data.dict(exclude_unset=True).items():
         setattr(exp, key, value)
 
-    exp.updated_by_user_id = updated_by_user_id
+    exp.updated_by_user_id = current_user.id
     db.commit()
     db.refresh(exp)
     return exp
-
 
 # -------------------- Delete Education Experience --------------------
 @router.delete("/{experience_id}", status_code=status.HTTP_204_NO_CONTENT)
