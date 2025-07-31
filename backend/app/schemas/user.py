@@ -16,6 +16,7 @@ class UserCreate(BaseModel):
     # role_id: int
     is_superuser: Optional[bool] = False  # default to False
     role_id: Optional[int] = None         # Optional, validated in endpoint logic
+    employee_id: int  # ✅ Must link to an existing employee
 
 
 # class UserLogin(BaseModel):  # This was missing
@@ -41,6 +42,7 @@ class UserOut(UserBase):
     id: int
     username: Optional[str] = None
     is_active: bool
+    employee_id: int  # ✅ included in response
     
     class Config:
         from_attributes = True  # Replaces orm_mode in Pydantic v2

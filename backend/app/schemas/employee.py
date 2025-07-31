@@ -53,6 +53,8 @@ from pydantic import BaseModel, EmailStr
 from datetime import date
 from typing import List, Optional
 
+from app.schemas.user import UserOut
+
 # ✅ Base for create/update, not used in response
 class EmployeeBase(BaseModel):
     first_name: str
@@ -87,7 +89,7 @@ class EmployeeUpdate(BaseModel):
     class Config:
         extra = "forbid"
 
-
+# ✅ Employee Response Schema (including optional user info)
 # ✅ Response schema (used in GET)
 class Employee(BaseModel):
     id: int
@@ -99,6 +101,7 @@ class Employee(BaseModel):
     salary: float
     department_id: int
     rank_id: Optional[int]
+    user: Optional[UserOut] = None  # 👈 show linked user info if exists
 
     class Config:
         from_attributes = True  # required to work with SQLAlchemy models

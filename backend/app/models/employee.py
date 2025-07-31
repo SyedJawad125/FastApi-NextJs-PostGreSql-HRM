@@ -80,6 +80,8 @@ class Employee(Base):
     disciplinary_actions = relationship("DisciplinaryAction", back_populates="employee")
     travel_expenses = relationship("TravelExpense", back_populates="employee")
 
+    user = relationship("User", back_populates="employee", uselist=False)
+
 
 
 

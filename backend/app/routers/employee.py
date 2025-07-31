@@ -165,8 +165,46 @@ def get_employee(id: int, db: Session = Depends(database.get_db),
                            detail=f"Employee with id {id} not found")
     return employee
 
+# @router.patch("/{id}", response_model=schemas.Employee, dependencies=[require("update_employee")])
+# # def update_employee(id: int, updated_employee: schemas.EmployeeCreate, 
+# def update_employee(
+#     id: int,
+#     updated_employee: schemas.EmployeeUpdate,
+#     db: Session = Depends(database.get_db),
+#     current_user: models.User = Depends(oauth2.get_current_user)
+# ):
+#     try:
+        
+
+#         employee_instance = db.query(models.Employee).filter(models.Employee.id == id).first()
+
+#         if not employee_instance:
+#             raise HTTPException(
+#                 status_code=status.HTTP_404_NOT_FOUND,
+#                 detail=f"Department with id {id} not found"
+#             )
+
+#         update_data = updated_employee.dict(exclude_unset=True)
+
+#         for key, value in update_data.items():
+#             setattr(employee_instance, key, value)
+
+#         db.commit()
+#         db.refresh(employee_instance)
+
+#         return employee_instance
+
+#     except HTTPException as he:
+#         raise he
+#     except Exception as e:
+#         raise HTTPException(
+#             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+#             detail=f"An error occurred while patching the employee: {str(e)}"
+#         )
+
+
+
 @router.patch("/{id}", response_model=schemas.Employee, dependencies=[require("update_employee")])
-# def update_employee(id: int, updated_employee: schemas.EmployeeCreate, 
 def update_employee(
     id: int,
     updated_employee: schemas.EmployeeUpdate,
@@ -174,32 +212,43 @@ def update_employee(
     current_user: models.User = Depends(oauth2.get_current_user)
 ):
     try:
-        
-
+        # Find employee
         employee_instance = db.query(models.Employee).filter(models.Employee.id == id).first()
 
         if not employee_instance:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
-                detail=f"Department with id {id} not found"
+                detail=f"Employee with id {id} not found"
             )
 
-        update_data = updated_employee.dict(exclude_unset=True)
+        # Optional: If email is being changed, check for duplicates
+        if updated_employee.email:
+            email_conflict = db.query(models.Employee).filter(
+                models.Employee.email == updated_employee.email,
+                models.Employee.id != id
+            ).first()
+            if email_conflict:
+                raise HTTPException(
+                    status_code=400,
+                    detail="Another employee with this email already exists"
+                )
 
+        # Apply updates (only non-null fields)
+        update_data = updated_employee.model_dump(exclude_unset=True)
         for key, value in update_data.items():
             setattr(employee_instance, key, value)
 
         db.commit()
         db.refresh(employee_instance)
-
         return employee_instance
 
     except HTTPException as he:
         raise he
     except Exception as e:
+        db.rollback()
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"An error occurred while patching the employee: {str(e)}"
+            detail=f"Error updating employee: {str(e)}"
         )
 
 
@@ -226,81 +275,6 @@ def delete_employee(
     return {"message": "Employee deleted successfully"}
 
 
-
-
-# @router.post("/upload-employees", dependencies=[require("create_employee")])
-# async def upload_employees(file: UploadFile = File(...), db: Session = Depends(database.get_db)):
-#     try:
-#         # Read file
-#         filename = file.filename or ""
-#         if filename.endswith(".xlsx"):
-#             df = pd.read_excel(file.file)
-#         elif filename.endswith(".csv"):
-#             df = pd.read_csv(file.file)
-#         else:
-#             raise HTTPException(status_code=400, detail="Only .xlsx and .csv files are supported.")
-
-#         # Clean column names (remove spaces)
-#         df.columns = df.columns.str.strip()
-
-#         # Check required columns
-#         required_columns = {
-#             "first_name", "last_name", "email", "phone_number", 
-#             "hire_date", "job_title", "salary", "department_id", "rank_id"
-#         }
-#         if not required_columns.issubset(df.columns):
-#             missing = required_columns - set(df.columns)
-#             raise HTTPException(
-#                 status_code=400,
-#                 detail=f"Missing required columns: {missing}"
-#             )
-
-#         # Process data
-#         existing_emails = {e.email for e in db.query(models.Employee.email).all()}
-#         added_count = 0
-#         skipped_rows = []
-
-#         for index, row in df.iterrows():
-#             try:
-#                 # Check for duplicate email
-#                 if row["email"] in existing_emails:
-#                     skipped_rows.append(int(index) + 2)  # +2 for 1-based index + header
-#                     continue
-
-#                 # Validate hire_date
-#                 hire_date = pd.to_datetime(row["hire_date"], errors='coerce')
-#                 if pd.isnull(hire_date):
-#                     skipped_rows.append(int(index) + 2)
-#                     continue
-
-#                 # Create employee
-#                 employee = models.Employee(
-#                     first_name=str(row["first_name"]),
-#                     last_name=str(row["last_name"]),
-#                     email=str(row["email"]),
-#                     phone_number=str(row["phone_number"]),
-#                     hire_date=hire_date.date(),
-#                     job_title=str(row["job_title"]),
-#                     salary=float(row["salary"]),
-#                     department_id=int(row["department_id"]),
-#                     rank_id=int(row["rank_id"]),
-#                 )
-#                 db.add(employee)
-#                 added_count += 1
-
-#             except Exception as e:
-#                 skipped_rows.append(int(index) + 2)
-
-#         db.commit()
-
-#         return {
-#             "status": "PARTIAL_SUCCESS" if skipped_rows else "SUCCESS",
-#             "message": f"{added_count} employees added.",
-#             "skipped_rows": skipped_rows
-#         }
-
-#     except Exception as e:
-#         raise HTTPException(status_code=500, detail=str(e))
 
 
 
@@ -428,109 +402,3 @@ async def upload_employees(file: UploadFile = File(...), db: Session = Depends(d
 
         
 
-# @router.get("/", response_model=List[schemas.Employee])
-# @router.get("/", response_model=schemas.EmployeeListResponse, dependencies=[require("read_employee")])
-# def get_employees(
-#     request: Request,
-#     db: Session = Depends(database.get_db),
-#     current_user: models.User = Depends(oauth2.get_current_user),
-# ):
-#     try:
-#         query = db.query(models.Employee)
-#         query = filter_employees(request.query_params, query)
-#         data = query.all()
-#         paginated_data, count = paginate_data(data, request)
-
-#         # ✅ Convert ORM to Pydantic
-#         serialized_data = [schemas.Employee.from_orm(dept) for dept in paginated_data]
-
-#         response_data = {
-#             "count": count,
-#             "data": serialized_data
-#         }
-
-#         return {
-#             "status": "SUCCESSFUL",
-#             "result": response_data
-#         }
-
-#     except Exception as e:
-#         raise HTTPException(status_code=500, detail=str(e))
-
-
-
-
-# from fastapi import APIRouter, Depends, status, HTTPException
-# from sqlalchemy.orm import Session
-# from typing import List
-# from .. import database, schemas, models, oauth2
-# from app.schemas.employee import Employee, EmployeeCreate  # Explicit imports
-
-# router = APIRouter(
-#     prefix="/employees",
-#     tags=['Employees']
-# )
-
-# @router.get("/", response_model=List[schemas.Employee])
-# def get_employees(db: Session = Depends(database.get_db), current_user: models.User = Depends(oauth2.get_current_user)):
-#     employees = db.query(models.Employee).all()
-#     return employees
-
-# @router.post("/", status_code=status.HTTP_201_CREATED, response_model=schemas.Employee)
-# def create_employee(employee: schemas.EmployeeCreate, db: Session = Depends(database.get_db), 
-#                    current_user: models.User = Depends(oauth2.get_current_user)):
-#     if not current_user.is_admin:
-#         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, 
-#                            detail="Only admin users can create employees")
-    
-#     new_employee = models.Employee(**employee.dict())
-#     db.add(new_employee)
-#     db.commit()
-#     db.refresh(new_employee)
-#     return new_employee
-
-# @router.get("/{id}", response_model=schemas.Employee)
-# def get_employee(id: int, db: Session = Depends(database.get_db), 
-#                 current_user: models.User = Depends(oauth2.get_current_user)):
-#     employee = db.query(models.Employee).filter(models.Employee.id == id).first()
-#     if not employee:
-#         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-#                            detail=f"Employee with id {id} not found")
-#     return employee
-
-# @router.put("/{id}", response_model=schemas.Employee)
-# def update_employee(id: int, updated_employee: schemas.EmployeeCreate, 
-#                    db: Session = Depends(database.get_db), 
-#                    current_user: models.User = Depends(oauth2.get_current_user)):
-#     if not current_user.is_admin:
-#         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, 
-#                            detail="Only admin users can update employees")
-    
-#     employee_query = db.query(models.Employee).filter(models.Employee.id == id)
-#     employee = employee_query.first()
-    
-#     if not employee:
-#         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-#                            detail=f"Employee with id {id} not found")
-    
-#     employee_query.update(updated_employee.dict(), synchronize_session=False)
-#     db.commit()
-#     return employee_query.first()
-
-# @router.delete("/{id}", status_code=status.HTTP_204_NO_CONTENT)
-# def delete_employee(id: int, db: Session = Depends(database.get_db), 
-#                    current_user: models.User = Depends(oauth2.get_current_user)):
-#     if not current_user.is_admin:
-#         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, 
-#                            detail="Only admin users can delete employees")
-    
-#     employee_query = db.query(models.Employee).filter(models.Employee.id == id)
-#     employee = employee_query.first()
-    
-#     if not employee:
-#         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-#                            detail=f"Employee with id {id} not found")
-    
-#     employee_query.delete(synchronize_session=False)
-#     db.commit()
-#     return

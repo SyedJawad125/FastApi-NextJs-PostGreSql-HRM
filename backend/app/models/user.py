@@ -399,3 +399,6 @@ class User(Base):
     updated_travel_expenses = relationship("TravelExpense", foreign_keys=[TravelExpense.updated_by_user_id], back_populates="updater")
     submitted_travel_expenses = relationship("TravelExpense", foreign_keys=[TravelExpense.submitted_by_user_id])
     approved_travel_expenses = relationship("TravelExpense", foreign_keys=[TravelExpense.approved_by_user_id])
+
+    employee_id = Column(Integer, ForeignKey("employees.id"), unique=True)  # one user per employee
+    employee = relationship("Employee", back_populates="user")
