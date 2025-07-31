@@ -86,6 +86,10 @@ def get_grievance(
 
 
 # ✅ Update grievance
+from datetime import datetime
+from fastapi import HTTPException, status
+from sqlalchemy.orm import Session
+
 @router.patch("/{id}", response_model=schemas.GrievanceOut)
 def update_grievance(
     id: int,
@@ -94,14 +98,40 @@ def update_grievance(
     current_user: models.User = Depends(oauth2.get_current_user)
 ):
     try:
+        # Get the grievance instance
         grievance_instance = db.query(models.Grievance).filter(models.Grievance.id == id).first()
-
         if not grievance_instance:
             raise HTTPException(status_code=404, detail=f"Grievance with id {id} not found")
 
+        # Convert update data to dict
         update_dict = updated_data.dict(exclude_unset=True)
+        
+        # Handle status changes
+        if 'status' in update_dict:
+            new_status = update_dict['status']
+            current_status = grievance_instance.status
+            
+            # If changing to resolved and wasn't resolved before
+            if new_status == "resolved" and current_status != "resolved":
+                update_dict['resolved_at'] = datetime.utcnow()
+            # If changing from resolved to another status
+            elif current_status == "resolved" and new_status != "resolved":
+                update_dict['resolved_at'] = None
+        
+        # Handle explicit resolved_at updates
+        if 'resolved_at' in update_dict:
+            # If setting to null but status is resolved, prevent it
+            if update_dict['resolved_at'] is None and grievance_instance.status == "resolved":
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="Cannot clear resolved_at when status is resolved"
+                )
+            # If setting a date but status isn't resolved, update status
+            elif update_dict['resolved_at'] is not None and grievance_instance.status != "resolved":
+                update_dict['status'] = "resolved"
+        
+        # Update the record
         update_dict["updated_by"] = current_user.id
-
         for key, value in update_dict.items():
             setattr(grievance_instance, key, value)
 
@@ -110,9 +140,11 @@ def update_grievance(
 
         return grievance_instance
 
+    except HTTPException:
+        raise
     except Exception as e:
+        db.rollback()
         raise HTTPException(status_code=500, detail=str(e))
-
 
 # ✅ Delete grievance
 @router.delete("/{id}", status_code=status.HTTP_200_OK)
