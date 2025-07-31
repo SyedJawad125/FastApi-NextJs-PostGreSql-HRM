@@ -18,6 +18,7 @@ from .employee_profile import EmployeeProfile
 from .employee_documents import EmployeeDocument
 from .shift import Shift
 from .shift_assignments import ShiftAssignment
+from .holiday_calendar import HolidayCalendar
 from .candidate import Candidate
 from .recruitment import Recruitment
 from .performance_review import PerformanceReview

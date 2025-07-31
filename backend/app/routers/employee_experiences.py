@@ -2,6 +2,7 @@ from fastapi import APIRouter, HTTPException, status, Request, Depends
 from sqlalchemy.orm import Session
 from typing import List, Optional
 
+from app import database
 from app.utils import filter_employee_experiences, paginate_data
 from app import models
 from app.schemas import (
@@ -101,14 +102,20 @@ def update_employee_experience(
 
 # -------------------- Delete Employee Experience --------------------
 @router.delete("/{experience_id}", status_code=status.HTTP_204_NO_CONTENT)
-def delete_employee_experience(experience_id: int, db: Session = Depends(get_db)):
+def delete_employee_experience(
+    experience_id: int,
+    db: Session = Depends(database.get_db)
+):
     """
     Delete a specific employee experience.
     """
-    exp = db.query(models.EmployeeExperience).filter_by(id=experience_id).first()
-    if not exp:
-        raise HTTPException(status_code=404, detail="Experience not found")
+    experience_query = db.query(models.EmployeeExperience).filter(models.EmployeeExperience.id == experience_id)
+    experience = experience_query.first()
 
-    db.delete(exp)
+    if not experience:
+        raise HTTPException(status_code=404, detail=f"Experience with id {experience_id} not found")
+
+    experience_query.delete(synchronize_session=False)
     db.commit()
-    return None
+    
+    return {"message": "Experience deleted successfully"}
