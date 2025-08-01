@@ -82,7 +82,7 @@ class Employee(Base):
 
     user = relationship("User", back_populates="employee", uselist=False)
 
-
+    loans = relationship("EmployeeLoan", back_populates="employee", cascade="all, delete-orphan")
 
 
     created_recruitments = relationship(

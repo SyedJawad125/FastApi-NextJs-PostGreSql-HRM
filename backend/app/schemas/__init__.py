@@ -352,6 +352,15 @@ from .travel_expenses import (
     PaginatedTravelExpense,
     TravelExpenseListResponse
 )
+from .employee_loan import (
+    EmployeeLoanBase,
+    EmployeeLoanCreate,
+    EmployeeLoanUpdate,
+    EmployeeLoanOut,
+    PaginatedEmployeeLoan,
+    EmployeeLoanListResponse
+)
+
 # define what will be exported on `from schemas import *`
 __all__ = [
     'UserBase', 'UserCreate', 'LoginRequest', 'UserUpdate', 'UserOut',
@@ -403,5 +412,6 @@ __all__ = [
     'GrievanceBase', 'GrievanceCreate', 'GrievanceUpdate', 'GrievanceOut', 'PaginatedGrievance', 'GrievanceListResponse', 
     'DisciplinaryActionBase', 'DisciplinaryActionCreate', 'DisciplinaryActionUpdate', 'DisciplinaryActionOut', 'PaginatedDisciplinaryAction', 'DisciplinaryActionListResponse',
     'TravelExpenseBase', 'TravelExpenseCreate', 'TravelExpenseUpdate', 'TravelExpenseOut', 'PaginatedTravelExpense', 'TravelExpenseListResponse',
+    'EmployeeLoanBase', 'EmployeeLoanCreate', 'EmployeeLoanUpdate', 'EmployeeLoanOut', 'PaginatedEmployeeLoan', 'EmployeeLoanListResponse',
     ]
 

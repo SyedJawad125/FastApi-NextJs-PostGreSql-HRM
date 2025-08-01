@@ -402,3 +402,7 @@ class User(Base):
 
     employee_id = Column(Integer, ForeignKey("employees.id"), unique=True)  # one user per employee
     employee = relationship("Employee", back_populates="user")
+    
+    approved_loans = relationship("EmployeeLoan", foreign_keys="[EmployeeLoan.approved_by_user_id]", back_populates="approved_by")
+    created_loans = relationship("EmployeeLoan", foreign_keys="[EmployeeLoan.created_by_user_id]", back_populates="creator")
+    updated_loans = relationship("EmployeeLoan", foreign_keys="[EmployeeLoan.updated_by_user_id]", back_populates="updater")

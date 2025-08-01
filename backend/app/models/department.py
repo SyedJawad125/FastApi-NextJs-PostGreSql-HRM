@@ -25,6 +25,8 @@ class Department(Base):
     employee_contracts = relationship("EmployeeContract", back_populates="department")
     health_checkups = relationship("HealthCheckUp", back_populates="department")
     advanced_salaries = relationship("AdvancedSalary", back_populates="department")
+    loans = relationship("EmployeeLoan", back_populates="department")
+
 
     grievances = relationship("Grievance", back_populates="department", cascade="all, delete-orphan")
     travel_expenses = relationship("TravelExpense", back_populates="department")

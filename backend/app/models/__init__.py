@@ -41,9 +41,7 @@ from .promotion_history import PromotionHistory
 from .grievances import Grievance
 from .disciplinary_actions import DisciplinaryAction
 from .travel_expenses import TravelExpense
-
-
-
+from .employee_loan import EmployeeLoan
 
 
 __all__ = ["User", "Department", "Employee", "Role", "Permission", "Rank", "Attendance", "Timesheet",

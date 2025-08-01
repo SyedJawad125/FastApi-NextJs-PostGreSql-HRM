@@ -1000,6 +1000,23 @@ def filter_travel_expenses(params, query: Query):
     return query
 
 
+def filter_employee_loans(params: dict, query: Query):
+    if "status" in params:
+        query = query.filter(models.EmployeeLoan.status.ilike(f"%{params['status']}%"))
+    if "loan_type" in params:
+        query = query.filter(models.EmployeeLoan.loan_type.ilike(f"%{params['loan_type']}%"))
+    if "employee_id" in params:
+        query = query.filter(models.EmployeeLoan.employee_id == int(params["employee_id"]))
+    if "department_id" in params:
+        query = query.filter(models.EmployeeLoan.department_id == int(params["department_id"]))
+    if "approved" in params:
+        if params["approved"].lower() == "true":
+            query = query.filter(models.EmployeeLoan.approved_by_user_id.isnot(None))
+        elif params["approved"].lower() == "false":
+            query = query.filter(models.EmployeeLoan.approved_by_user_id.is_(None))
+    return query
+
+
 def filter_permissions(params, query):
     name = params.get("name")
     if name:

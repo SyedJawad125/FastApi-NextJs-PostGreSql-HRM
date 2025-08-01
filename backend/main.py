@@ -1,7 +1,7 @@
 # from fastapi import FastAPI
 # from fastapi.middleware.cors import CORSMiddleware
 # from app.database import engine, Base
-# from app.routers import employee, department, auth, user, leave
+# from app.routers import employee, department, auth, user, leave, employee_loan_luxury_router
 
 # # Create tables
 # Base.metadata.create_all(bind=engine)
@@ -23,6 +23,7 @@
 # app.include_router(employee.router)
 # app.include_router(department.router)
 # app.include_router(leave.router)
+# app.include_router(employee_loan_luxury_router)
 
 # @app.get("/")
 # def root():
