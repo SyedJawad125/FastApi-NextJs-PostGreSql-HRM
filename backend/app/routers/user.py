@@ -409,7 +409,7 @@ def login(user_credentials: schemas.LoginRequest, db: Session = Depends(database
         "email": user.email,
         "is_superuser": is_superuser_response,
         "role_id": user.role.id if user.role else None,
-        "role_name": user.role.name if user.role else None,
+        "name": user.role.name if user.role else None,
         "employee_info": employee_info,  # ✅ Include employee info
         "permissions": permissions_dict
     }

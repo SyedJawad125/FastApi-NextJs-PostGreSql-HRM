@@ -1,7 +1,11 @@
-from fastapi import APIRouter, Depends, status, Request, HTTPException
+import datetime
+from fastapi import APIRouter, Depends, Path, status, Request, HTTPException
 from sqlalchemy.orm import Session
 from typing import Any
 from app import schemas, models, database, oauth2
+from app.models.employee_loan import EmployeeLoan
+from app.models.user import User
+from app.schemas.employee_loan import EmployeeLoanOut
 from app.utils import filter_employee_loans, paginate_data
 
 router = APIRouter(
@@ -49,6 +53,7 @@ def create_loan(
         loan_data = loan.dict(exclude_unset=True)
         loan_data["created_by_user_id"] = current_user.id
         loan_data["updated_by_user_id"] = None
+        loan_data["status"] = "pending"  # Always default to pending
 
         new_loan = models.EmployeeLoan(**loan_data)
         db.add(new_loan)
@@ -91,6 +96,11 @@ def update_loan(
             raise HTTPException(status_code=404, detail=f"Loan with ID {id} not found")
 
         update_dict = updated_data.dict(exclude_unset=True)
+
+        # ❌ Prevent anyone from manually approving via this API
+        if "status" in update_dict or "approved_by_user_id" in update_dict:
+            raise HTTPException(status_code=403, detail="You are not allowed to approve a loan from this endpoint")
+
         update_dict["updated_by_user_id"] = current_user.id
 
         for key, value in update_dict.items():
@@ -103,6 +113,40 @@ def update_loan(
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+
+from datetime import datetime
+
+
+@router.patch("/{loan_id}/approve", response_model=EmployeeLoanOut)
+def approve_employee_loan(
+    loan_id: int = Path(..., gt=0),
+    db: Session = Depends(database.get_db),
+    current_user: User = Depends(oauth2.get_current_user)
+):
+    # ✅ Only superusers or CEOs can approve
+    if not current_user.is_superuser and getattr(current_user.role, "name", None) != "CEO":
+        raise HTTPException(status_code=403, detail="Only superuser or CEO can approve loans")
+
+
+
+    loan = db.query(EmployeeLoan).filter(EmployeeLoan.id == loan_id).first()
+    if not loan:
+        raise HTTPException(status_code=404, detail="Loan not found")
+    
+    if loan.status == "approved":
+        raise HTTPException(status_code=400, detail="Loan is already approved")
+
+    loan.status = "approved"
+    loan.approved_by_user_id = current_user.id
+    loan.updated_by_user_id = current_user.id
+    loan.updated_at = datetime.utcnow()
+
+
+    db.commit()
+    db.refresh(loan)
+    return loan
+
 
 
 # ✅ Delete loan

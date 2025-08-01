@@ -357,6 +357,7 @@ from .employee_loan import (
     EmployeeLoanCreate,
     EmployeeLoanUpdate,
     EmployeeLoanOut,
+    LoanApprovalResponse,
     PaginatedEmployeeLoan,
     EmployeeLoanListResponse
 )
@@ -412,6 +413,6 @@ __all__ = [
     'GrievanceBase', 'GrievanceCreate', 'GrievanceUpdate', 'GrievanceOut', 'PaginatedGrievance', 'GrievanceListResponse', 
     'DisciplinaryActionBase', 'DisciplinaryActionCreate', 'DisciplinaryActionUpdate', 'DisciplinaryActionOut', 'PaginatedDisciplinaryAction', 'DisciplinaryActionListResponse',
     'TravelExpenseBase', 'TravelExpenseCreate', 'TravelExpenseUpdate', 'TravelExpenseOut', 'PaginatedTravelExpense', 'TravelExpenseListResponse',
-    'EmployeeLoanBase', 'EmployeeLoanCreate', 'EmployeeLoanUpdate', 'EmployeeLoanOut', 'PaginatedEmployeeLoan', 'EmployeeLoanListResponse',
+    'EmployeeLoanBase', 'EmployeeLoanCreate', 'EmployeeLoanUpdate', 'EmployeeLoanOut', 'LoanApprovalResponse', 'PaginatedEmployeeLoan', 'EmployeeLoanListResponse',
     ]
 

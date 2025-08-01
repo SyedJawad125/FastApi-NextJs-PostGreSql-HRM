@@ -35,7 +35,7 @@ class EmployeeLoanBase(BaseModel):
     description: Optional[str] = None
     issue_date: Optional[date] = None
     due_date: Optional[date] = None
-    status: Optional[str] = "pending"
+    # status: Optional[str] = "pending"
 
 
 # ✅ Create schema
@@ -51,7 +51,7 @@ class EmployeeLoanUpdate(BaseModel):
     description: Optional[str] = None
     issue_date: Optional[date] = None
     due_date: Optional[date] = None
-    status: Optional[str] = None
+    # status: Optional[str] = None
     employee_id: Optional[int] = None
     department_id: Optional[int] = None
 
@@ -61,6 +61,8 @@ class EmployeeLoanOut(EmployeeLoanBase):
     id: int
     employee_id: int
     department_id: int
+
+    status: str  # ✅ Add this line explicitly
 
     created_by_user_id: Optional[int]
     updated_by_user_id: Optional[int]
@@ -74,7 +76,16 @@ class EmployeeLoanOut(EmployeeLoanBase):
     department: Optional[DepartmentOut] = None
     creator: Optional[UserOut] = None
     updater: Optional[UserOut] = None
-    approver: Optional[UserOut] = None
+    approved_by: Optional[UserOut] = None   # ✅ match the model name
+
+    class Config:
+        from_attributes = True
+
+class LoanApprovalResponse(BaseModel):
+    id: int
+    status: str
+    approved_by_user_id: Optional[int]
+    approved_at: Optional[datetime]
 
     class Config:
         from_attributes = True
