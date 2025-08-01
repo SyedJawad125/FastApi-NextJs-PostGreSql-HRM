@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, status, Request, HTTPException
 from sqlalchemy.orm import Session
 from typing import Any
 from .. import database, schemas, models, oauth2
-from app.utils import paginate_data, get_object_or_404
+from app.utils import filter_payslips, paginate_data, get_object_or_404
 from fastapi import Body
 
 router = APIRouter(
@@ -69,7 +69,7 @@ def get_payslip(
 @router.patch("/{id}", response_model=schemas.PayslipOut)
 def update_payslip(
     id: int,
-    payslip_data: schemas.PayslipUpdate = Body(...),  # ✅ fixed
+    payslip_data: schemas.PayslipUpdate = Body(default={}),  # 👈 fix here
     db: Session = Depends(database.get_db),
     current_user: models.User = Depends(oauth2.get_current_user)
 ):
@@ -82,10 +82,33 @@ def update_payslip(
         for key, value in update_data.items():
             setattr(payslip, key, value)
 
+        # 🔁 Recalculate gross_salary
+        payslip.gross_salary = (
+            (payslip.basic_salary or 0) +
+            (payslip.overtime_pay or 0) +
+            (payslip.bonus or 0) +
+            (payslip.housing_allowance or 0) +
+            (payslip.transport_allowance or 0) +
+            (payslip.medical_allowance or 0) +
+            (payslip.other_allowances or 0)
+        )
+
+        # 🔁 Recalculate total_deductions
+        payslip.total_deductions = (
+            (payslip.tax_deduction or 0) +
+            (payslip.insurance_deduction or 0) +
+            (payslip.loan_deduction or 0) +
+            (payslip.other_deductions or 0)
+        )
+
+        # 🔁 Recalculate net_salary
+        payslip.net_salary = payslip.gross_salary - payslip.total_deductions
+
         db.commit()
         db.refresh(payslip)
 
         return payslip
+
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Update failed: {str(e)}")
 
