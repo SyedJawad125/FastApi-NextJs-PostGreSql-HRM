@@ -1,125 +1,3 @@
-# from fastapi import APIRouter, Depends, HTTPException, Request, status
-# from sqlalchemy.orm import Session
-# from typing import List
-
-# from app import oauth2
-# from app import schemas
-# from app import database
-# from app import models
-# from app.models import OvertimeRequest, User
-# from app.schemas import OvertimeRequestCreate, OvertimeRequestUpdate, OvertimeRequestOut
-# from app.database import get_db
-# from app.dependencies import get_current_user
-# from app.utils import filter_overtime_requests, paginate_data
-
-# router = APIRouter(prefix="/overtime", tags=["Overtime Requests"])
-
-# # ✅ Get all overtime requests (admin or filtered per user)
-# @router.get("/", response_model=schemas.OvertimeRequestListResponse)
-# def get_overtime_requests(
-#     request: Request,
-#     db: Session = Depends(database.get_db),
-#     current_user: models.User = Depends(oauth2.get_current_user)
-# ):
-#     try:
-#         query = db.query(models.OvertimeRequest)
-#         query = filter_overtime_requests(request.query_params, query)
-
-#         all_data = query.all()
-#         paginated_data, count = paginate_data(all_data, request)
-
-#         serialized_data = [schemas.OvertimeRequestOut.from_orm(overtime) for overtime in paginated_data]
-
-#         response_data = {
-#             "count": count,
-#             "data": serialized_data
-#         }
-
-#         return {
-#             "status": "SUCCESSFUL",
-#             "result": response_data
-#         }
-
-#     except Exception as e:
-#         raise HTTPException(status_code=500, detail=str(e))
-
-# # ✅ Create a new overtime request
-# @router.post("/", response_model=OvertimeRequestOut)
-# def create_overtime_request(
-#     request_data: OvertimeRequestCreate,
-#     db: Session = Depends(get_db),
-#     current_user: User = Depends(get_current_user)
-# ):
-#     # Ensure user has linked employee
-#     if not current_user.employee_id:
-#         raise HTTPException(status_code=400, detail="User is not linked to an employee")
-
-#     # Ensure employee_id in request matches user's employee
-#     if request_data.employee_id != current_user.employee_id:
-#         raise HTTPException(status_code=400, detail="Employee ID must match current user")
-
-#     new_request = OvertimeRequest(
-#         **request_data.dict(),
-#         request_user_id=current_user.id,
-#         created_by_user_id=current_user.id
-#     )
-#     db.add(new_request)
-#     db.commit()
-#     db.refresh(new_request)
-#     return new_request
-
-# # ✅ Update an existing overtime request
-# @router.patch("/{request_id}", response_model=OvertimeRequestOut)
-# def update_overtime_request(
-#     request_id: int,
-#     request_data: OvertimeRequestUpdate,
-#     db: Session = Depends(get_db),
-#     current_user: User = Depends(get_current_user)
-# ):
-#     request = db.query(OvertimeRequest).filter(OvertimeRequest.id == request_id).first()
-
-#     if not request:
-#         raise HTTPException(status_code=404, detail="Overtime request not found")
-
-#     if request.request_user_id != current_user.id:
-#         raise HTTPException(status_code=403, detail="Not allowed to update this request")
-
-#     if request_data.employee_id and request_data.employee_id != current_user.employee_id:
-#         raise HTTPException(status_code=400, detail="Employee ID must match current user")
-
-#     for key, value in request_data.dict(exclude_unset=True).items():
-#         setattr(request, key, value)
-
-#     request.updated_by_user_id = current_user.id
-#     db.commit()
-#     db.refresh(request)
-#     return request
-
-# # ✅ Delete an overtime request
-# @router.delete("/{request_id}", status_code=status.HTTP_204_NO_CONTENT)
-# def delete_overtime_request(
-#     request_id: int,
-#     db: Session = Depends(get_db),
-#     current_user: User = Depends(get_current_user)
-# ):
-#     request = db.query(OvertimeRequest).filter(OvertimeRequest.id == request_id).first()
-
-#     if not request:
-#         raise HTTPException(status_code=404, detail="Request not found")
-
-#     if request.request_user_id != current_user.id:
-#         raise HTTPException(status_code=403, detail="Not allowed to delete this request")
-
-#     db.delete(request)
-#     db.commit()
-#     return None
-
-
-
-
-
-
-
 from fastapi import APIRouter, Depends, HTTPException, Request, status, Query
 from sqlalchemy.orm import Session, joinedload
 from typing import List, Optional
@@ -168,7 +46,7 @@ def check_admin_permissions(user: User) -> bool:
     return hasattr(user, 'role') and user.role in ['admin', 'manager', 'hr']
 
 # ✅ Get all overtime requests (admin or filtered per user)
-@router.get("/", response_model=OvertimeRequestListResponse)
+@router.get("/", response_model=OvertimeRequestListResponse, dependencies=[require("read_employee_overtime")])
 def get_overtime_requests(
     request: Request,
     status_filter: Optional[OvertimeStatus] = Query(None, description="Filter by status"),
@@ -189,19 +67,26 @@ def get_overtime_requests(
             joinedload(OvertimeRequest.approved_by)
         )
         
-        # Apply user-based filtering (non-admins can only see their own requests)
-        if not check_admin_permissions(current_user):
-            if not current_user.employee_id:
-                raise HTTPException(status_code=400, detail="User is not linked to an employee")
+        # Apply user-based filtering (users can only see their own requests unless they have broader permissions)
+        # Since permission is already validated via dependency, users with read_employee_overtime can see all
+        # If you want to restrict to own requests only, you can add additional logic here based on user role
+        if current_user.employee_id and not current_user.is_superuser:
+            # Non-superusers with employee_id can only see their own requests
             query = query.filter(OvertimeRequest.employee_id == current_user.employee_id)
+        elif not current_user.employee_id and not current_user.is_superuser:
+            # Users without employee_id and not superuser get empty results
+            query = query.filter(OvertimeRequest.id == -1)  # No results
         
         # Apply filters
         if status_filter:
             query = query.filter(OvertimeRequest.status == status_filter)
+        
         if employee_id:
-            if not check_admin_permissions(current_user) and employee_id != current_user.employee_id:
-                raise HTTPException(status_code=403, detail="Access denied")
+            # Allow filtering by employee_id if user is superuser or it's their own employee_id
+            if not current_user.is_superuser and employee_id != current_user.employee_id:
+                raise HTTPException(status_code=403, detail="Access denied: Cannot view other employee's requests")
             query = query.filter(OvertimeRequest.employee_id == employee_id)
+        
         if department_id:
             query = query.filter(OvertimeRequest.department_id == department_id)
         
@@ -227,7 +112,6 @@ def get_overtime_requests(
         raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
-
 # ✅ Get specific overtime request by ID
 @router.get("/{request_id}", response_model=OvertimeRequestDetailOut)
 def get_overtime_request(
@@ -479,7 +363,7 @@ def delete_overtime_request(
         raise HTTPException(status_code=500, detail=f"Failed to delete overtime request: {str(e)}")
 
 # ✅ Get overtime statistics (admin only)
-@router.get("/stats/summary", response_model=OvertimeRequestStats)
+@router.get("/stats/summary", response_model=OvertimeRequestStats, dependencies=[require("read_employee_overtime")])
 def get_overtime_stats(
     employee_id: Optional[int] = Query(None, description="Filter stats by employee ID"),
     department_id: Optional[int] = Query(None, description="Filter stats by department ID"),
@@ -488,8 +372,8 @@ def get_overtime_stats(
 ):
     """Get overtime request statistics"""
     
-    if not check_admin_permissions(current_user):
-        raise HTTPException(status_code=403, detail="Admin permissions required")
+    # if not check_admin_permissions(current_user):
+    #     raise HTTPException(status_code=403, detail="Admin permissions required")
     
     query = db.query(OvertimeRequest)
     
