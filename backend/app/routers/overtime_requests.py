@@ -128,6 +128,7 @@ from app import oauth2
 from app import schemas
 from app import database
 from app import models
+from app.dependencies.permission import require
 from app.models import OvertimeRequest, User, Employee, Department
 from app.schemas import (
     OvertimeRequestCreate, OvertimeRequestUpdate, OvertimeRequestAdminUpdate,
@@ -369,7 +370,45 @@ def update_overtime_request(
         raise HTTPException(status_code=500, detail=f"Failed to update overtime request: {str(e)}")
 
 # ✅ Admin update endpoint (approve/reject requests)
-@router.patch("/{request_id}/admin", response_model=OvertimeRequestUpdateResponse)
+# @router.patch("/{request_id}/admin", response_model=OvertimeRequestUpdateResponse, dependencies=[require("update_employee_overtime")])
+# def admin_update_overtime_request(
+#     request_id: int,
+#     request_data: OvertimeRequestAdminUpdate,
+#     db: Session = Depends(get_db),
+#     current_user: User = Depends(get_current_user)
+# ):
+#     """Admin endpoint to approve/reject overtime requests"""
+    
+#     overtime_request = db.query(OvertimeRequest).filter(OvertimeRequest.id == request_id).first()
+    
+#     if not overtime_request:
+#         raise HTTPException(status_code=404, detail="Overtime request not found")
+    
+#     try:
+#         # Update fields
+#         update_data = request_data.dict(exclude_unset=True)
+#         for field, value in update_data.items():
+#             setattr(overtime_request, field, value)
+        
+#         # Set approval user if status is being changed to approved
+#         if request_data.status == OvertimeStatus.APPROVED:
+#             overtime_request.approved_by_user_id = current_user.id
+        
+#         overtime_request.updated_by_user_id = current_user.id
+        
+#         db.commit()
+#         db.refresh(overtime_request)
+        
+#         return OvertimeRequestUpdateResponse(
+#             message=f"Overtime request {request_data.status.value if request_data.status else 'updated'} successfully",
+#             data=OvertimeRequestOut.from_orm(overtime_request)
+#         )
+        
+#     except Exception as e:
+#         db.rollback()
+#         raise HTTPException(status_code=500, detail=f"Failed to update overtime request: {str(e)}")
+
+@router.patch("/{request_id}/admin", response_model=OvertimeRequestUpdateResponse, dependencies=[require("update_employee_overtime")])
 def admin_update_overtime_request(
     request_id: int,
     request_data: OvertimeRequestAdminUpdate,
@@ -377,9 +416,6 @@ def admin_update_overtime_request(
     current_user: User = Depends(get_current_user)
 ):
     """Admin endpoint to approve/reject overtime requests"""
-    
-    if not check_admin_permissions(current_user):
-        raise HTTPException(status_code=403, detail="Admin permissions required")
     
     overtime_request = db.query(OvertimeRequest).filter(OvertimeRequest.id == request_id).first()
     
@@ -392,10 +428,12 @@ def admin_update_overtime_request(
         for field, value in update_data.items():
             setattr(overtime_request, field, value)
         
-        # Set approval user if status is being changed to approved
-        if request_data.status == OvertimeStatus.APPROVED:
+        # Set approval user for both APPROVED and REJECTED status
+        # This tracks who made the decision (approved or rejected)
+        if request_data.status in [OvertimeStatus.APPROVED, OvertimeStatus.REJECTED]:
             overtime_request.approved_by_user_id = current_user.id
         
+        # Always set updated_by_user_id to current user
         overtime_request.updated_by_user_id = current_user.id
         
         db.commit()
@@ -409,7 +447,6 @@ def admin_update_overtime_request(
     except Exception as e:
         db.rollback()
         raise HTTPException(status_code=500, detail=f"Failed to update overtime request: {str(e)}")
-
 # ✅ Delete an overtime request
 @router.delete("/{request_id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_overtime_request(

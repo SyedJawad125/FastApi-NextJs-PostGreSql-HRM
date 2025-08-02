@@ -66,7 +66,12 @@ permissions = [
     {"name": "Create Employee Profile", "code": "create_employee_profile", "module_name": "Employee Profile", "description": "User can create Employee Profile"},
     {"name": "Read Employee Profile", "code": "read_employee_profile", "module_name": "Employee Profile", "description": "User can read Employee Profile"},
     {"name": "Update Employee Profile", "code": "update_employee_profile", "module_name": "Employee Profile", "description": "User can update Employee Profile"},
-    {"name": "Delete Employee Profile", "code": "delete_employee_profile", "module_name": "Employee Profile", "description": "User can delete Employee Profile"},  
+    {"name": "Delete Employee Profile", "code": "delete_employee_profile", "module_name": "Employee Profile", "description": "User can delete Employee Profile"},
+
+    {"name": "Create Employee OverTime", "code": "create_employee_overtime", "module_name": "Employee OverTime", "description": "User can create Employee OverTime"},
+    {"name": "Read Employee OverTime", "code": "read_employee_overtime", "module_name": "Employee OverTime", "description": "User can read Employee OverTime"},
+    {"name": "Update Employee OverTime", "code": "update_employee_overtime", "module_name": "Employee OverTime", "description": "User can update Employee OverTime"},
+    {"name": "Delete Employee OverTime", "code": "delete_employee_overtime", "module_name": "Employee OverTime", "description": "User can delete Employee OverTime"},    
 ]
 
 def add_permissions_to_db(db: Session):
