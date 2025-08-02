@@ -490,3 +490,11 @@ class User(Base):
     # EmployeeSkill
     created_employee_skills = relationship("EmployeeSkill", back_populates="creator", foreign_keys="[EmployeeSkill.created_by_user_id]")
     updated_employee_skills = relationship("EmployeeSkill", back_populates="updater", foreign_keys="[EmployeeSkill.updated_by_user_id]")
+    
+    # Overtiem request
+    submitted_overtime_requests = relationship("OvertimeRequest", back_populates="request_user", foreign_keys="OvertimeRequest.request_user_id")
+    approved_overtime_requests = relationship("OvertimeRequest", back_populates="approved_by", foreign_keys="OvertimeRequest.approved_by_user_id")
+    created_overtime_requests = relationship("OvertimeRequest", back_populates="creator", foreign_keys="OvertimeRequest.created_by_user_id")
+    updated_overtime_requests = relationship("OvertimeRequest", back_populates="updater", foreign_keys="OvertimeRequest.updated_by_user_id")
+
+

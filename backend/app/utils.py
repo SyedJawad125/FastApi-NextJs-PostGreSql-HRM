@@ -1093,6 +1093,17 @@ def filter_employee_skills(query_params: Dict[str, Any], query: Query) -> Query:
     
     return query
 
+
+def filter_overtime_requests(params, query):
+    if "status" in params:
+        query = query.filter(models.OvertimeRequest.status == params["status"])
+    if "employee_id" in params:
+        query = query.filter(models.OvertimeRequest.employee_id == int(params["employee_id"]))
+    if "department_id" in params:
+        query = query.filter(models.OvertimeRequest.department_id == int(params["department_id"]))
+    return query
+
+
 def filter_permissions(params, query):
     name = params.get("name")
     if name:

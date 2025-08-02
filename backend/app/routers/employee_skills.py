@@ -171,24 +171,26 @@ def get_employee_skills(
     is_active: bool = True,
     db: Session = Depends(database.get_db),
     current_user: models.User = Depends(oauth2.get_current_user)
-):
-    # Verify employee exists
-    employee = db.query(models.User).filter(models.User.id == employee_id).first()
+) -> Any:
+    # ✅ Verify employee exists (from Employee model, not User)
+    employee = db.query(models.Employee).filter(models.Employee.id == employee_id).first()
     if not employee:
         raise HTTPException(status_code=404, detail=f"Employee with id {employee_id} not found")
 
+    # ✅ Fetch employee skills with optional is_active filter
     query = db.query(models.EmployeeSkill).options(
         joinedload(models.EmployeeSkill.skill)
     ).filter(models.EmployeeSkill.employee_id == employee_id)
-    
+
     if is_active is not None:
         query = query.filter(models.EmployeeSkill.is_active == is_active)
-    
+
     employee_skills = query.all()
 
+    # ✅ Return the structured response
     return {
-        "employee_id": employee_id,
-        "employee_name": getattr(employee, 'name', None) or getattr(employee, 'username', None),
+        "employee_id": employee.id,
+        "employee_name": employee.name,
         "skills": employee_skills
     }
 
@@ -201,35 +203,36 @@ def bulk_assign_skills_to_employee(
     current_user: models.User = Depends(oauth2.get_current_user)
 ):
     try:
-        # Verify employee exists
-        employee = db.query(models.User).filter(models.User.id == employee_id).first()
+        # ✅ Verify employee exists in Employee table (not User)
+        employee = db.query(models.Employee).filter(models.Employee.id == employee_id).first()
         if not employee:
             raise HTTPException(status_code=404, detail=f"Employee with id {employee_id} not found")
 
         created_skills = []
-        
+
         for skill_assignment in skill_assignments:
-            # Ensure employee_id matches the path parameter
+            # ✅ Ensure employee_id in payload matches URL parameter
             if skill_assignment.employee_id != employee_id:
                 raise HTTPException(
                     status_code=400, 
                     detail=f"Employee ID in payload ({skill_assignment.employee_id}) doesn't match path parameter ({employee_id})"
                 )
 
-            # Check if skill exists
+            # ✅ Check if skill exists
             skill = db.query(models.Skill).filter(models.Skill.id == skill_assignment.skill_id).first()
             if not skill:
                 raise HTTPException(status_code=404, detail=f"Skill with id {skill_assignment.skill_id} not found")
 
-            # Check if employee already has this skill
+            # ✅ Check for duplicate skill assignment
             existing_emp_skill = db.query(models.EmployeeSkill).filter(
                 models.EmployeeSkill.employee_id == employee_id,
                 models.EmployeeSkill.skill_id == skill_assignment.skill_id
             ).first()
             
             if existing_emp_skill:
-                continue  # Skip duplicates instead of raising error
+                continue  # Skip if already assigned
 
+            # ✅ Create new EmployeeSkill record
             emp_skill_data = skill_assignment.dict(exclude_unset=True)
             emp_skill_data["created_by_user_id"] = current_user.id
             emp_skill_data["updated_by_user_id"] = None
@@ -239,7 +242,7 @@ def bulk_assign_skills_to_employee(
             created_skills.append(new_employee_skill)
 
         db.commit()
-        
+
         for skill in created_skills:
             db.refresh(skill)
 

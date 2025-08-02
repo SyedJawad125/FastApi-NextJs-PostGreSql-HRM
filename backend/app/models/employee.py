@@ -86,6 +86,9 @@ class Employee(Base):
 
     employee_skills = relationship("EmployeeSkill", back_populates="employee", foreign_keys="[EmployeeSkill.employee_id]")
 
+    overtime_requests = relationship("OvertimeRequest", back_populates="employee")
+
+
     created_recruitments = relationship(
         "Recruitment", 
         foreign_keys="[Recruitment.created_by_employee_id]",

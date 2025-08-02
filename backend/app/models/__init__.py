@@ -44,6 +44,7 @@ from .travel_expenses import TravelExpense
 from .employee_loan import EmployeeLoan
 from .skills import Skill
 from .employee_skills import EmployeeSkill
+from .overtime_requests import OvertimeRequest
 
 
 __all__ = ["User", "Department", "Employee", "Role", "Permission", "Rank", "Attendance", "Timesheet",
@@ -53,5 +54,5 @@ __all__ = ["User", "Department", "Employee", "Role", "Permission", "Rank", "Atte
   "AuditLog", "EducationExperience", "EmployeeExperience", "EmployeeAsset", "EmployeeContract", "HealthCheckUp",
   "AdvancedSalary", "CompanyAnnouncement","JobApplication", "Interview", "OfferLetter", "InterviewFeedback",
   "InterviewSchedule", "PromotionHistory", "Grievance", "DisciplinaryAction", "TravelExpense", "EmployeeLoan"
-  "Skill", "EmployeeSkill"]
+  "Skill", "EmployeeSkill", "OvertimeRequest"]
 

@@ -53,13 +53,13 @@ class EmployeeSkillListResponse(BaseModel):
 
 # ========== COMBINED SCHEMAS FOR SPECIAL ENDPOINTS ==========
 
-class EmployeeWithSkills(BaseModel):
-    employee_id: int
-    employee_name: Optional[str] = None
-    skills: List[EmployeeSkillOut] = []
+# class EmployeeWithSkills(BaseModel):
+#     employee_id: int
+#     employee_name: Optional[str] = None
+#     skills: List[EmployeeSkillOut] = []
     
-    class Config:
-        from_attributes = True
+#     class Config:
+#         from_attributes = True
 
 class SkillWithEmployees(BaseModel):
     skill: SkillOut
@@ -69,21 +69,47 @@ class SkillWithEmployees(BaseModel):
         from_attributes = True
 
 
-from pydantic import BaseModel
-from typing import List
-
 class SkillOut(BaseModel):
     id: int
     name: str
-    level: str
+    description: Optional[str]
+    category: Optional[str]
+    is_active: Optional[bool]
+    created_by_user_id: Optional[int]
+    updated_by_user_id: Optional[int]
+    created_at: Optional[datetime]
+    updated_at: Optional[datetime]
 
     class Config:
         from_attributes = True
 
+
+from app.schemas.skills import SkillOut  # Assuming this schema exists
+
+class SkillWithDetails(BaseModel):
+    employee_id: int
+    skill_id: int
+    proficiency_level: str
+    years_of_experience: int
+    is_certified: bool
+    certification_name: str
+    notes: str
+    is_active: bool
+    id: int
+    created_by_user_id: int
+    updated_by_user_id: Optional[int]         # ✅ Fix
+    created_at: datetime
+    updated_at: Optional[datetime]            # ✅ Fix
+    skill: SkillOut
+
+    class Config:
+        from_attributes = True
+
+
 class EmployeeWithSkills(BaseModel):
     employee_id: int
     employee_name: str
-    skills: List[SkillOut]
+    skills: List[SkillWithDetails]
 
     class Config:
         from_attributes = True

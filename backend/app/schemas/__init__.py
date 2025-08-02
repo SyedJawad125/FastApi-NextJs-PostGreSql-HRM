@@ -381,6 +381,23 @@ from .employee_skills import (
     EmployeeWithSkills,
     SkillWithEmployees
 )
+from .overtime_requests import (
+    OvertimeRequestBase,
+    OvertimeRequestCreate,
+    OvertimeRequestUpdate,
+    OvertimeRequestAdminUpdate,
+    OvertimeRequestOut,
+    OvertimeRequestDetailOut,
+    OvertimeRequestCreateResponse,
+    OvertimeRequestUpdateResponse,
+    OvertimeRequestListResponse,
+    OvertimeRequestStats,
+    PaginatedOvertimeRequest,
+    OvertimeStatus,
+    UserOut,
+    EmployeeOut,
+    DepartmentOut
+)
 # define what will be exported on `from schemas import *`
 __all__ = [
     'UserBase', 'UserCreate', 'LoginRequest', 'UserUpdate', 'UserOut',
@@ -436,6 +453,21 @@ __all__ = [
     'SkillBase', 'SkillCreate', 'SkillUpdate', 'SkillOut', 'PaginatedSkills', 'SkillListResponse',
     'EmployeeShort', 'SkillWithEmployees',
     'EmployeeSkillBase', 'EmployeeSkillCreate', 'EmployeeSkillUpdate', 'EmployeeSkillOut', 'PaginatedEmployeeSkills', 'EmployeeSkillListResponse',
-    'EmployeeWithSkills', 'SkillWithEmployees'
+    'EmployeeWithSkills', 'SkillWithEmployees',
+    'OvertimeRequestBase',
+    'OvertimeRequestCreate', 
+    'OvertimeRequestUpdate',
+    'OvertimeRequestAdminUpdate',
+    'OvertimeRequestOut',
+    'OvertimeRequestDetailOut',
+    'OvertimeRequestCreateResponse',
+    'OvertimeRequestUpdateResponse', 
+    'OvertimeRequestListResponse',
+    'OvertimeRequestStats',
+    'PaginatedOvertimeRequest',
+    'OvertimeStatus',
+    'UserOut',
+    'EmployeeOut',
+    'DepartmentOut'
     ]
 
