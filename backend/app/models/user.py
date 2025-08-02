@@ -4,7 +4,10 @@
 # from datetime import datetime
 # from app.models.permission import Permission, user_permission
 # from app.models.shift_assignments import ShiftAssignment
-# from app.models.shift import Shift  # ✅ Needed to reference foreign_keys on Shift
+# from app.models.shift import Shift
+# from app.models.education_experience import EducationExperience
+# from app.models.travel_expenses import TravelExpense
+
 
 # class User(Base):
 #     __tablename__ = "users"
@@ -17,125 +20,344 @@
 #     is_superuser = Column(Boolean, server_default='FALSE', nullable=False)
 #     created_at = Column(TIMESTAMP(timezone=True), nullable=False, default=datetime.utcnow)
 
+#     # Role relationships
 #     role_id = Column(Integer, ForeignKey("roles.id"))
 #     role = relationship("Role", back_populates="users", foreign_keys=[role_id])
-
 #     created_roles = relationship("Role", back_populates="creator", foreign_keys="Role.created_by_user_id")
-#     created_departments = relationship("Department", back_populates="creator")
+
+#     # Department relationships
+#     created_departments = relationship("Department", foreign_keys="[Department.created_by_user_id]", back_populates="creator")
+#     updated_departments = relationship("Department", foreign_keys="[Department.updated_by_user_id]", back_populates="updater")
+
+
+#     # Permission relationships
 #     created_permissions = relationship("Permission", back_populates="creator")
-#     created_ranks = relationship("Rank", back_populates="creator")
-#     notifications = relationship("Notification", back_populates="user", foreign_keys="Notification.user_id")
 #     permissions = relationship("Permission", secondary=user_permission, back_populates="users")
 
+#     # Rank relationships
+#     created_ranks = relationship("Rank", back_populates="creator")
+
+#     # Notification relationships
+#     notifications = relationship("Notification", back_populates="user", foreign_keys="Notification.user_id")
+
+#     # Salary relationships
 #     created_employee_salaries = relationship("EmployeeSalary", back_populates="creator")
 #     created_salary_structures = relationship("SalaryStructure", back_populates="creator")
 #     created_salary_histories = relationship("SalaryHistory", back_populates="creator")
 
+#     # Payslip relationships
 #     created_payslips = relationship("Payslip", back_populates="creator", foreign_keys="Payslip.created_by_user_id")
 #     approved_payslips = relationship("Payslip", back_populates="approver", foreign_keys="Payslip.approved_by_user_id")
 
-#     # ✅ Explicit relationships to Shift using foreign keys
+#     # Shift relationships
 #     created_shifts = relationship(
 #         "Shift",
 #         foreign_keys=[Shift.created_by_user_id],
 #         back_populates="creator"
 #     )
-
 #     updated_shifts = relationship(
 #         "Shift",
 #         foreign_keys=[Shift.updated_by_user_id],
 #         back_populates="updater"
 #     )
 
-#     # ✅ ShiftAssignment relationships (already correct)
+#     # ShiftAssignment relationships - CORRECTED VERSION
 #     created_shift_assignments = relationship(
 #         "ShiftAssignment",
 #         foreign_keys=[ShiftAssignment.created_by_user_id],
 #         back_populates="creator"
 #     )
-
 #     updated_shift_assignments = relationship(
 #         "ShiftAssignment",
-#         foreign_keys=[ShiftAssignment.updated_by_user_id]
+#         foreign_keys=[ShiftAssignment.updated_by_user_id],
+#         back_populates="updater",
+#         overlaps="updater"
 #     )
-#     created_recruitments = relationship("Recruitment", foreign_keys='Recruitment.created_by_user_id', back_populates="creator")
-#     updated_recruitments = relationship("Recruitment", foreign_keys='Recruitment.updated_by_user_id', back_populates="updater")
 
-#     created_candidates = relationship("Candidate", foreign_keys='Candidate.created_by_user_id', back_populates="creator")
-#     updated_candidates = relationship("Candidate", foreign_keys='Candidate.updated_by_user_id', back_populates="updater")
+#     # Recruitment relationships
+#     created_recruitments = relationship(
+#         "Recruitment",
+#         foreign_keys="[Recruitment.created_by_user_id]",
+#         backref="created_by_user"
+#     )
 
-#         # reviews where user is the reviewer
-#     reviews_given = relationship("PerformanceReview", foreign_keys="PerformanceReview.reviewer_id",
-#         back_populates="reviewer")
+#     updated_recruitments = relationship(
+#         "Recruitment",
+#         foreign_keys="[Recruitment.updated_by_user_id]",
+#         backref="updated_by_user"
+#     )
 
-#     # reviews where user is the creator
-#     created_reviews = relationship("PerformanceReview", foreign_keys="PerformanceReview.created_by_user_id",
-#         back_populates="creator")
 
-#     # reviews where user is the updater
-#     updated_reviews = relationship("PerformanceReview", foreign_keys="PerformanceReview.updated_by_user_id",
-#         back_populates="updater")
+#     # Candidate relationships
+#     created_candidates = relationship(
+#         "Candidate",
+#         foreign_keys='Candidate.created_by_user_id',
+#         back_populates="creator"
+#     )
+#     updated_candidates = relationship(
+#         "Candidate",
+#         foreign_keys='Candidate.updated_by_user_id',
+#         back_populates="updater"
+#     )
 
-#     trainings_given = relationship("Training", foreign_keys="Training.trainer_id", back_populates="trainer")
+#     # Performance Review relationships
+#     reviews_given = relationship(
+#         "PerformanceReview", 
+#         foreign_keys="PerformanceReview.reviewer_id",
+#         back_populates="reviewer"
+#     )
+#     created_reviews = relationship(
+#         "PerformanceReview", 
+#         foreign_keys="PerformanceReview.created_by_user_id",
+#         back_populates="creator"
+#     )
+#     updated_reviews = relationship(
+#         "PerformanceReview", 
+#         foreign_keys="PerformanceReview.updated_by_user_id",
+#         back_populates="updater"
+#     )
 
-#     created_trainings = relationship("Training", foreign_keys="Training.created_by_user_id", back_populates="creator")
+#     # Training relationships
+#     trainings_given = relationship(
+#         "Training", 
+#         foreign_keys="Training.trainer_id", 
+#         back_populates="trainer"
+#     )
+#     created_trainings = relationship(
+#         "Training", 
+#         foreign_keys="Training.created_by_user_id", 
+#         back_populates="creator"
+#     )
+#     updated_trainings = relationship(
+#         "Training", 
+#         foreign_keys="Training.updated_by_user_id", 
+#         back_populates="updater"
+#     )
 
-#     updated_trainings = relationship("Training", foreign_keys="Training.updated_by_user_id", back_populates="updater")
-
+#     # Training Participant relationships
 #     created_participations = relationship(
-#     "TrainingParticipant",
-#     foreign_keys="TrainingParticipant.created_by_user_id",
+#         "TrainingParticipant",
+#         foreign_keys="TrainingParticipant.created_by_user_id",
+#         back_populates="creator"
+#     )
+#     updated_participations = relationship(
+#         "TrainingParticipant",
+#         foreign_keys="TrainingParticipant.updated_by_user_id",
+#         back_populates="updater"
+#     )
+
+#     # Relationships in User model
+#     performed_audits = relationship(
+#         "AuditLog", 
+#         foreign_keys="AuditLog.performed_by_user_id", 
+#         back_populates="performed_by"
+#     )
+#     logged_audits = relationship(
+#         "AuditLog", 
+#         foreign_keys="AuditLog.logged_by_user_id", 
+#         back_populates="logged_by"
+#     )
+    
+#     created_educations = relationship(
+#     "EducationExperience",
+#     foreign_keys=[EducationExperience.created_by_user_id],
 #     back_populates="creator"
 #     )
 
-#     updated_participations = relationship(
-#     "TrainingParticipant",
-#     foreign_keys="TrainingParticipant.updated_by_user_id",
+#     updated_educations = relationship(
+#     "EducationExperience",
+#     foreign_keys=[EducationExperience.updated_by_user_id],
 #     back_populates="updater"
 #     )
 
-#     performed_audits = relationship("AuditLog", foreign_keys="[AuditLog.performed_by_user_id]", back_populates="performed_by")
-#     logged_audits = relationship("AuditLog", foreign_keys="[AuditLog.logged_by_user_id]", back_populates="logged_by")
-#     created_candidates = relationship("AuditLog", foreign_keys="[AuditLog.created_by_user_id]", back_populates="creator")
-#     updated_candidates = relationship("AuditLog", foreign_keys="[AuditLog.updated_by_user_id]", back_populates="updater")
+#     created_experiences = relationship("EmployeeExperience",
+#         foreign_keys="[EmployeeExperience.created_by_user_id]", back_populates="creator")
+#     updated_experiences = relationship("EmployeeExperience", 
+#         foreign_keys="[EmployeeExperience.updated_by_user_id]", back_populates="updater")
+    
+#     created_assets = relationship("EmployeeAsset",
+#                                        foreign_keys="[EmployeeAsset.created_by_user_id]", back_populates="creator")
+#     updated_assets = relationship("EmployeeAsset",
+#                                        foreign_keys="[EmployeeAsset.updated_by_user_id]", back_populates="updater")
+    
+#     # Inside User class
+#     created_employee_contracts = relationship("EmployeeContract",
+#     foreign_keys="[EmployeeContract.created_by_user_id]",
+#     back_populates="creator"
+#     )
+
+#     updated_employee_contracts = relationship("EmployeeContract",
+#     foreign_keys="[EmployeeContract.updated_by_user_id]",
+#     back_populates="updater"
+#     )
+
+#     # ✅ Relationships for HealthCheckUp
+#     created_health_checkups = relationship(
+#         "HealthCheckUp",
+#         foreign_keys="[HealthCheckUp.created_by_user_id]",
+#         back_populates="creator"
+#     )
+    
+#     updated_health_checkups = relationship(
+#         "HealthCheckUp",
+#         foreign_keys="[HealthCheckUp.updated_by_user_id]",
+#         back_populates="updater"
+#     )
+
+#     created_advanced_salaries = relationship("AdvancedSalary", back_populates="creator",
+#         foreign_keys="[AdvancedSalary.created_by_user_id]"
+#     )
+
+#     updated_advanced_salaries = relationship("AdvancedSalary", back_populates="updater",
+#         foreign_keys="[AdvancedSalary.updated_by_user_id]"
+#     )
+
+#     company_announcements_created = relationship(
+#         "CompanyAnnouncement",
+#         foreign_keys="[CompanyAnnouncement.created_by_user_id]",
+#         back_populates="creator"
+#     )
+
+#     company_announcements_updated = relationship(
+#         "CompanyAnnouncement",
+#         foreign_keys="[CompanyAnnouncement.updated_by_user_id]",
+#         back_populates="updater"
+#     )
+
+
+#     created_job_applications = relationship("JobApplication", foreign_keys='JobApplication.created_by_user_id', back_populates="creator")
+#     updated_job_applications = relationship("JobApplication", foreign_keys='JobApplication.updated_by_user_id', back_populates="updater")
+
+#     created_interviews = relationship("Interview", foreign_keys="[Interview.created_by_user_id]", back_populates="creator")
+#     updated_interviews = relationship("Interview", foreign_keys="[Interview.updated_by_user_id]", back_populates="updater")
+
+#     created_offer_letters = relationship("OfferLetter", foreign_keys='OfferLetter.created_by_user_id', back_populates="creator")
+#     updated_offer_letters = relationship("OfferLetter", foreign_keys='OfferLetter.updated_by_user_id', back_populates="updater")
+
+#     interview_feedbacks = relationship(
+#     "InterviewFeedback",
+#     foreign_keys="[InterviewFeedback.panel_member_id]",
+#     back_populates="panel_member"
+#     )
+
+#     created_interview_feedbacks = relationship(
+#         "InterviewFeedback",
+#         foreign_keys="[InterviewFeedback.created_by_user_id]",
+#         back_populates="creator"
+#     )
+
+#     updated_interview_feedbacks = relationship(
+#         "InterviewFeedback",
+#         foreign_keys="[InterviewFeedback.updated_by_user_id]",
+#         back_populates="updater"
+#     )
+
+#     scheduled_interviews = relationship(
+#         "InterviewSchedule",
+#         foreign_keys="[InterviewSchedule.scheduled_by_user_id]",
+#         back_populates="scheduler"
+#     )
+
+#     created_schedules = relationship(
+#         "InterviewSchedule",
+#         foreign_keys="[InterviewSchedule.created_by_user_id]",
+#         back_populates="creator"
+#     )
+
+#     updated_schedules = relationship(
+#         "InterviewSchedule",
+#         foreign_keys="[InterviewSchedule.updated_by_user_id]",
+#         back_populates="updater"
+#     )
+
+#     created_promotion_histories = relationship(
+#         "PromotionHistory", foreign_keys="[PromotionHistory.created_by_user_id]", back_populates="creator"
+#     )
+#     updated_promotion_histories = relationship(
+#         "PromotionHistory", foreign_keys="[PromotionHistory.updated_by_user_id]", back_populates="updater"
+#     )
+
+#     created_grievances = relationship("Grievance", foreign_keys="[Grievance.created_by]", back_populates="creator")
+#     updated_grievances = relationship("Grievance", foreign_keys="[Grievance.updated_by]", back_populates="updater")
+
+#     created_disciplinary_actions = relationship(
+#     "DisciplinaryAction",
+#     foreign_keys="[DisciplinaryAction.created_by_user_id]",
+#     back_populates="creator"
+#     )
+
+#     updated_disciplinary_actions = relationship(
+#         "DisciplinaryAction",
+#         foreign_keys="[DisciplinaryAction.updated_by_user_id]",
+#         back_populates="updater"
+#     )
+
+#     created_travel_expenses = relationship("TravelExpense", foreign_keys=[TravelExpense.created_by_user_id], back_populates="creator")
+#     updated_travel_expenses = relationship("TravelExpense", foreign_keys=[TravelExpense.updated_by_user_id], back_populates="updater")
+#     submitted_travel_expenses = relationship("TravelExpense", foreign_keys=[TravelExpense.submitted_by_user_id])
+#     approved_travel_expenses = relationship("TravelExpense", foreign_keys=[TravelExpense.approved_by_user_id])
+
+#     employee_id = Column(Integer, ForeignKey("employees.id"), unique=True)  # one user per employee
+#     employee = relationship("Employee", back_populates="user")
+    
+#     approved_loans = relationship("EmployeeLoan", foreign_keys="[EmployeeLoan.approved_by_user_id]", back_populates="approved_by")
+#     created_loans = relationship("EmployeeLoan", foreign_keys="[EmployeeLoan.created_by_user_id]", back_populates="creator")
+#     updated_loans = relationship("EmployeeLoan", foreign_keys="[EmployeeLoan.updated_by_user_id]", back_populates="updater")
+
+#     created_skills = relationship("Skill", foreign_keys="[Skill.created_by_user_id]", back_populates="creator")
+#     updated_skills = relationship("Skill", foreign_keys="[Skill.updated_by_user_id]", back_populates="updater")
+
+#     # Relationships to EmployeeSkill
+#     created_employee_skills = relationship(
+#         "EmployeeSkill",
+#         back_populates="creator",
+#         foreign_keys="[EmployeeSkill.created_by_user_id]"
+#     )
+
+#     updated_employee_skills = relationship(
+#         "EmployeeSkill",
+#         back_populates="updater",
+#         foreign_keys="[EmployeeSkill.updated_by_user_id]"
+#     )
 
 
 
+
+from datetime import datetime
 from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, TIMESTAMP
 from sqlalchemy.orm import relationship
 from app.database import Base
-from datetime import datetime
+
+# Related model imports
 from app.models.permission import Permission, user_permission
 from app.models.shift_assignments import ShiftAssignment
 from app.models.shift import Shift
 from app.models.education_experience import EducationExperience
 from app.models.travel_expenses import TravelExpense
 
-
 class User(Base):
     __tablename__ = "users"
 
-    id = Column(Integer, primary_key=True, index=True)
-    username = Column(String, index=True, nullable=True)
-    email = Column(String, unique=True, nullable=False)
+    id             = Column(Integer, primary_key=True, index=True)
+    username       = Column(String, index=True, nullable=True)
+    email          = Column(String, unique=True, nullable=False)
     hashed_password = Column(String, nullable=False)
-    is_active = Column(Boolean, server_default='TRUE', nullable=False)
-    is_superuser = Column(Boolean, server_default='FALSE', nullable=False)
-    created_at = Column(TIMESTAMP(timezone=True), nullable=False, default=datetime.utcnow)
+    is_active      = Column(Boolean, server_default='TRUE', nullable=False)
+    is_superuser   = Column(Boolean, server_default='FALSE', nullable=False)
+    created_at     = Column(TIMESTAMP(timezone=True), nullable=False, default=datetime.utcnow)
 
     # Role relationships
-    role_id = Column(Integer, ForeignKey("roles.id"))
-    role = relationship("Role", back_populates="users", foreign_keys=[role_id])
-    created_roles = relationship("Role", back_populates="creator", foreign_keys="Role.created_by_user_id")
+    role_id        = Column(Integer, ForeignKey("roles.id"))
+    role           = relationship("Role", back_populates="users", foreign_keys=[role_id])
+    created_roles  = relationship("Role", back_populates="creator", foreign_keys="Role.created_by_user_id")
 
     # Department relationships
     created_departments = relationship("Department", foreign_keys="[Department.created_by_user_id]", back_populates="creator")
     updated_departments = relationship("Department", foreign_keys="[Department.updated_by_user_id]", back_populates="updater")
 
-
     # Permission relationships
     created_permissions = relationship("Permission", back_populates="creator")
-    permissions = relationship("Permission", secondary=user_permission, back_populates="users")
+    permissions          = relationship("Permission", secondary=user_permission, back_populates="users")
 
     # Rank relationships
     created_ranks = relationship("Rank", back_populates="creator")
@@ -146,279 +368,125 @@ class User(Base):
     # Salary relationships
     created_employee_salaries = relationship("EmployeeSalary", back_populates="creator")
     created_salary_structures = relationship("SalaryStructure", back_populates="creator")
-    created_salary_histories = relationship("SalaryHistory", back_populates="creator")
+    created_salary_histories  = relationship("SalaryHistory", back_populates="creator")
 
     # Payslip relationships
-    created_payslips = relationship("Payslip", back_populates="creator", foreign_keys="Payslip.created_by_user_id")
+    created_payslips  = relationship("Payslip", back_populates="creator", foreign_keys="Payslip.created_by_user_id")
     approved_payslips = relationship("Payslip", back_populates="approver", foreign_keys="Payslip.approved_by_user_id")
 
     # Shift relationships
-    created_shifts = relationship(
-        "Shift",
-        foreign_keys=[Shift.created_by_user_id],
-        back_populates="creator"
-    )
-    updated_shifts = relationship(
-        "Shift",
-        foreign_keys=[Shift.updated_by_user_id],
-        back_populates="updater"
-    )
+    created_shifts = relationship("Shift", foreign_keys=[Shift.created_by_user_id], back_populates="creator")
+    updated_shifts = relationship("Shift", foreign_keys=[Shift.updated_by_user_id], back_populates="updater")
 
-    # ShiftAssignment relationships - CORRECTED VERSION
-    created_shift_assignments = relationship(
-        "ShiftAssignment",
-        foreign_keys=[ShiftAssignment.created_by_user_id],
-        back_populates="creator"
-    )
-    updated_shift_assignments = relationship(
-        "ShiftAssignment",
-        foreign_keys=[ShiftAssignment.updated_by_user_id],
-        back_populates="updater",
-        overlaps="updater"
-    )
+    # ShiftAssignment relationships
+    created_shift_assignments = relationship("ShiftAssignment", foreign_keys=[ShiftAssignment.created_by_user_id], back_populates="creator")
+    updated_shift_assignments = relationship("ShiftAssignment", foreign_keys=[ShiftAssignment.updated_by_user_id], back_populates="updater", overlaps="updater")
 
     # Recruitment relationships
-    created_recruitments = relationship(
-        "Recruitment",
-        foreign_keys="[Recruitment.created_by_user_id]",
-        backref="created_by_user"
-    )
-
-    updated_recruitments = relationship(
-        "Recruitment",
-        foreign_keys="[Recruitment.updated_by_user_id]",
-        backref="updated_by_user"
-    )
-
+    created_recruitments = relationship("Recruitment", foreign_keys="[Recruitment.created_by_user_id]", backref="created_by_user")
+    updated_recruitments = relationship("Recruitment", foreign_keys="[Recruitment.updated_by_user_id]", backref="updated_by_user")
 
     # Candidate relationships
-    created_candidates = relationship(
-        "Candidate",
-        foreign_keys='Candidate.created_by_user_id',
-        back_populates="creator"
-    )
-    updated_candidates = relationship(
-        "Candidate",
-        foreign_keys='Candidate.updated_by_user_id',
-        back_populates="updater"
-    )
+    created_candidates = relationship("Candidate", foreign_keys='Candidate.created_by_user_id', back_populates="creator")
+    updated_candidates = relationship("Candidate", foreign_keys='Candidate.updated_by_user_id', back_populates="updater")
 
     # Performance Review relationships
-    reviews_given = relationship(
-        "PerformanceReview", 
-        foreign_keys="PerformanceReview.reviewer_id",
-        back_populates="reviewer"
-    )
-    created_reviews = relationship(
-        "PerformanceReview", 
-        foreign_keys="PerformanceReview.created_by_user_id",
-        back_populates="creator"
-    )
-    updated_reviews = relationship(
-        "PerformanceReview", 
-        foreign_keys="PerformanceReview.updated_by_user_id",
-        back_populates="updater"
-    )
+    reviews_given     = relationship("PerformanceReview", foreign_keys="PerformanceReview.reviewer_id", back_populates="reviewer")
+    created_reviews   = relationship("PerformanceReview", foreign_keys="PerformanceReview.created_by_user_id", back_populates="creator")
+    updated_reviews   = relationship("PerformanceReview", foreign_keys="PerformanceReview.updated_by_user_id", back_populates="updater")
 
     # Training relationships
-    trainings_given = relationship(
-        "Training", 
-        foreign_keys="Training.trainer_id", 
-        back_populates="trainer"
-    )
-    created_trainings = relationship(
-        "Training", 
-        foreign_keys="Training.created_by_user_id", 
-        back_populates="creator"
-    )
-    updated_trainings = relationship(
-        "Training", 
-        foreign_keys="Training.updated_by_user_id", 
-        back_populates="updater"
-    )
+    trainings_given   = relationship("Training", foreign_keys="Training.trainer_id", back_populates="trainer")
+    created_trainings = relationship("Training", foreign_keys="Training.created_by_user_id", back_populates="creator")
+    updated_trainings = relationship("Training", foreign_keys="Training.updated_by_user_id", back_populates="updater")
 
     # Training Participant relationships
-    created_participations = relationship(
-        "TrainingParticipant",
-        foreign_keys="TrainingParticipant.created_by_user_id",
-        back_populates="creator"
-    )
-    updated_participations = relationship(
-        "TrainingParticipant",
-        foreign_keys="TrainingParticipant.updated_by_user_id",
-        back_populates="updater"
-    )
+    created_participations = relationship("TrainingParticipant", foreign_keys="TrainingParticipant.created_by_user_id", back_populates="creator")
+    updated_participations = relationship("TrainingParticipant", foreign_keys="TrainingParticipant.updated_by_user_id", back_populates="updater")
 
-    # Relationships in User model
-    performed_audits = relationship(
-        "AuditLog", 
-        foreign_keys="AuditLog.performed_by_user_id", 
-        back_populates="performed_by"
-    )
-    logged_audits = relationship(
-        "AuditLog", 
-        foreign_keys="AuditLog.logged_by_user_id", 
-        back_populates="logged_by"
-    )
-    
-    created_educations = relationship(
-    "EducationExperience",
-    foreign_keys=[EducationExperience.created_by_user_id],
-    back_populates="creator"
-    )
+    # Audit relationships
+    performed_audits = relationship("AuditLog", foreign_keys="AuditLog.performed_by_user_id", back_populates="performed_by")
+    logged_audits    = relationship("AuditLog", foreign_keys="AuditLog.logged_by_user_id", back_populates="logged_by")
 
-    updated_educations = relationship(
-    "EducationExperience",
-    foreign_keys=[EducationExperience.updated_by_user_id],
-    back_populates="updater"
-    )
+    # Education & Experience
+    created_educations   = relationship("EducationExperience", foreign_keys=[EducationExperience.created_by_user_id], back_populates="creator")
+    updated_educations   = relationship("EducationExperience", foreign_keys=[EducationExperience.updated_by_user_id], back_populates="updater")
+    created_experiences  = relationship("EmployeeExperience", foreign_keys="[EmployeeExperience.created_by_user_id]", back_populates="creator")
+    updated_experiences  = relationship("EmployeeExperience", foreign_keys="[EmployeeExperience.updated_by_user_id]", back_populates="updater")
 
-    created_experiences = relationship("EmployeeExperience",
-        foreign_keys="[EmployeeExperience.created_by_user_id]", back_populates="creator")
-    updated_experiences = relationship("EmployeeExperience", 
-        foreign_keys="[EmployeeExperience.updated_by_user_id]", back_populates="updater")
-    
-    created_assets = relationship("EmployeeAsset",
-                                       foreign_keys="[EmployeeAsset.created_by_user_id]", back_populates="creator")
-    updated_assets = relationship("EmployeeAsset",
-                                       foreign_keys="[EmployeeAsset.updated_by_user_id]", back_populates="updater")
-    
-    # Inside User class
-    created_employee_contracts = relationship("EmployeeContract",
-    foreign_keys="[EmployeeContract.created_by_user_id]",
-    back_populates="creator"
-    )
+    # Asset
+    created_assets = relationship("EmployeeAsset", foreign_keys="[EmployeeAsset.created_by_user_id]", back_populates="creator")
+    updated_assets = relationship("EmployeeAsset", foreign_keys="[EmployeeAsset.updated_by_user_id]", back_populates="updater")
 
-    updated_employee_contracts = relationship("EmployeeContract",
-    foreign_keys="[EmployeeContract.updated_by_user_id]",
-    back_populates="updater"
-    )
+    # Employee Contracts
+    created_employee_contracts = relationship("EmployeeContract", foreign_keys="[EmployeeContract.created_by_user_id]", back_populates="creator")
+    updated_employee_contracts = relationship("EmployeeContract", foreign_keys="[EmployeeContract.updated_by_user_id]", back_populates="updater")
 
-    # ✅ Relationships for HealthCheckUp
-    created_health_checkups = relationship(
-        "HealthCheckUp",
-        foreign_keys="[HealthCheckUp.created_by_user_id]",
-        back_populates="creator"
-    )
-    
-    updated_health_checkups = relationship(
-        "HealthCheckUp",
-        foreign_keys="[HealthCheckUp.updated_by_user_id]",
-        back_populates="updater"
-    )
+    # Health Checkups
+    created_health_checkups = relationship("HealthCheckUp", foreign_keys="[HealthCheckUp.created_by_user_id]", back_populates="creator")
+    updated_health_checkups = relationship("HealthCheckUp", foreign_keys="[HealthCheckUp.updated_by_user_id]", back_populates="updater")
 
-    created_advanced_salaries = relationship("AdvancedSalary", back_populates="creator",
-        foreign_keys="[AdvancedSalary.created_by_user_id]"
-    )
+    # Advanced Salary
+    created_advanced_salaries = relationship("AdvancedSalary", back_populates="creator", foreign_keys="[AdvancedSalary.created_by_user_id]")
+    updated_advanced_salaries = relationship("AdvancedSalary", back_populates="updater", foreign_keys="[AdvancedSalary.updated_by_user_id]")
 
-    updated_advanced_salaries = relationship("AdvancedSalary", back_populates="updater",
-        foreign_keys="[AdvancedSalary.updated_by_user_id]"
-    )
+    # Company Announcements
+    company_announcements_created = relationship("CompanyAnnouncement", foreign_keys="[CompanyAnnouncement.created_by_user_id]", back_populates="creator")
+    company_announcements_updated = relationship("CompanyAnnouncement", foreign_keys="[CompanyAnnouncement.updated_by_user_id]", back_populates="updater")
 
-    company_announcements_created = relationship(
-        "CompanyAnnouncement",
-        foreign_keys="[CompanyAnnouncement.created_by_user_id]",
-        back_populates="creator"
-    )
-
-    company_announcements_updated = relationship(
-        "CompanyAnnouncement",
-        foreign_keys="[CompanyAnnouncement.updated_by_user_id]",
-        back_populates="updater"
-    )
-
-
+    # Job Application
     created_job_applications = relationship("JobApplication", foreign_keys='JobApplication.created_by_user_id', back_populates="creator")
     updated_job_applications = relationship("JobApplication", foreign_keys='JobApplication.updated_by_user_id', back_populates="updater")
 
+    # Interview
     created_interviews = relationship("Interview", foreign_keys="[Interview.created_by_user_id]", back_populates="creator")
     updated_interviews = relationship("Interview", foreign_keys="[Interview.updated_by_user_id]", back_populates="updater")
 
+    # Offer Letter
     created_offer_letters = relationship("OfferLetter", foreign_keys='OfferLetter.created_by_user_id', back_populates="creator")
     updated_offer_letters = relationship("OfferLetter", foreign_keys='OfferLetter.updated_by_user_id', back_populates="updater")
 
-    interview_feedbacks = relationship(
-    "InterviewFeedback",
-    foreign_keys="[InterviewFeedback.panel_member_id]",
-    back_populates="panel_member"
-    )
+    # Interview Feedback
+    interview_feedbacks         = relationship("InterviewFeedback", foreign_keys="[InterviewFeedback.panel_member_id]", back_populates="panel_member")
+    created_interview_feedbacks = relationship("InterviewFeedback", foreign_keys="[InterviewFeedback.created_by_user_id]", back_populates="creator")
+    updated_interview_feedbacks = relationship("InterviewFeedback", foreign_keys="[InterviewFeedback.updated_by_user_id]", back_populates="updater")
 
-    created_interview_feedbacks = relationship(
-        "InterviewFeedback",
-        foreign_keys="[InterviewFeedback.created_by_user_id]",
-        back_populates="creator"
-    )
+    # Interview Schedule
+    scheduled_interviews = relationship("InterviewSchedule", foreign_keys="[InterviewSchedule.scheduled_by_user_id]", back_populates="scheduler")
+    created_schedules     = relationship("InterviewSchedule", foreign_keys="[InterviewSchedule.created_by_user_id]", back_populates="creator")
+    updated_schedules     = relationship("InterviewSchedule", foreign_keys="[InterviewSchedule.updated_by_user_id]", back_populates="updater")
 
-    updated_interview_feedbacks = relationship(
-        "InterviewFeedback",
-        foreign_keys="[InterviewFeedback.updated_by_user_id]",
-        back_populates="updater"
-    )
+    # Promotion History
+    created_promotion_histories = relationship("PromotionHistory", foreign_keys="[PromotionHistory.created_by_user_id]", back_populates="creator")
+    updated_promotion_histories = relationship("PromotionHistory", foreign_keys="[PromotionHistory.updated_by_user_id]", back_populates="updater")
 
-    scheduled_interviews = relationship(
-        "InterviewSchedule",
-        foreign_keys="[InterviewSchedule.scheduled_by_user_id]",
-        back_populates="scheduler"
-    )
-
-    created_schedules = relationship(
-        "InterviewSchedule",
-        foreign_keys="[InterviewSchedule.created_by_user_id]",
-        back_populates="creator"
-    )
-
-    updated_schedules = relationship(
-        "InterviewSchedule",
-        foreign_keys="[InterviewSchedule.updated_by_user_id]",
-        back_populates="updater"
-    )
-
-    created_promotion_histories = relationship(
-        "PromotionHistory", foreign_keys="[PromotionHistory.created_by_user_id]", back_populates="creator"
-    )
-    updated_promotion_histories = relationship(
-        "PromotionHistory", foreign_keys="[PromotionHistory.updated_by_user_id]", back_populates="updater"
-    )
-
+    # Grievance
     created_grievances = relationship("Grievance", foreign_keys="[Grievance.created_by]", back_populates="creator")
     updated_grievances = relationship("Grievance", foreign_keys="[Grievance.updated_by]", back_populates="updater")
 
-    created_disciplinary_actions = relationship(
-    "DisciplinaryAction",
-    foreign_keys="[DisciplinaryAction.created_by_user_id]",
-    back_populates="creator"
-    )
+    # Disciplinary Actions
+    created_disciplinary_actions = relationship("DisciplinaryAction", foreign_keys="[DisciplinaryAction.created_by_user_id]", back_populates="creator")
+    updated_disciplinary_actions = relationship("DisciplinaryAction", foreign_keys="[DisciplinaryAction.updated_by_user_id]", back_populates="updater")
 
-    updated_disciplinary_actions = relationship(
-        "DisciplinaryAction",
-        foreign_keys="[DisciplinaryAction.updated_by_user_id]",
-        back_populates="updater"
-    )
-
-    created_travel_expenses = relationship("TravelExpense", foreign_keys=[TravelExpense.created_by_user_id], back_populates="creator")
-    updated_travel_expenses = relationship("TravelExpense", foreign_keys=[TravelExpense.updated_by_user_id], back_populates="updater")
+    # Travel Expenses
+    created_travel_expenses   = relationship("TravelExpense", foreign_keys=[TravelExpense.created_by_user_id], back_populates="creator")
+    updated_travel_expenses   = relationship("TravelExpense", foreign_keys=[TravelExpense.updated_by_user_id], back_populates="updater")
     submitted_travel_expenses = relationship("TravelExpense", foreign_keys=[TravelExpense.submitted_by_user_id])
-    approved_travel_expenses = relationship("TravelExpense", foreign_keys=[TravelExpense.approved_by_user_id])
+    approved_travel_expenses  = relationship("TravelExpense", foreign_keys=[TravelExpense.approved_by_user_id])
 
+    # Employee
     employee_id = Column(Integer, ForeignKey("employees.id"), unique=True)  # one user per employee
-    employee = relationship("Employee", back_populates="user")
-    
-    approved_loans = relationship("EmployeeLoan", foreign_keys="[EmployeeLoan.approved_by_user_id]", back_populates="approved_by")
-    created_loans = relationship("EmployeeLoan", foreign_keys="[EmployeeLoan.created_by_user_id]", back_populates="creator")
-    updated_loans = relationship("EmployeeLoan", foreign_keys="[EmployeeLoan.updated_by_user_id]", back_populates="updater")
+    employee    = relationship("Employee", back_populates="user")
 
+    # Employee Loan
+    approved_loans = relationship("EmployeeLoan", foreign_keys="[EmployeeLoan.approved_by_user_id]", back_populates="approved_by")
+    created_loans  = relationship("EmployeeLoan", foreign_keys="[EmployeeLoan.created_by_user_id]", back_populates="creator")
+    updated_loans  = relationship("EmployeeLoan", foreign_keys="[EmployeeLoan.updated_by_user_id]", back_populates="updater")
+
+    # Skill
     created_skills = relationship("Skill", foreign_keys="[Skill.created_by_user_id]", back_populates="creator")
     updated_skills = relationship("Skill", foreign_keys="[Skill.updated_by_user_id]", back_populates="updater")
 
-    # Relationships to EmployeeSkill
-    created_employee_skills = relationship(
-        "EmployeeSkill",
-        back_populates="creator",
-        foreign_keys="[EmployeeSkill.created_by_user_id]"
-    )
-
-    updated_employee_skills = relationship(
-        "EmployeeSkill",
-        back_populates="updater",
-        foreign_keys="[EmployeeSkill.updated_by_user_id]"
-    )
+    # EmployeeSkill
+    created_employee_skills = relationship("EmployeeSkill", back_populates="creator", foreign_keys="[EmployeeSkill.created_by_user_id]")
+    updated_employee_skills = relationship("EmployeeSkill", back_populates="updater", foreign_keys="[EmployeeSkill.updated_by_user_id]")
