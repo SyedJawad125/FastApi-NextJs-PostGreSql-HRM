@@ -58,6 +58,7 @@ from app.models.disciplinary_actions import DisciplinaryAction
 from app.models.travel_expenses import TravelExpense
 from app.models.employee_loan import EmployeeLoan
 from app.models.skills import Skill
+from app.models.employee_skills import EmployeeSkill
 
 
 # Import routers
@@ -72,7 +73,7 @@ from app.routers import (
     employee_assets, employee_contract, health_checkup, advanced_salaries, 
     company_announcements, job_application, interviews, offer_letters, 
     interview_feedback, interview_schedules, promotion_history, grievances, 
-    disciplinary_actions, travel_expenses, employee_loan, skills
+    disciplinary_actions, travel_expenses, employee_loan, skills, employee_skills
 )
 
 app = FastAPI(
@@ -192,6 +193,8 @@ app.include_router(disciplinary_actions.router)
 app.include_router(travel_expenses.router)
 app.include_router(employee_loan.router)
 app.include_router(skills.router)
+app.include_router(employee_skills.router)
+
 
 
 

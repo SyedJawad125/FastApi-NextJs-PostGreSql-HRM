@@ -6,10 +6,10 @@ from datetime import datetime
 import enum
 
 class SkillLevel(enum.Enum):
-    BEGINNER = "beginner"
-    INTERMEDIATE = "intermediate"
-    ADVANCED = "advanced"
-    EXPERT = "expert"
+    beginner = "beginner"
+    intermediate = "intermediate"
+    advanced = "advanced"
+    expert = "expert"
 
 class EmployeeSkill(Base):
     __tablename__ = "employee_skills"
@@ -20,7 +20,7 @@ class EmployeeSkill(Base):
     employee_id = Column(Integer, ForeignKey("employees.id", ondelete="CASCADE"), nullable=False)
     skill_id = Column(Integer, ForeignKey("skills.id", ondelete="CASCADE"), nullable=False)
     
-    proficiency_level = Column(Enum(SkillLevel), nullable=False, default=SkillLevel.BEGINNER)
+    proficiency_level = Column(Enum(SkillLevel), nullable=False, default=SkillLevel.beginner)
     years_of_experience = Column(Integer, default=0)
     is_certified = Column(Boolean, default=False)
     certification_name = Column(String(200), nullable=True)

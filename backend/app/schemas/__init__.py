@@ -371,6 +371,16 @@ from .skills import (
     EmployeeShort,
     SkillWithEmployees
 )
+from .employee_skills import (
+    EmployeeSkillBase,
+    EmployeeSkillCreate,
+    EmployeeSkillUpdate,
+    EmployeeSkillOut,
+    PaginatedEmployeeSkills,
+    EmployeeSkillListResponse,
+    EmployeeWithSkills,
+    SkillWithEmployees
+)
 # define what will be exported on `from schemas import *`
 __all__ = [
     'UserBase', 'UserCreate', 'LoginRequest', 'UserUpdate', 'UserOut',
@@ -425,5 +435,7 @@ __all__ = [
     'EmployeeLoanBase', 'EmployeeLoanCreate', 'EmployeeLoanUpdate', 'EmployeeLoanOut', 'LoanApprovalResponse', 'PaginatedEmployeeLoan', 'EmployeeLoanListResponse',
     'SkillBase', 'SkillCreate', 'SkillUpdate', 'SkillOut', 'PaginatedSkills', 'SkillListResponse',
     'EmployeeShort', 'SkillWithEmployees',
+    'EmployeeSkillBase', 'EmployeeSkillCreate', 'EmployeeSkillUpdate', 'EmployeeSkillOut', 'PaginatedEmployeeSkills', 'EmployeeSkillListResponse',
+    'EmployeeWithSkills', 'SkillWithEmployees'
     ]
 

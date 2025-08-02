@@ -1040,6 +1040,59 @@ def filter_skills(params: dict, query: Query):
     return query
 
 
+def filter_employee_skills(query_params: Dict[str, Any], query: Query) -> Query:
+    """
+    Filter employee skills based on query parameters
+    """
+    # Filter by employee ID
+    if query_params.get("employee_id"):
+        query = query.filter(models.EmployeeSkill.employee_id == query_params.get("employee_id"))
+    
+    # Filter by skill ID
+    if query_params.get("skill_id"):
+        query = query.filter(models.EmployeeSkill.skill_id == query_params.get("skill_id"))
+    
+    # Filter by proficiency level
+    if query_params.get("proficiency_level"):
+        query = query.filter(models.EmployeeSkill.proficiency_level == query_params.get("proficiency_level"))
+    
+    # Filter by certification status
+    if query_params.get("is_certified") is not None:
+        is_certified_str = str(query_params.get("is_certified")).lower()
+        is_certified = is_certified_str == "true"
+        query = query.filter(models.EmployeeSkill.is_certified == is_certified)
+    
+    # Filter by active status
+    if query_params.get("is_active") is not None:
+        is_active_str = str(query_params.get("is_active")).lower()
+        is_active = is_active_str == "true"
+        query = query.filter(models.EmployeeSkill.is_active == is_active)
+    
+    # Filter by years of experience (minimum)
+    if query_params.get("min_years_experience"):
+        query = query.filter(models.EmployeeSkill.years_of_experience >= query_params.get("min_years_experience"))
+    
+    # Filter by years of experience (maximum)
+    if query_params.get("max_years_experience"):
+        query = query.filter(models.EmployeeSkill.years_of_experience <= query_params.get("max_years_experience"))
+    
+    # Filter by certification name (partial match)
+    if query_params.get("certification_name"):
+        query = query.filter(models.EmployeeSkill.certification_name.ilike(f"%{query_params.get('certification_name')}%"))
+    
+    # Filter by creation date range
+    if query_params.get("created_after"):
+        query = query.filter(models.EmployeeSkill.created_at >= query_params.get("created_after"))
+    
+    if query_params.get("created_before"):
+        query = query.filter(models.EmployeeSkill.created_at <= query_params.get("created_before"))
+    
+    # Filter by creator
+    if query_params.get("created_by_user_id"):
+        query = query.filter(models.EmployeeSkill.created_by_user_id == query_params.get("created_by_user_id"))
+    
+    return query
+
 def filter_permissions(params, query):
     name = params.get("name")
     if name:
