@@ -84,6 +84,7 @@ class Employee(Base):
 
     loans = relationship("EmployeeLoan", back_populates="employee", cascade="all, delete-orphan")
 
+    employee_skills = relationship("EmployeeSkill", back_populates="employee", foreign_keys="[EmployeeSkill.employee_id]")
 
     created_recruitments = relationship(
         "Recruitment", 

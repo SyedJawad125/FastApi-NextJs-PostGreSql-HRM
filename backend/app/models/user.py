@@ -406,3 +406,19 @@ class User(Base):
     approved_loans = relationship("EmployeeLoan", foreign_keys="[EmployeeLoan.approved_by_user_id]", back_populates="approved_by")
     created_loans = relationship("EmployeeLoan", foreign_keys="[EmployeeLoan.created_by_user_id]", back_populates="creator")
     updated_loans = relationship("EmployeeLoan", foreign_keys="[EmployeeLoan.updated_by_user_id]", back_populates="updater")
+
+    created_skills = relationship("Skill", foreign_keys="[Skill.created_by_user_id]", back_populates="creator")
+    updated_skills = relationship("Skill", foreign_keys="[Skill.updated_by_user_id]", back_populates="updater")
+
+    # Relationships to EmployeeSkill
+    created_employee_skills = relationship(
+        "EmployeeSkill",
+        back_populates="creator",
+        foreign_keys="[EmployeeSkill.created_by_user_id]"
+    )
+
+    updated_employee_skills = relationship(
+        "EmployeeSkill",
+        back_populates="updater",
+        foreign_keys="[EmployeeSkill.updated_by_user_id]"
+    )

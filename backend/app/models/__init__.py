@@ -42,6 +42,8 @@ from .grievances import Grievance
 from .disciplinary_actions import DisciplinaryAction
 from .travel_expenses import TravelExpense
 from .employee_loan import EmployeeLoan
+from .skills import Skill
+from .employee_skills import EmployeeSkill
 
 
 __all__ = ["User", "Department", "Employee", "Role", "Permission", "Rank", "Attendance", "Timesheet",
@@ -50,5 +52,6 @@ __all__ = ["User", "Department", "Employee", "Role", "Permission", "Rank", "Atte
   "Shift", "ShiftAssignment", "Candidate", "Recruitment", "PerformanceReview", "Training", "TrainingParticipant",
   "AuditLog", "EducationExperience", "EmployeeExperience", "EmployeeAsset", "EmployeeContract", "HealthCheckUp",
   "AdvancedSalary", "CompanyAnnouncement","JobApplication", "Interview", "OfferLetter", "InterviewFeedback",
-  "InterviewSchedule", "PromotionHistory", "Grievance", "DisciplinaryAction", "TravelExpense"]
+  "InterviewSchedule", "PromotionHistory", "Grievance", "DisciplinaryAction", "TravelExpense", "EmployeeLoan"
+  "Skill", "EmployeeSkill"]
 
