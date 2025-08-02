@@ -20,6 +20,7 @@ from typing import Dict
 from sqlalchemy.orm import Query, Session
 
 from app.models.promotion_history import PromotionHistory
+from app.models.skills import Skill
 
 
 
@@ -1014,6 +1015,28 @@ def filter_employee_loans(params: dict, query: Query):
             query = query.filter(models.EmployeeLoan.approved_by_user_id.isnot(None))
         elif params["approved"].lower() == "false":
             query = query.filter(models.EmployeeLoan.approved_by_user_id.is_(None))
+    return query
+
+
+def filter_skills(params: dict, query: Query):
+    if "name" in params:
+        query = query.filter(Skill.name.ilike(f"%{params['name']}%"))
+
+    if "description" in params:
+        query = query.filter(Skill.description.ilike(f"%{params['description']}%"))
+
+    if "created_by_user_id" in params:
+        query = query.filter(Skill.created_by_user_id == params["created_by_user_id"])
+
+    if "updated_by_user_id" in params:
+        query = query.filter(Skill.updated_by_user_id == params["updated_by_user_id"])
+
+    if "created_at_from" in params:
+        query = query.filter(Skill.created_at >= params["created_at_from"])
+
+    if "created_at_to" in params:
+        query = query.filter(Skill.created_at <= params["created_at_to"])
+
     return query
 
 

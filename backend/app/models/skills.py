@@ -1,7 +1,16 @@
 from datetime import datetime
-from sqlalchemy import Column, DateTime, ForeignKey, Integer, String, Text
+from sqlalchemy import Column, DateTime, ForeignKey, Integer, String, Text, Boolean, Enum as SQLAEnum
 from sqlalchemy.orm import relationship
 from app.database import Base
+import enum
+
+class SkillCategory(str, enum.Enum):
+    TECHNICAL = "technical"
+    SOFT_SKILL = "soft_skill"
+    LANGUAGE = "language"
+    CERTIFICATION = "certification"
+    TOOL = "tool"
+    FRAMEWORK = "framework"
 
 class Skill(Base):
     __tablename__ = "skills"
@@ -10,7 +19,9 @@ class Skill(Base):
     name = Column(String(100), nullable=False, unique=True)
     description = Column(Text, nullable=True)
 
-    # Relationship to EmployeeSkill
+    category = Column(SQLAEnum(SkillCategory, name="skill_category_enum"), default=SkillCategory.TECHNICAL)
+    is_active = Column(Boolean, default=True)
+
     employee_skills = relationship("EmployeeSkill", back_populates="skill")
 
     created_by_user_id = Column(Integer, ForeignKey("users.id"))

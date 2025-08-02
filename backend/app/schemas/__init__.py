@@ -361,7 +361,16 @@ from .employee_loan import (
     PaginatedEmployeeLoan,
     EmployeeLoanListResponse
 )
-
+from .skills import (
+    SkillBase,
+    SkillCreate,
+    SkillUpdate,
+    SkillOut,
+    PaginatedSkills,
+    SkillListResponse,
+    EmployeeShort,
+    SkillWithEmployees
+)
 # define what will be exported on `from schemas import *`
 __all__ = [
     'UserBase', 'UserCreate', 'LoginRequest', 'UserUpdate', 'UserOut',
@@ -414,5 +423,7 @@ __all__ = [
     'DisciplinaryActionBase', 'DisciplinaryActionCreate', 'DisciplinaryActionUpdate', 'DisciplinaryActionOut', 'PaginatedDisciplinaryAction', 'DisciplinaryActionListResponse',
     'TravelExpenseBase', 'TravelExpenseCreate', 'TravelExpenseUpdate', 'TravelExpenseOut', 'PaginatedTravelExpense', 'TravelExpenseListResponse',
     'EmployeeLoanBase', 'EmployeeLoanCreate', 'EmployeeLoanUpdate', 'EmployeeLoanOut', 'LoanApprovalResponse', 'PaginatedEmployeeLoan', 'EmployeeLoanListResponse',
+    'SkillBase', 'SkillCreate', 'SkillUpdate', 'SkillOut', 'PaginatedSkills', 'SkillListResponse',
+    'EmployeeShort', 'SkillWithEmployees',
     ]
 
