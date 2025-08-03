@@ -352,14 +352,51 @@ from .travel_expenses import (
     PaginatedTravelExpense,
     TravelExpenseListResponse
 )
+# from .employee_loan import (
+#     EmployeeLoanBase,
+#     EmployeeLoanCreate,
+#     EmployeeLoanUpdate,
+#     EmployeeLoanOut,
+#     LoanApprovalResponse,
+#     PaginatedEmployeeLoan,
+#     EmployeeLoanListResponse
+# )
+
 from .employee_loan import (
+    # Enums
+    LoanStatus,
+    LoanType,
+    
+    # Base and CRUD Schemas
     EmployeeLoanBase,
     EmployeeLoanCreate,
     EmployeeLoanUpdate,
+    
+    # Admin Schemas
+    EmployeeLoanAdminUpdate,
+    EmployeeLoanAdminCreate,
+    EmployeeLoanAdminPatch,
+    
+    # Output Schemas
     EmployeeLoanOut,
-    LoanApprovalResponse,
+    EmployeeLoanDetailOut,
+    
+    # Response Schemas
+    EmployeeLoanCreateResponse,
+    EmployeeLoanUpdateResponse,
+    EmployeeLoanDeleteResponse,
+    EmployeeLoanListResponse,
+    
+    # Pagination
     PaginatedEmployeeLoan,
-    EmployeeLoanListResponse
+    
+    # Statistics
+    EmployeeLoanStats,
+    
+    # Nested Output Schemas (if not already imported elsewhere)
+    UserOut,
+    EmployeeOut,
+    DepartmentOut
 )
 from .skills import (
     SkillBase,

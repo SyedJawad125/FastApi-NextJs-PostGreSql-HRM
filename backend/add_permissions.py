@@ -72,7 +72,15 @@ permissions = [
     {"name": "Read Employee OverTime", "code": "read_employee_overtime", "module_name": "Employee OverTime", "description": "User can read Employee OverTime"},
     {"name": "Update Employee OverTime", "code": "update_employee_overtime", "module_name": "Employee OverTime", "description": "User can update Employee OverTime"},
     {"name": "Delete Employee OverTime", "code": "delete_employee_overtime", "module_name": "Employee OverTime", "description": "User can delete Employee OverTime"},    
+
+    {"name": "Create Employee Loan", "code": "create_employee_loan", "module_name": "Employee Loan", "description": "User can create Employee Loan"},
+    {"name": "Read Employee Loan", "code": "read_employee_loan", "module_name": "Employee Loan", "description": "User can read Employee Loan"},
+    {"name": "Read All Employee Loan", "code": "read_all_employee_loan", "module_name": "Employee Loan", "description": "User can read All Employee Loan"},
+    {"name": "Update Employee Loan", "code": "update_employee_loan", "module_name": "Employee Loan", "description": "User can update Employee Loan"},
+    {"name": "Approve Employee Loan", "code": "approved_employee_loan", "module_name": "Employee Loan", "description": "User can Approved Employee Loan"},
+    {"name": "Delete Employee Loan", "code": "delete_employee_loan", "module_name": "Employee Loan", "description": "User can delete Employee Loan"},    
 ]
+    
 
 def add_permissions_to_db(db: Session):
     for perm in permissions:

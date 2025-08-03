@@ -334,6 +334,8 @@ from app.models.shift_assignments import ShiftAssignment
 from app.models.shift import Shift
 from app.models.education_experience import EducationExperience
 from app.models.travel_expenses import TravelExpense
+from app.models.employee_loan import EmployeeLoan
+
 
 class User(Base):
     __tablename__ = "users"
@@ -479,9 +481,11 @@ class User(Base):
     employee    = relationship("Employee", back_populates="user")
 
     # Employee Loan
-    approved_loans = relationship("EmployeeLoan", foreign_keys="[EmployeeLoan.approved_by_user_id]", back_populates="approved_by")
-    created_loans  = relationship("EmployeeLoan", foreign_keys="[EmployeeLoan.created_by_user_id]", back_populates="creator")
-    updated_loans  = relationship("EmployeeLoan", foreign_keys="[EmployeeLoan.updated_by_user_id]", back_populates="updater")
+    submitted_loan_requests = relationship("EmployeeLoan", back_populates="request_user", foreign_keys="EmployeeLoan.request_user_id")
+    approved_loan_requests = relationship("EmployeeLoan", back_populates="approved_by", foreign_keys="EmployeeLoan.approved_by_user_id")
+    created_loan_requests = relationship("EmployeeLoan", back_populates="creator", foreign_keys="EmployeeLoan.created_by_user_id")
+    updated_loan_requests = relationship("EmployeeLoan", back_populates="updater", foreign_keys="EmployeeLoan.updated_by_user_id")
+
 
     # Skill
     created_skills = relationship("Skill", foreign_keys="[Skill.created_by_user_id]", back_populates="creator")
