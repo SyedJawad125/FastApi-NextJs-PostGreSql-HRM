@@ -23,7 +23,7 @@ UPLOAD_DIR = "uploads/images"
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 
 
-@router.post("/", response_model=ImageOut, dependencies=[require("read_image")])
+@router.post("/", response_model=ImageOut, dependencies=[require("create_image")])
 def upload_image(
     file: UploadFile = File(...),
     name: Optional[str] = Form(None),

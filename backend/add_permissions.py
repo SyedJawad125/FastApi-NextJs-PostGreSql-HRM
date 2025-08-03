@@ -7,6 +7,11 @@ permissions = [
     {"name": "Read Role", "code": "read_role", "module_name": "Role", "description": "User can read role"},
     {"name": "Update Role", "code": "update_role", "module_name": "Role", "description": "User can update role"},
     {"name": "Delete Role", "code": "delete_role", "module_name": "Role", "description": "User can delete role"},
+
+    {"name": "Create Permission", "code": "create_permission", "module_name": "Permission", "description": "User can create permission"},
+    {"name": "Read Permission", "code": "read_permission", "module_name": "Permission", "description": "User can read permission"},
+    {"name": "Update Permission", "code": "update_permission", "module_name": "Permission", "description": "User can update permission"},
+    {"name": "Delete Permission", "code": "delete_permission", "module_name": "Permission", "description": "User can delete permission"},
     
     {"name": "Create Department", "code": "create_department", "module_name": "Department", "description": "User can create Department"},
     {"name": "Read Department", "code": "read_department", "module_name": "Department", "description": "User can read Department"},

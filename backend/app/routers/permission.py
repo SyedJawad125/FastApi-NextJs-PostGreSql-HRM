@@ -1,6 +1,8 @@
 from fastapi import APIRouter, Depends, status, Request, HTTPException
 from sqlalchemy.orm import Session
 from typing import List, Optional, Any
+
+from app.dependencies.permission import require
 from .. import database, schemas, models, oauth2
 from app.utils import paginate_data, create_response, filter_permissions
 from fastapi.responses import JSONResponse
@@ -42,10 +44,36 @@ def get_permissions(
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+@router.get("/get_admin", response_model=schemas.PermissionListResponse, dependencies=[require("read_permission")])
+def get_admin_permissions(
+    request: Request,
+    db: Session = Depends(database.get_db),
+    current_user: models.User = Depends(oauth2.get_current_user),
+):
+    try:
+        query = db.query(models.Permission)
+        query = filter_permissions(request.query_params, query)
+        data = query.all()
+        paginated_data, count = paginate_data(data, request)
+
+        # ✅ Convert ORM to Pydantic
+        serialized_data = [schemas.Permission.from_orm(perms) for perms in paginated_data]
+
+        response_data = {
+            "count": count,
+            "data": serialized_data
+        }
+
+        return {
+            "status": "SUCCESSFUL",
+            "result": response_data
+        }
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 
-
-@router.post("/", status_code=status.HTTP_201_CREATED, response_model=schemas.Permission)
+@router.post("/", status_code=status.HTTP_201_CREATED, response_model=schemas.Permission, dependencies=[require("create_permission")])
 # @router.post("/", status_code=status.HTTP_201_CREATED)
 def create_permission(
     permission: schemas.PermissionCreate,
@@ -72,7 +100,7 @@ def create_permission(
 
 
 
-@router.get("/{id}", response_model=schemas.Permission)
+@router.get("/{id}", response_model=schemas.Permission, dependencies=[require("read_permission")])
 def get_permission(id: int, db: Session = Depends(database.get_db), 
                   current_user: models.User = Depends(oauth2.get_current_user)):
     permission = db.query(models.Permission).filter(models.Permission.id == id).first()
@@ -81,7 +109,7 @@ def get_permission(id: int, db: Session = Depends(database.get_db),
                            detail=f"Permission with id {id} not found")
     return permission
 
-@router.patch("/{id}", response_model=schemas.Permission)
+@router.patch("/{id}", response_model=schemas.Permission, dependencies=[require("update_permission")])
 def patch_update_permission(
     id: int,
     updated_permission: schemas.PermissionUpdate,
@@ -120,7 +148,7 @@ def patch_update_permission(
 
 # @router.delete("/{id}", status_code=status.HTTP_204_NO_CONTENT)
 
-@router.delete("/{id}", status_code=status.HTTP_200_OK)
+@router.delete("/{id}", status_code=status.HTTP_200_OK, dependencies=[require("delete_permission")])
 def delete_permission(
     id: int,
     db: Session = Depends(database.get_db),
