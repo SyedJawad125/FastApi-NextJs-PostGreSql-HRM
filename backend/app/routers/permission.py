@@ -72,6 +72,33 @@ def get_admin_permissions(
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+@router.get("/get_admin_without_paginated", response_model=schemas.PermissionListResponse, dependencies=[require("read_permission")])
+def get_admin_permissions(
+    request: Request,
+    db: Session = Depends(database.get_db),
+    current_user: models.User = Depends(oauth2.get_current_user),
+):
+    try:
+        query = db.query(models.Permission)
+        query = filter_permissions(request.query_params, query)
+        data = query.all()
+        # paginated_data, count = paginate_data(data, request)
+
+        # ✅ Convert ORM to Pydantic
+        serialized_data = [schemas.Permission.from_orm(perms) for perms in data]
+
+        response_data = {
+            "count": len(serialized_data),
+            "data": serialized_data
+        }
+
+        return {
+            "status": "SUCCESSFUL",
+            "result": response_data
+        }
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 @router.post("/", status_code=status.HTTP_201_CREATED, response_model=schemas.Permission, dependencies=[require("create_permission")])
 # @router.post("/", status_code=status.HTTP_201_CREATED)
