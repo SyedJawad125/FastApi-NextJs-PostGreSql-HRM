@@ -180,24 +180,61 @@ def delete_role(
     db: Session = Depends(database.get_db),
     current_user: models.User = Depends(oauth2.get_current_user),
     _: None = Depends(permission_required(["delete_role"]))
-
 ):
-    
-
-    role_query = db.query(models.Role).filter(models.Role.id == id)
-    role = role_query.first()
-
-    if not role:
+    try:
+        # Check if role exists
+        role_query = db.query(models.Role).filter(models.Role.id == id)
+        role = role_query.first()
+        
+        if not role:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"Role with id {id} not found"
+            )
+        
+        # Check if role is assigned to any users
+        user_count = db.query(models.User).filter(models.User.role_id == id).count()
+        if user_count > 0:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"Cannot delete role. It is assigned to {user_count} user(s). Please reassign users first."
+            )
+        
+        # Check if it's a system role that shouldn't be deleted
+        if hasattr(role, 'is_system') and role.is_system:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="System roles cannot be deleted"
+            )
+        
+        # First delete all role-permission relationships (NOT the permissions themselves)
+        # This removes the role from role_permission table but keeps permissions intact
+        deleted_relationships = db.query(models.RolePermission).filter(models.RolePermission.role_id == id).delete(synchronize_session=False)
+        print(f"Deleted {deleted_relationships} role-permission relationships")
+        
+        # Then delete the role
+        deleted_roles = role_query.delete(synchronize_session=False)
+        print(f"Deleted {deleted_roles} role(s)")
+        
+        db.commit()
+        
+        return {"message": "Role deleted successfully (permissions remain available for other roles)"}
+        
+    except HTTPException:
+        # Re-raise HTTP exceptions
+        db.rollback()
+        raise
+    except Exception as e:
+        # Print the actual error for debugging
+        print(f"Error deleting role: {str(e)}")
+        print(f"Error type: {type(e)}")
+        
+        # Rollback transaction on any error
+        db.rollback()
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Role with id {id} not found"
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Database error: {str(e)}"
         )
-
-    role_query.delete(synchronize_session=False)
-    db.commit()
-
-    return {"message": "Role deleted successfully"}
-
 
 
 

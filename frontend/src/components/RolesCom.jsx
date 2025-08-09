@@ -51,36 +51,84 @@ const RolesCom = () => {
     router.push(`/UpdateRolePage?id=${id}`);
   };
 
+  // const deleteRole = async (id) => {
+  //   try {
+  //     const res = await AxiosInstance.delete(`/roles/${id}`);
+  //     if (res?.data?.message) {
+  //       toast.success(res.data.message || 'Role deleted successfully!');
+
+  //       const newTotal = pagination.total - 1;
+  //       const newTotalPages = Math.ceil(newTotal / pagination.limit);
+  //       const newPage = pagination.page > newTotalPages ? newTotalPages : pagination.page;
+
+  //       setPagination(prev => ({
+  //         ...prev,
+  //         page: newPage
+  //       }));
+  //     }
+  //   } catch (error) {
+  //     if (error.response?.status === 404) {
+  //       toast.error('Role not found');
+  //     } else {
+  //       const errorMessage = error.response?.data?.detail || 'Error deleting role';
+  //       toast.error(errorMessage);
+  //     }
+  //   }
+  // };
+
   const deleteRole = async (id) => {
-    try {
-      const res = await AxiosInstance.delete(`/roles/${id}`);
-      if (res?.data?.message) {
-        toast.success(res.data.message || 'Role deleted successfully!');
+  try {
+    const res = await AxiosInstance.delete(`/roles/${id}`);
+    toast.success(res.data?.message || "Role deleted successfully!");
 
-        const newTotal = pagination.total - 1;
-        const newTotalPages = Math.ceil(newTotal / pagination.limit);
-        const newPage = pagination.page > newTotalPages ? newTotalPages : pagination.page;
+    // Update pagination
+    const newTotal = pagination.total - 1;
+    const newTotalPages = Math.ceil(newTotal / pagination.limit);
+    const newPage = Math.max(1, Math.min(pagination.page, newTotalPages));
 
-        setPagination(prev => ({
-          ...prev,
-          page: newPage
-        }));
+    setPagination(prev => ({
+      ...prev,
+      total: newTotal,
+      page: newPage
+    }));
+
+    // Remove from state
+    setRoles(prevRoles => prevRoles.filter(role => role.id !== id));
+
+  } catch (error) {
+    console.error("Delete role error:", error);
+
+    if (error.response) {
+      const { status, data } = error.response;
+      const message = data?.detail || data?.message || "Error deleting role";
+
+      switch (status) {
+        case 404:
+          toast.error(message); // Role not found
+          break;
+        case 400:
+          toast.error(message); // Assigned to user or system role
+          break;
+        case 401:
+          toast.error("You are not authorized to delete roles");
+          break;
+        case 403:
+          toast.error("You don't have permission to delete roles");
+          break;
+        case 500:
+          toast.error(message); // DB/Server error
+          break;
+        default:
+          toast.error(message);
       }
-    } catch (error) {
-      if (error.response?.status === 404) {
-        toast.error('Role not found');
-      } else {
-        const errorMessage = error.response?.data?.detail || 'Error deleting role';
-        toast.error(errorMessage);
-      }
+    } else if (error.request) {
+      toast.error("Network error. Please check your connection.");
+    } else {
+      toast.error("Unexpected error occurred while deleting role");
     }
-  };
+  }
+};
 
-  const handlePageChange = (newPage) => {
-    if (newPage >= 1 && newPage <= pagination.totalPages) {
-      fetchRoles(newPage);
-    }
-  };
 
   // Check for read permissions
   if (!permissions.read_role) {
