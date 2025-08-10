@@ -737,9 +737,9 @@ const AuditLogCom = () => {
                 className="w-full px-4 py-2 bg-slate-800/50 border border-slate-600/50 rounded-lg text-slate-200 focus:border-indigo-400/50 focus:ring-2 focus:ring-indigo-500/20 transition-all duration-200"
               >
                 <option value="">All Actions</option>
-                <option value="CREATE">Create</option>
-                <option value="UPDATE">Update</option>
-                <option value="DELETE">Delete</option>
+                <option value="INSERT">INSERT</option>
+                <option value="UPDATE">UPDATE</option>
+                <option value="DELETE">DELETE</option>
                 <option value="LOGIN">Login</option>
                 <option value="LOGOUT">Logout</option>
               </select>
@@ -792,32 +792,41 @@ const AuditLogCom = () => {
           </div>
         ) : (
           <>
+            
             {/* Luxury Table Container */}
-            <div className="backdrop-blur-xl bg-gradient-to-br from-slate-900/80 to-slate-800/60 rounded-2xl border border-indigo-400/20 shadow-2xl shadow-indigo-500/10 overflow-hidden">
-              
-              {/* Table Header */}
-              <div className="bg-gradient-to-r from-slate-900/90 to-slate-800/90 border-b border-indigo-400/20">
-                <div className="grid grid-cols-12 gap-4 px-8 py-4">
-                  <div className="col-span-2 font-semibold text-indigo-300 text-sm uppercase tracking-wider">User</div>
-                  <div className="col-span-2 font-semibold text-indigo-300 text-sm uppercase tracking-wider">Action</div>
-                  <div className="col-span-2 font-semibold text-indigo-300 text-sm uppercase tracking-wider">Table</div>
-                  <div className="col-span-2 font-semibold text-indigo-300 text-sm uppercase tracking-wider">Record ID</div>
-                  <div className="col-span-2 font-semibold text-indigo-300 text-sm uppercase tracking-wider">Timestamp</div>
-                  <div className="col-span-2 font-semibold text-indigo-300 text-sm uppercase tracking-wider">Details</div>
+              <div className="backdrop-blur-xl bg-gradient-to-br from-slate-900/80 to-slate-800/60 rounded-2xl border border-indigo-400/20 shadow-2xl shadow-indigo-500/10 overflow-hidden">
+                
+                {/* Table Header */}
+                <div className="bg-gradient-to-r from-slate-900/90 to-slate-800/90 border-b border-indigo-400/20">
+                  <div className="grid grid-cols-12 gap-4 px-8 py-4">
+                    <div className="col-span-1 font-semibold text-indigo-300 text-sm uppercase tracking-wider text-center">#</div>
+                    <div className="col-span-2 font-semibold text-indigo-300 text-sm uppercase tracking-wider text-left">User</div>
+                    <div className="col-span-1 font-semibold text-indigo-300 text-sm uppercase tracking-wider text-center">Action</div>
+                    <div className="col-span-2 font-semibold text-indigo-300 text-sm uppercase tracking-wider text-left">Table</div>
+                    <div className="col-span-2 font-semibold text-indigo-300 text-sm uppercase tracking-wider text-center">Record ID</div>
+                    <div className="col-span-2 font-semibold text-indigo-300 text-sm uppercase tracking-wider text-center">Timestamp</div>
+                    <div className="col-span-2 font-semibold text-indigo-300 text-sm uppercase tracking-wider text-center">Details</div>
+                  </div>
                 </div>
-              </div>
 
-              {/* Data Rows */}
-              <div className="divide-y divide-slate-700/30">
-                {auditLogsList.map((log, index) => (
-                  <div 
-                    key={log.id} 
-                    className={`grid grid-cols-12 gap-4 items-center px-8 py-6 hover:bg-gradient-to-r hover:from-indigo-500/5 hover:to-purple-500/5 transition-all duration-300 group ${
-                      index % 2 === 0 ? 'bg-slate-900/20' : 'bg-slate-800/20'
-                    }`}
-                  >
-                    <div className="col-span-2">
-                      <div className="flex items-center space-x-3">
+                {/* Data Rows */}
+                <div className="divide-y divide-slate-700/30">
+                  {auditLogsList.map((log, index) => (
+                    <div 
+                      key={log.id} 
+                      className={`grid grid-cols-12 gap-4 items-center px-8 py-6 hover:bg-gradient-to-r hover:from-indigo-500/5 hover:to-purple-500/5 transition-all duration-300 group ${
+                        index % 2 === 0 ? 'bg-slate-900/20' : 'bg-slate-800/20'
+                      }`}
+                    >
+                      {/* Serial Number */}
+                      <div className="col-span-1 text-center">
+                        <span className="text-slate-400 text-sm font-medium">
+                          {index + 1 + (pagination.current_page - 1) * pagination.limit}
+                        </span>
+                      </div>
+                      
+                      {/* User */}
+                      <div className="col-span-2 flex items-center space-x-3">
                         <div className="relative">
                           <div className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-400/20 to-purple-500/20 border border-indigo-400/30 flex items-center justify-center backdrop-blur-sm">
                             <span className="text-xs font-semibold text-indigo-300">
@@ -830,59 +839,62 @@ const AuditLogCom = () => {
                           User #{log.performed_by_user_id || 'System'}
                         </span>
                       </div>
-                    </div>
-                    
-                    <div className="col-span-2">
-                      <span className={`inline-flex items-center px-3 py-1.5 rounded-full text-sm font-semibold bg-gradient-to-r ${getActionColor(log.action)} backdrop-blur-sm`}>
-                        {log.action}
-                      </span>
-                    </div>
-                    
-                    <div className="col-span-2">
-                      <span className="text-amber-100 font-medium group-hover:text-amber-200 transition-colors">
-                        {log.table_name || 'N/A'}
-                      </span>
-                    </div>
-                    
-                    <div className="col-span-2">
-                      <span className="text-slate-300 text-sm group-hover:text-slate-200 transition-colors font-mono">
-                        {log.record_id || 'N/A'}
-                      </span>
-                    </div>
-                    
-                    <div className="col-span-2">
-                      <div className="text-xs">
-                        <div className="text-slate-300 group-hover:text-slate-200 transition-colors">
-                          {formatDateTime(log.timestamp)}
+                      
+                      {/* Action */}
+                      <div className="col-span-1 flex justify-center">
+                        <span className={`inline-flex items-center px-3 py-1.5 rounded-full text-sm font-semibold bg-gradient-to-r ${getActionColor(log.action)} backdrop-blur-sm`}>
+                          {log.action}
+                        </span>
+                      </div>
+                      
+                      {/* Table */}
+                      <div className="col-span-2">
+                        <span className="text-amber-100 font-medium group-hover:text-amber-200 transition-colors">
+                          {log.table_name || 'N/A'}
+                        </span>
+                      </div>
+                      
+                      {/* Record ID */}
+                      <div className="col-span-2 text-center">
+                        <span className="text-slate-300 text-sm group-hover:text-slate-200 transition-colors font-mono">
+                          {log.record_id || 'N/A'}
+                        </span>
+                      </div>
+                      
+                      {/* Timestamp */}
+                      <div className="col-span-2 text-center">
+                        <div className="text-xs">
+                          <div className="text-slate-300 group-hover:text-slate-200 transition-colors">
+                            {formatDateTime(log.timestamp)}
+                          </div>
                         </div>
                       </div>
+                      
+                      {/* Details */}
+                      <div className="col-span-2 text-center">
+                        {log.old_values || log.new_values ? (
+                          <button
+                            className="text-cyan-400 hover:text-cyan-300 text-sm font-medium bg-cyan-500/10 hover:bg-cyan-500/20 px-3 py-1 rounded-lg transition-all duration-200 border border-cyan-500/30"
+                            onClick={() => {
+                              const details = {
+                                old_values: log.old_values,
+                                new_values: log.new_values,
+                                ip_address: log.ip_address,
+                                user_agent: log.user_agent
+                              };
+                              alert(JSON.stringify(details, null, 2));
+                            }}
+                          >
+                            View Details
+                          </button>
+                        ) : (
+                          <span className="text-slate-500 italic text-sm">No details</span>
+                        )}
+                      </div>
                     </div>
-                    
-                    <div className="col-span-2">
-                      {log.old_values || log.new_values ? (
-                        <button
-                          className="text-cyan-400 hover:text-cyan-300 text-sm font-medium bg-cyan-500/10 hover:bg-cyan-500/20 px-3 py-1 rounded-lg transition-all duration-200 border border-cyan-500/30"
-                          onClick={() => {
-                            const details = {
-                              old_values: log.old_values,
-                              new_values: log.new_values,
-                              ip_address: log.ip_address,
-                              user_agent: log.user_agent
-                            };
-                            alert(JSON.stringify(details, null, 2));
-                          }}
-                        >
-                          View Details
-                        </button>
-                      ) : (
-                        <span className="text-slate-500 italic text-sm">No details</span>
-                      )}
-                    </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
-            </div>
-
             {/* Enhanced Pagination */}
             <div className="flex flex-col md:flex-row justify-between items-center mt-16 gap-4">
               <div className="text-gray-400 text-sm">
