@@ -799,10 +799,10 @@ const AuditLogCom = () => {
                 {/* Table Header */}
                 <div className="bg-gradient-to-r from-slate-900/90 to-slate-800/90 border-b border-indigo-400/20">
                   <div className="grid grid-cols-12 gap-4 px-8 py-4">
-                    <div className="col-span-1 font-semibold text-indigo-300 text-sm uppercase tracking-wider text-center">#</div>
+                    <div className="col-span-1 font-semibold text-indigo-300 text-sm uppercase tracking-wider text-center">S.No</div>
                     <div className="col-span-2 font-semibold text-indigo-300 text-sm uppercase tracking-wider text-left">User</div>
                     <div className="col-span-1 font-semibold text-indigo-300 text-sm uppercase tracking-wider text-center">Action</div>
-                    <div className="col-span-2 font-semibold text-indigo-300 text-sm uppercase tracking-wider text-left">Table</div>
+                    <div className="col-span-2 font-semibold text-indigo-300 text-sm uppercase tracking-wider text-left ml-4">Table</div>
                     <div className="col-span-2 font-semibold text-indigo-300 text-sm uppercase tracking-wider text-center">Record ID</div>
                     <div className="col-span-2 font-semibold text-indigo-300 text-sm uppercase tracking-wider text-center">Timestamp</div>
                     <div className="col-span-2 font-semibold text-indigo-300 text-sm uppercase tracking-wider text-center">Details</div>
@@ -849,7 +849,7 @@ const AuditLogCom = () => {
                       
                       {/* Table */}
                       <div className="col-span-2">
-                        <span className="text-amber-100 font-medium group-hover:text-amber-200 transition-colors">
+                        <span className="text-amber-100 ml-4 font-medium group-hover:text-amber-200 transition-colors">
                           {log.table_name || 'N/A'}
                         </span>
                       </div>
