@@ -28,6 +28,11 @@ permissions = [
     {"name": "Update Rank", "code": "update_rank", "module_name": "Rank", "description": "User can update Rank"},
     {"name": "Delete Rank", "code": "delete_rank", "module_name": "Rank", "description": "User can delete Rank"},
 
+    {"name": "Create AuditLog", "code": "create_auditlog", "module_name": "AuditLog", "description": "User can create AuditLog"},
+    {"name": "Read AuditLog", "code": "read_auditlog", "module_name": "AuditLog", "description": "User can read AuditLog"},
+    {"name": "Update AuditLog", "code": "update_auditlog", "module_name": "AuditLog", "description": "User can update AuditLog"},
+    {"name": "Delete AuditLog", "code": "delete_auditlog", "module_name": "AuditLog", "description": "User can delete AuditLog"},
+
     {"name": "Create Leave", "code": "create_leave", "module_name": "Leave", "description": "User can create Leave"},
     {"name": "Read Leave", "code": "read_leave", "module_name": "Leave", "description": "User can read Leave"},
     {"name": "Update Leave", "code": "update_leave", "module_name": "Leave", "description": "User can update Leave"},
