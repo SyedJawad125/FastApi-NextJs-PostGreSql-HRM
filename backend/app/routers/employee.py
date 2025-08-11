@@ -119,6 +119,36 @@ def get_employees(
         raise HTTPException(status_code=500, detail=str(e))
 
 
+@router.get("/employee", response_model=schemas.EmployeeListResponse, dependencies=[require("read_employee")])
+def get_employees(
+    request: Request,
+    db: Session = Depends(database.get_db),
+    current_user: models.User = Depends(oauth2.get_current_user),
+):
+    try:
+        # Query employees from the database
+        query = db.query(models.Employee)
+        query = filter_employees(request.query_params, query)
+        data = query.all()
+        
+        # Paginate results
+        paginated_data, count = paginate_data(data, request)
+
+        # Convert ORM objects to Pydantic models
+        serialized_data = [schemas.Employee.from_orm(emp) for emp in paginated_data]
+
+        # Return response
+        return {
+            "status": "SUCCESSFUL",
+            "result": {
+                "count": count,
+                "data": serialized_data
+            }
+        }
+
+    except Exception as e:
+        print("❌ Error in get_employees:", e)
+        raise HTTPException(status_code=500, detail=str(e))
 
 @router.post("/", 
             status_code=status.HTTP_201_CREATED, 
