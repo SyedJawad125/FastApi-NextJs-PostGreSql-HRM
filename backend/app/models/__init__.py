@@ -45,6 +45,7 @@ from .employee_loan import EmployeeLoan
 from .skills import Skill
 from .employee_skills import EmployeeSkill
 from .overtime_requests import OvertimeRequest
+from .policy import Policy
 
 
 __all__ = ["User", "Department", "Employee", "Role", "Permission", "Rank", "Attendance", "Timesheet",
@@ -53,6 +54,6 @@ __all__ = ["User", "Department", "Employee", "Role", "Permission", "Rank", "Atte
   "Shift", "ShiftAssignment", "Candidate", "Recruitment", "PerformanceReview", "Training", "TrainingParticipant",
   "AuditLog", "EducationExperience", "EmployeeExperience", "EmployeeAsset", "EmployeeContract", "HealthCheckUp",
   "AdvancedSalary", "CompanyAnnouncement","JobApplication", "Interview", "OfferLetter", "InterviewFeedback",
-  "InterviewSchedule", "PromotionHistory", "Grievance", "DisciplinaryAction", "TravelExpense", "EmployeeLoan"
-  "Skill", "EmployeeSkill", "OvertimeRequest"]
+  "InterviewSchedule", "PromotionHistory", "Grievance", "DisciplinaryAction", "TravelExpense",
+  "Skill", "EmployeeSkill", "OvertimeRequest", "Skill", "EmployeeLoan", "Policy"]
 

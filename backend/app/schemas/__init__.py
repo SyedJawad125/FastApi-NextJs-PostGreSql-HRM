@@ -435,6 +435,17 @@ from .overtime_requests import (
     EmployeeOut,
     DepartmentOut
 )
+from .policy import (
+    PolicyBase,
+    PolicyCreate,
+    PolicyUpdate,
+    PolicyOut,
+    PaginatedPolicy,
+    PolicyListResponse,
+    PolicyAcknowledgementOut,
+    PolicyAttachmentOut,
+)
+
 # define what will be exported on `from schemas import *`
 __all__ = [
     'UserBase', 'UserCreate', 'LoginRequest', 'UserUpdate', 'UserOut',
@@ -505,6 +516,7 @@ __all__ = [
     'OvertimeStatus',
     'UserOut',
     'EmployeeOut',
-    'DepartmentOut'
+    'DepartmentOut', 'PolicyBase', 'PolicyCreate', 'PolicyUpdate', 'PolicyOut', 'PolicyListResponse', 
+    'PaginatedPolicy', 'PolicyAcknowledgementOut', 'PolicyAttachmentOut', 'UserOut', 'DepartmentOut'
     ]
 

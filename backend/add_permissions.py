@@ -89,7 +89,13 @@ permissions = [
     {"name": "Update Employee Loan", "code": "update_employee_loan", "module_name": "Employee Loan", "description": "User can update Employee Loan"},
     {"name": "Approve Employee Loan", "code": "approved_employee_loan", "module_name": "Employee Loan", "description": "User can Approved Employee Loan"},
     {"name": "Delete Employee Loan", "code": "delete_employee_loan", "module_name": "Employee Loan", "description": "User can delete Employee Loan"},    
+
+    {"name": "Create Policy", "code": "create_policy", "module_name": "Policy", "description": "User can create Policy"},
+    {"name": "Read Policy", "code": "read_policy", "module_name": "Policy", "description": "User can read Policy"},
+    {"name": "Update Policy", "code": "update_policy", "module_name": "Policy", "description": "User can update Policy"},
+    {"name": "Delete Policy", "code": "delete_policy", "module_name": "Policy", "description": "User can delete Policy"},
 ]
+
     
 
 def add_permissions_to_db(db: Session):

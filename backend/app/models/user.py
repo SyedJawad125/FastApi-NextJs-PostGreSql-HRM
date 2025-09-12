@@ -501,4 +501,6 @@ class User(Base):
     created_overtime_requests = relationship("OvertimeRequest", back_populates="creator", foreign_keys="OvertimeRequest.created_by_user_id")
     updated_overtime_requests = relationship("OvertimeRequest", back_populates="updater", foreign_keys="OvertimeRequest.updated_by_user_id")
 
-
+    # Relationships with Policy
+    created_policies = relationship("Policy", foreign_keys="[Policy.created_by_user_id]", back_populates="creator")
+    updated_policies = relationship("Policy", foreign_keys="[Policy.updated_by_user_id]", back_populates="updater")

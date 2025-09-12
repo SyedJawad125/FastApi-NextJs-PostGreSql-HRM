@@ -27,6 +27,8 @@ class Department(Base):
     advanced_salaries = relationship("AdvancedSalary", back_populates="department")
     loans = relationship("EmployeeLoan", back_populates="department")
     overtime_requests = relationship("OvertimeRequest", back_populates="department")
+    policies = relationship("Policy", back_populates="department", cascade="all, delete-orphan")
+
 
 
 
