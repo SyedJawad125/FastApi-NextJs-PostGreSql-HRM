@@ -70,7 +70,7 @@ const NavbarCom = () => {
     { name: 'Home', path: '/' },
     { name: 'About', path: '/about' },
     { name: 'Services', path: '/services' },
-    { name: 'Reviews', path: '/Reviews' },
+    // { name: 'Reviews', path: '/Reviews' },
     { name: 'Contact', path: '/publiccontact' }
   ], [])
 
